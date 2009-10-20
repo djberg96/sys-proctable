@@ -3,7 +3,7 @@ require 'rbconfig'
 
 Gem::Specification.new do |gem|
    gem.name       = 'sys-proctable'
-   gem.version    = '0.8.2'
+   gem.version    = '0.9.0'
    gem.author     = 'Daniel J. Berger'
    gem.license    = 'Artistic 2.0' 
    gem.email      = 'djberg96@gmail.com'
