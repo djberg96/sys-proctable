@@ -21,7 +21,7 @@ You may need to specify a platform in some cases. For example:
 
 gem install sys-proctable --platform mswin32 # Windows
 gem install sys-proctable --platform sunos   # Solaris
-gem install sys-proctalbe --platform linux   # Linux
+gem install sys-proctable --platform linux   # Linux
 
 === Standard
 rake install
