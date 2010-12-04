@@ -2,31 +2,17 @@ require 'rake'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rbconfig'
+include Config
 
-desc 'Clean the build files for C versions of sys-proctable'
-task :clean do
-  rm_rf('.test-result') if File.exists?('.test-result')
-  Dir['*.gem'].each{ |f| File.delete(f) }
-  Dir['**/*.rbc'].each{ |f| File.delete(f) } # Rubinius
-   
-  case Config::CONFIG['host_os']
-    when /bsd/i
-      dir = 'ext/bsd'
-    when /darwin/i
-      dir = 'ext/darwin'
-    when /hpux/i
-      dir = 'ext/hpux'
-  end
-
-  unless Config::CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|linux|sunos|solaris/i
-    Dir.chdir(dir) do
-      if Dir['*.o'].length > 0
-        sh 'make distclean'
-        Dir['sys/proctable.*'].each{ |f| rm(f) if File.extname(f) != '.c' }
-      end
-    end
-  end
-end
+CLEAN.include(
+  '**/*.gem',               # Gem files
+  '**/*.rbc',               # Rubinius
+  '**/*.o',                 # C object file
+  '**/*.log',               # Ruby extension build log
+  '**/Makefile',            # C Makefile
+  '**/conftest.dSYM',       # OS X build directory
+  "**/*.#{CONFIG['DLEXT']}" # C shared object
+)
 
 desc 'Build the sys-proctable library for C versions of sys-proctable'
 task :build => [:clean] do
@@ -39,7 +25,7 @@ task :build => [:clean] do
       dir = 'ext/hpux'
   end
 
-  unless Config::CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|linux|sunos|solaris/i
+  unless Config::CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
@@ -56,7 +42,7 @@ task :install => [:build] do
   Dir.mkdir(dir) unless File.exists?(dir)
 
   case Config::CONFIG['host_os']
-    when /mswin|win32|msdos|cygwin|mingw/i
+    when /mswin|win32|msdos|cygwin|mingw|windows/i
       file = 'lib/windows/sys/proctable.rb'
     when /linux/i
       file = 'lib/linux/sys/proctable.rb'
@@ -76,7 +62,7 @@ end
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
   case Config::CONFIG['host_os']
-    when /win32|mswin|dos|cygwin|mingw|linux|sunos|solaris/i
+    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
       dir  = File.join(Config::CONFIG['sitelibdir'], 'sys')
       file = File.join(dir, 'proctable.rb')
     else
@@ -153,7 +139,7 @@ namespace :gem do
          spec.require_paths = ['lib', 'lib/sunos']
          spec.files += ['lib/sunos/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_sunos.rb'
-      when /mswin|win32|dos|cygwin|mingw/i
+      when /mswin|win32|dos|cygwin|mingw|windows/i
          spec.require_paths = ['lib', 'lib/windows']
          spec.files += ['lib/windows/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_windows.rb'
