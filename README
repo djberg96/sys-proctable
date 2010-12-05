@@ -1,12 +1,11 @@
 == Description
-   A Ruby interface for gathering process information.
+  A Ruby interface for gathering process information.
 
 == Prerequisites
-* Ruby 1.8.2 or later
 * Test::Unit 2.x (development only)
 
 == Supported Platforms
-* Windows NT family (NT, 2000, XP, etc)
+* Windows 2000 or later
 * Linux 2.6+
 * BSD (various flavors)
 * Solaris 8+
@@ -14,113 +13,107 @@
 * OS X 10.4+
 
 == Installation
-=== Rubygems
-gem install sys-proctable
+  gem install sys-proctable
 
-You may need to specify a platform in some cases. For example:
+  You may need to specify a platform in some cases. For example:
 
-gem install sys-proctable --platform mswin32 # Windows
-gem install sys-proctable --platform sunos   # Solaris
-gem install sys-proctable --platform linux   # Linux
+  gem install sys-proctable --platform mswin32 # Windows
+  gem install sys-proctable --platform sunos   # Solaris
+  gem install sys-proctable --platform linux   # Linux
 
-=== Standard
-rake install
+== Synopsis
+  require 'sys/proctable'
+  include Sys
 
-= Synopsis
-   require 'sys/proctable'
-   include Sys
+  # Everything
+  ProcTable.ps{ |p|
+    puts p.pid.to_s
+    puts p.comm
+    # ...
+  }
 
-   # Everything
-   ProcTable.ps{ |p|
-      puts p.pid.to_s
-      puts p.comm
-      ...
-   }
+  # Just one process
+  s = ProcTable.ps(2123)
+  puts s.pid.to_s
+  puts s.comm
+  # ...
 
-   or
-
-   # Just one process
-   s = ProcTable.ps(2123)
-   puts s.pid.to_s
-   puts s.comm
-   ...
-
-   # Return the results as an array of ProcTableStructs
-   a = ProcTable.ps
-   a.each do |p|
-      puts a.pid
-      ...
-   end
+  # Return the results as an array of ProcTableStructs
+  a = ProcTable.ps
+  a.each do |p|
+    puts a.pid
+    # ...
+  end
 
 == Notes 
-   Windows users may pass a host name as a second argument to get process
-   information from a different host. This relies on the WMI service running.
+  Windows users may pass a host name as a second argument to get process
+  information from a different host. This relies on the WMI service running.
 
 == Known Issues
 === BSD
-   A kvm interface is used. That means the owner of the process using the
-   sys-proctable library needs to be a member of the kvm group (or root).
+  A kvm interface is used. That means the owner of the process using the
+  sys-proctable library needs to be a member of the kvm group (or root).
 
 === Solaris
-   The cmdline member on Solaris is limited to 80 characters unless you (or
-   your program) own the process. This is a Solaris design flaw/feature.
+  The cmdline member on Solaris is limited to 80 characters unless you (or
+  your program) own the process. This is a Solaris design flaw/feature.
 
 === OS X
-   At the moment you do not get the full command line string. The code required
-   to get this information is obnoxious and I don't have any compelling desire
-   to add it. However, if you're willing to submit a patch I'll accept it.
+  At the moment you do not get the full command line string. The code required
+  to get this information is obnoxious and I don't have any compelling desire
+  to add it. However, if you're willing to submit a patch I'll accept it.
 
-   You can find a good starting point with the OS X code found in Dan Urist's
-   Proc::ProcessTable module. You can find that module on CPAN. Point your
-   browser at http://search.cpan.org.
+  You can find a good starting point with the OS X code found in Dan Urist's
+  Proc::ProcessTable module. You can find that module on CPAN. Point your
+  browser at http://search.cpan.org.
 
 === Thread Safety
-   I am not currently using a thread-safe version of readdir(). I am not
-   especially concerned about it either. If you are trying to read information
-   out of /proc from different threads at the same time there is something
-   seriously wrong with your code logic. Using readdir_r() still won't solve
-   all potential thread safety issues anyway.
+  I am not currently using a thread-safe version of readdir() for versions
+  of this library that use C. I am not especially concerned about it either.
+  If you are trying to read information out of /proc from different threads
+  at the same time there is something seriously wrong with your code logic.
+  Using readdir_r() still won't solve all potential thread safety issues anyway.
 
 == Future Plans
-   Research has indicated that the kvm approach is less favored than a sysctl
-   approach on BSD variants. I will try to add this interface in a future
-   release.
+  Research has indicated that the kvm approach is less favored than a sysctl
+  approach on BSD variants. I will try to add this interface in a future
+  release.
 
 == Acknowledgements
-   This library is largely based on the Perl module Proc::ProcessTable by
-   Dan Urist. Many ideas, as well as large chunks of code, were taken
-   from his work. So, a big THANK YOU goes out to Dan Urist.
+  This library is largely based on the Perl module Proc::ProcessTable by
+  Dan Urist. Many ideas, as well as large chunks of code, were taken
+  from his work. So, a big THANK YOU goes out to Dan Urist.
 
-   A big thanks also goes out to Mike Hall who was very helpful with ideas,
-   logic and testing.
+  A big thanks also goes out to Mike Hall who was very helpful with ideas,
+  logic and testing.
 
-   Thanks also go to Sean Chittenden for providing an account on one of his
-   FreeBSD machines. This is how the FreeBSD support was (initially) added.
+  Thanks also go to Sean Chittenden for providing an account on one of his
+  FreeBSD machines. This is how the FreeBSD support was (initially) added.
 
-   Thanks go to James Hranicky for providing a patch that grabs name, eid,
-   euid, gid and guid info in the Linux version, along with some general
-   debugging help.
+  Thanks go to James Hranicky for providing a patch that grabs name, eid,
+  euid, gid and guid info in the Linux version, along with some general
+  debugging help.
    
-   Thanks go to David Felstead for the original OS X code.
+  Thanks go to David Felstead for the original OS X code.
 
-   Finally I'd like to thank all the folks who have submitted bug reports
-   and/or patches.
+  Finally I'd like to thank all the folks who have submitted bug reports
+  and/or patches.
 
 == Help Wanted
-   I do not have access to all platforms. If your platform is not supported
-   then you will need to either submit a patch or give me a remote account
-   on a box with a compiler so that I can write the code.
+  I do not have access to all platforms. If your platform is not supported
+  then you will need to either submit a patch or give me a remote account
+  on a box with a compiler so that I can write the code.
 
 == More documentation
-   See the documentation under the 'doc' directory for more information,
-   including platform specific notes and issues.
+  See the documentation under the 'doc' directory for more information,
+  including platform specific notes and issues.
 
 == License
-   Artistic 2.0
+  Artistic 2.0
     
 == Copyright
-   (C) 2003-2009 Daniel J. Berger
-   All Rights Reserved.
+  (C) 2003-2010 Daniel J. Berger
+  All Rights Reserved.
 
 == Author
-   Daniel J. Berger
+  Daniel J. Berger
