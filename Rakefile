@@ -86,27 +86,27 @@ end
 desc 'Run the test suite'
 Rake::TestTask.new do |t|
   task :test => :build
-  t.libs << 'test'
+  t.libs << 'test' << '.'
    
   case Config::CONFIG['host_os']
-  when /mswin|msdos|cygwin|mingw/i
-    t.test_files = FileList['test/test_sys_proctable_windows.rb']
-    t.libs << 'lib/windows'
-  when /linux/i
-    t.test_files = FileList['test/test_sys_proctable_linux.rb']
-    t.libs << 'lib/linux'
-  when /sunos|solaris/i
-    t.test_files = FileList['test/test_sys_proctable_sunos.rb']
-    t.libs << 'lib/sunos'
-  when /darwin/i
-    t.libs << 'ext/darwin'
-    t.test_files = FileList['test/test_sys_proctable_darwin.rb']
-  when /bsd/i
-    t.libs << 'ext/bsd'
-    t.test_files = FileList['test/test_sys_proctable_bsd.rb']  
-  when /hpux/i
-    t.libs << 'ext/hpux'
-    t.test_files = FileList['test/test_sys_proctable_hpux.rb']  
+    when /mswin|msdos|cygwin|mingw|windows/i
+      t.test_files = FileList['test/test_sys_proctable_windows.rb']
+      t.libs << 'lib/windows'
+    when /linux/i
+      t.test_files = FileList['test/test_sys_proctable_linux.rb']
+      t.libs << 'lib/linux'
+    when /sunos|solaris/i
+      t.test_files = FileList['test/test_sys_proctable_sunos.rb']
+      t.libs << 'lib/sunos'
+    when /darwin/i
+      t.libs << 'ext/darwin'
+      t.test_files = FileList['test/test_sys_proctable_darwin.rb']
+    when /bsd/i
+      t.libs << 'ext/bsd'
+      t.test_files = FileList['test/test_sys_proctable_bsd.rb']  
+    when /hpux/i
+      t.libs << 'ext/hpux'
+      t.test_files = FileList['test/test_sys_proctable_hpux.rb']  
   end
 end
 

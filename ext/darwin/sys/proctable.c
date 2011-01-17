@@ -20,7 +20,7 @@
 #define ARGS_MAX_LEN 4096
 VALUE cProcTableError, sProcStruct;
 
-char* fields[] = {
+const char* fields[] = {
    "pid", "ppid", "pgid", "ruid", "rgid", "comm", "state", "pctcpu", "oncpu",
    "tnum", "tdev", "wmesg", "rtime", "priority", "usrpri", "nice", "cmdline",
    "starttime", "maxrss", "ixrss", "idrss", "isrss", "minflt", "majflt",
