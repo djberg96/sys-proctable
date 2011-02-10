@@ -23,7 +23,7 @@ class TC_ProcTable_All < Test::Unit::TestCase
   end
 
   def test_version
-    assert_equal('0.9.0', ProcTable::VERSION)
+    assert_equal('0.9.1', ProcTable::VERSION)
   end
 
   def test_fields
@@ -74,7 +74,7 @@ class TC_ProcTable_All < Test::Unit::TestCase
     assert_not_nil(Sys::ProcTable::Error)
     assert_kind_of(StandardError, Sys::ProcTable::Error.new)
   end
- 
+
   def teardown
     @pid  = nil
   end
