@@ -16,6 +16,7 @@ module Sys
     private
 
     @mem_total = IO.read("/proc/meminfo")[/MemTotal.*/].split[1].to_i * 1024 rescue nil
+    @boot_time = IO.read("/proc/stat")[/btime.*/].split.last.to_i rescue nil
 
     @fields = [
       'cmdline',     # Complete command line
@@ -227,6 +228,7 @@ module Sys
         struct.cmdline = struct.comm if struct.cmdline.empty?
 
         # Manually calculate CPU and memory usage
+        struct.pctcpu = get_pctcpu(struct.utime, struct.starttime)
         struct.pctmem = get_pctmem(struct.rss)
 
         struct.freeze # This is read-only data
@@ -257,11 +259,23 @@ module Sys
 
     private
 
+    # Calculate the percentage of memory usage for the given process.
+    #
     def self.get_pctmem(rss)
       return nil unless @mem_total
       page_size = 4096
       rss_total = rss * page_size
       sprintf("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
+    end
+
+    # Calculate the percentage of CPU usage for the given process.
+    #
+    def self.get_pctcpu(utime, start_time)
+      return nil unless @boot_time
+      hertz = 100.0
+      utime = (utime * 10000).to_f
+      stime = (start_time.to_f / hertz) + @boot_time
+      sprintf("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
     end
   end
 end

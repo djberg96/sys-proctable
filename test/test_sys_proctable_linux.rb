@@ -19,7 +19,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
       stime cutime cstime priority nice itrealvalue starttime vsize
       rss rlim startcode endcode startstack kstkesp kstkeip signal blocked
       sigignore sigcatch wchan nswap cnswap exit_signal processor environ
-      pctmem
+      pctcpu pctmem
       /
   end
 
@@ -285,6 +285,11 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
   def test_pctmem
     assert_respond_to(@ptable, :pctmem)
     assert_kind_of(Float, @ptable.pctmem)
+  end
+
+  def test_pctcpu
+    assert_respond_to(@ptable, :pctcpu)
+    assert_kind_of(Float, @ptable.pctcpu)
   end
 
   def teardown
