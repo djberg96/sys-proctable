@@ -16,7 +16,7 @@ module Sys
       private_class_method :new
 
       # The version of the sys-proctable library
-      VERSION = '0.9.0'
+      VERSION = '0.9.1'
 
       private
 
@@ -217,7 +217,7 @@ module Sys
       #
       #   # Print process table information for only pid 1001
       #   p ProcTable.ps(1001)
-      # 
+      #
       def self.ps(pid = nil)
          raise TypeError unless pid.is_a?(Fixnum) if pid
 
@@ -327,7 +327,7 @@ module Sys
                      fd.sysseek(address, IO::SEEK_SET)
                      data = fd.sysread(128)[/^[^\0]*/] # Null strip
                      struct.cmd_args << data
-                     address += data.length + 1 # Add 1 for the space 
+                     address += data.length + 1 # Add 1 for the space
                   }
 
                   # Get the environment hash associated with the process.

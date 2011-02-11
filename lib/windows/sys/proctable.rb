@@ -4,21 +4,21 @@ require 'date'
 
 # The Sys module serves as a namespace only
 module Sys
-   
+
    # The ProcTable class encapsulates process table information
    class ProcTable
-      
+
       # There is no constructor
       private_class_method :new
-      
+
       # Error typically raised if one of the Sys::ProcTable methods fails
       class Error < StandardError; end
-      
+
       # The version of the sys-proctable library
-      VERSION = '0.9.0'
-      
+      VERSION = '0.9.1'
+
       # The comm field corresponds to the 'name' field.  The 'cmdline' field
-      # is the CommandLine attribute on Windows XP or later, or the 
+      # is the CommandLine attribute on Windows XP or later, or the
       # 'executable_path' field on Windows 2000 or earlier.
       #
       @fields = %w/
@@ -69,12 +69,12 @@ module Sys
          write_operation_count
          write_transfer_count
       /
-      
+
       ProcTableStruct = Struct.new("ProcTableStruct", *@fields)
-      
+
       # call-seq:
       #    ProcTable.fields
-      # 
+      #
       # Returns an array of fields that each ProcTableStruct will contain.  This
       # may be useful if you want to know in advance what fields are available
       # without having to perform at least one read of the /proc table.
@@ -82,15 +82,15 @@ module Sys
       def self.fields
          @fields
       end
-      
+
       # call-seq:
       #    ProcTable.ps(pid=nil)
       #    ProcTable.ps(pid=nil){ |ps| ... }
-      # 
+      #
       # In block form, yields a ProcTableStruct for each process entry that you
       # have rights to.  This method returns an array of ProcTableStruct's in
       # non-block form.
-      # 
+      #
       # If a +pid+ is provided, then only a single ProcTableStruct is yielded or
       # returned, or nil if no process information is found for that +pid+.
       #
@@ -101,14 +101,14 @@ module Sys
 
          array  = block_given? ? nil : []
          struct = nil
-              
+
          begin
             wmi = WIN32OLE.connect("winmgmts://#{host}/root/cimv2")
          rescue WIN32OLERuntimeError => e
             raise Error, e # Re-raise as ProcTable::Error
          else
-            wmi.InstancesOf("Win32_Process").each{ |wproc|        
-               if pid                
+            wmi.InstancesOf("Win32_Process").each{ |wproc|
+               if pid
                   next unless wproc.ProcessId == pid
                end
 
@@ -161,7 +161,7 @@ module Sys
                   self.convert(wproc.WriteOperationCount),
                   self.convert(wproc.WriteTransferCount)
                )
-            
+
                ###############################################################
                # On Windows XP or later, set the cmdline to the CommandLine
                # attribute.  Otherwise, set it to the ExecutablePath
@@ -172,9 +172,9 @@ module Sys
                else
                   struct.cmdline = wproc.CommandLine
                end
-               
+
                struct.freeze # This is read-only data
-              
+
                if block_given?
                   yield struct
                else
@@ -185,9 +185,9 @@ module Sys
 
          pid ? struct : array
       end
-      
+
       private
-      
+
       #######################################################################
       # Converts a string in the format '20040703074625.015625-360' into a
       # Ruby Time object.
@@ -196,7 +196,7 @@ module Sys
          return if str.nil?
          return Date.parse(str.split('.').first)
       end
-      
+
       #####################################################################
       # There is a bug in win32ole where uint64 types are returned as a
       # String instead of a Fixnum.  This method deals with that for now.
