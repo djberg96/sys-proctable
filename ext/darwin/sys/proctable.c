@@ -13,7 +13,7 @@
 #include <sys/user.h>
 #include <errno.h>
 
-#define SYS_PROCTABLE_VERSION "0.9.0"
+#define SYS_PROCTABLE_VERSION "0.9.1"
 
 #define PROC_MIB_LEN 4
 #define ARGS_MIB_LEN 3
@@ -241,7 +241,7 @@ void Init_proctable(){
 
    /* Constants */
 
-   /* 0.9.0: The version of the sys-proctable library */
+   /* 0.9.1: The version of the sys-proctable library */
    rb_define_const(cProcTable, "VERSION", rb_str_new2(SYS_PROCTABLE_VERSION));
 
    /* Structs */
