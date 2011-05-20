@@ -8,9 +8,8 @@ Gem::Specification.new do |spec|
   spec.license    = 'Artistic 2.0' 
   spec.email      = 'djberg96@gmail.com'
   spec.homepage   = 'http://www.rubyforge.org/projects/sysutils'
-  spec.platform   = Gem::Platform::CURRENT
+  spec.platform   = Gem::Platform::CURRENT # Probably altered by Rake task
   spec.summary    = 'An interface for providing process table information'
-  spec.has_rdoc   = true
   spec.test_files = ['test/test_sys_proctable_all.rb']
    
   # Additional files for your platform are added by the 'rake gem' task.
