@@ -2,6 +2,8 @@
 * Added the pctcpu and pctmem members for Linux.
 * Fixed a build warning for Darwin.
 * Updates to the test suite for both Darwin and Linux.
+* Altered the platforms for the Rakefile so that they use 'universal' platforms
+  for any particular operating system.
 
 == 0.9.0 - 14-Oct-2009
 * Changed the license to Artistic 2.0.
