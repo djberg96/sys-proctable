@@ -95,7 +95,7 @@ module Sys
          :ictx,      # involuntary context switches
          :sysc,      # system calls
          :ioch,      # chars read and written
-         :path,      # array of symbolic link paths from /proc/<pid>/pid
+         :path,      # array of symbolic link paths from /proc/<pid>/path
          :contracts, # array symbolic link paths from /proc/<pid>/contracts
          :fd,        # array of used file descriptors
          :cmd_args,  # array of command line arguments
@@ -124,7 +124,7 @@ module Sys
          'LL',  # pr_start
          'LL',  # pr_time
          'LL',  # pr_ctime
-         'A16', # pr_gname[PRFNSZ]
+         'A16', # pr_fname[PRFNSZ]
          'A80', # pr_psargs[PRARGSZ]
          'i',   # pr_wstat
          'i',   # pr_argc
