@@ -115,6 +115,10 @@ namespace :gem do
   task :create => [:clean] do
     spec = eval(IO.read('sys-proctable.gemspec'))
 
+    # I've had to manually futz with the spec here in some cases
+    # in order to get the universal platform settings I want because
+    # of some bugginess in Rubygems' platform.rb.
+    #
     case Config::CONFIG['host_os']
       when /bsd/i
          spec.platform = Gem::Platform.new('universal-bsd')
@@ -140,7 +144,8 @@ namespace :gem do
          spec.files += ['lib/linux/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_linux.rb'
       when /sunos|solaris/i
-         spec.platform = Gem::Platform.new('universal-sunos')
+         spec.platform = Gem::Platform.new('universal-solaris10.0')
+         spec.platform.version = nil
          spec.require_paths = ['lib', 'lib/sunos']
          spec.files += ['lib/sunos/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_sunos.rb'
