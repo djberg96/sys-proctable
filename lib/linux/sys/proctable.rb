@@ -134,8 +134,10 @@ module Sys
             key, value = str.split('=')
             struct.environ[key] = value
           }
-        rescue Errno::EACCES
+        rescue Errno::EACCES, Errno::ESRCH
           # Ignore and move on.
+        rescue IOError => ioe
+          raise unless ioe.message =~ /No such process/
         end
 
         # Get /proc/<pid>/exe information
