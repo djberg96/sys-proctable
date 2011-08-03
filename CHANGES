@@ -1,5 +1,8 @@
 == 0.9.1 - ???
 * Added the pctcpu and pctmem members for Linux.
+* Added Errno::ESRCH to a rescue clause on Linux that fixed a bug
+  where a missing entry wasn't being skipped when run as root. Thanks
+  go to Austin Ziegler for the spot and patch.
 * Fixed a build warning for Darwin.
 * Updates to the test suite for both Darwin and Linux.
 * Added an explicit type check for BSD for pids.
