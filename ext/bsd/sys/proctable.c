@@ -44,13 +44,16 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
    char state[8];
    char** args = malloc(sizeof(char*));
    struct kinfo_proc* procs;
-   int count;                     /* Holds total number of processes */
+   int count;                     // Holds total number of processes
    int i = 0;
    VALUE v_pid, v_tty_num, v_tty_dev, v_start_time;
    VALUE v_pstruct = Qnil;
    VALUE v_array = Qnil;
 
    rb_scan_args(argc, argv, "01", &v_pid);
+
+   if(!NIL_P(v_pid))
+      Check_Type(v_pid, T_FIXNUM);
 
    if(!rb_block_given_p())
       v_array = rb_ary_new();
