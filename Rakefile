@@ -5,6 +5,7 @@ require 'rbconfig'
 include Config
 
 CLEAN.include(
+  '**/*.core',              # Core dump files
   '**/*.gem',               # Gem files
   '**/*.rbc',               # Rubinius
   '**/*.o',                 # C object file
