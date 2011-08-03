@@ -2,6 +2,8 @@
 * Added the pctcpu and pctmem members for Linux.
 * Fixed a build warning for Darwin.
 * Updates to the test suite for both Darwin and Linux.
+* Added an explicit type check for BSD for pids.
+* Added .core files to the clean task.
 * Altered the platform settings in the Rakefile so that generated gems
   use 'universal' platform architectures for any particular operating system.
 
