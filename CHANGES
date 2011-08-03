@@ -1,4 +1,4 @@
-== 0.9.1 - ???
+== 0.9.1 - 3-Aug-2011
 * Added the pctcpu and pctmem members for Linux.
 * Added Errno::ESRCH to a rescue clause on Linux that fixed a bug
   where a missing entry wasn't being skipped when run as root. Thanks
