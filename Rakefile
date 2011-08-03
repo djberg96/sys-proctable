@@ -153,6 +153,7 @@ namespace :gem do
       when /mswin|win32|dos|cygwin|mingw|windows/i
          spec.platform = Gem::Platform::CURRENT
          spec.platform.cpu = 'universal'
+         spec.platform.version = nil
          spec.require_paths = ['lib', 'lib/windows']
          spec.files += ['lib/windows/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_windows.rb'
