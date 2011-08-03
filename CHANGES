@@ -3,6 +3,7 @@
 * Fixed a build warning for Darwin.
 * Updates to the test suite for both Darwin and Linux.
 * Added an explicit type check for BSD for pids.
+* Added nicer error messages for BSD if kvm_open fails.
 * Added .core files to the clean task.
 * Altered the platform settings in the Rakefile so that generated gems
   use 'universal' platform architectures for any particular operating system.
