@@ -44,12 +44,11 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
    int err;
    char state[8];
    struct kinfo_proc* procs;
-   int count;                     /* Holds total number of processes */
-   int i = 0;
    VALUE v_pid, v_tty_num, v_tty_dev, v_start_time;
    VALUE v_pstruct = Qnil;
    VALUE v_array = rb_ary_new();
-   size_t length;
+   size_t length, count;
+   size_t i = 0;
    char args[ARGS_MAX_LEN+1];
 
    // Passed into sysctl call
@@ -61,18 +60,18 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
    err = sysctl( (int *) name_mib, PROC_MIB_LEN, NULL, &length, NULL, 0);
 
    if(err == -1)
-      rb_raise(cProcTableError, strerror(errno));
+      rb_raise(cProcTableError, "sysctl: %s", strerror(errno));
 
    // Populate the kproc buffer
    procs = malloc(length);
 
    if(procs == NULL)
-      rb_raise(cProcTableError, strerror(errno));
+      rb_raise(cProcTableError, "malloc: %s", strerror(errno));
 
    err = sysctl( (int *) name_mib, PROC_MIB_LEN, procs, &length, NULL, 0);
 
    if(err == -1)
-      rb_raise(cProcTableError, strerror(errno));
+      rb_raise(cProcTableError, "sysctl: %s", strerror(errno));
 
    // If we're here, we got our list
    count = length / sizeof(struct kinfo_proc);
