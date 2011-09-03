@@ -20,6 +20,7 @@
   gem install sys-proctable --platform mswin32 # Windows
   gem install sys-proctable --platform sunos   # Solaris
   gem install sys-proctable --platform linux   # Linux
+  gem install sys-proctable --platform freebsd # BSD (any flavor)
 
 == Synopsis
   require 'sys/proctable'

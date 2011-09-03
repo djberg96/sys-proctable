@@ -122,7 +122,8 @@ namespace :gem do
     #
     case Config::CONFIG['host_os']
       when /bsd/i
-         spec.platform = Gem::Platform.new('universal-bsd')
+         spec.platform = Gem::Platform.new('universal-freebsd8.0')
+         spec.platform.version = nil
          spec.files << 'ext/bsd/sys/proctable.c'
          spec.extra_rdoc_files << 'ext/bsd/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_bsd.rb'
