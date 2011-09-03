@@ -16,7 +16,7 @@
 
 VALUE cProcTableError, sProcStruct;
 
-char* fields[] = {
+const char* fields[] = {
   "pid", "ppid", "pgid", "ruid",
   "rgid", "comm", "state", "pctcpu", "oncpu", "ttynum", "ttydev", "wmesg",
   "time", "priority", "usrpri", "nice", "cmdline", "start",
