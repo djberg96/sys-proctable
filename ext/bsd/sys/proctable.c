@@ -233,8 +233,6 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       rb_ary_push(v_array, v_pstruct);
   }
 
-  free(args);
-
   if(kd)
     kvm_close(kd);
 
