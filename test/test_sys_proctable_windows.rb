@@ -299,7 +299,11 @@ class TC_ProcTable_MSWindows < Test::Unit::TestCase
    def test_field_members
       assert_equal(@@fields.length, @@ptable.length)
       assert_equal(@@fields, ProcTable.fields)
-      assert_equal(@@fields, @@ptable.members)
+      if RUBY_VERSION.to_f >= 1.9
+        assert_equal(@@fields.map(&:to_sym), @@ptable.members)
+      else
+        assert_equal(@@fields, @@ptable.members)
+      end
    end
 
    # Only Windows supports a hostname as a second argument

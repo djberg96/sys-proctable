@@ -1,5 +1,4 @@
 require 'sys/proctable'
-require 'rbconfig'
 
 # The Sys module serves as a namespace only
 module Sys
@@ -19,10 +18,8 @@ module Sys
     def self.top(num=10, field='pctcpu')
       field = field.to_s if field.is_a?(Symbol)
 
-      windows = /mswin|win32|windows|dos|cygwin|mingw/i
-
       # Sort by pid on Windows by default
-      if Config::CONFIG['host_os'].match(windows) && field == 'pctcpu'
+      if File::ALT_SEPARATOR && field == 'pctcpu'
         field = 'pid'
       end
 

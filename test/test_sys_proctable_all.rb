@@ -9,13 +9,12 @@ gem 'test-unit'
 
 require 'test/unit'
 require 'sys/proctable'
-require 'rbconfig'
 require 'test/test_sys_top'
 include Sys
 
 class TC_ProcTable_All < Test::Unit::TestCase
   def self.startup
-    @@windows = Config::CONFIG['host_os'] =~ /windows|win32|msdos|mswin32|mingw|cygwin/i
+    @@windows = File::ALT_SEPARATOR
   end
 
   def setup
