@@ -123,39 +123,36 @@ namespace :gem do
     #
     case Config::CONFIG['host_os']
       when /bsd/i
-         spec.platform = Gem::Platform.new('universal-freebsd8.0')
+         spec.platform = Gem::Platform.new(['universal', 'freebsd'])
          spec.platform.version = nil
          spec.files << 'ext/bsd/sys/proctable.c'
          spec.extra_rdoc_files << 'ext/bsd/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_bsd.rb'
          spec.extensions = ['ext/bsd/extconf.rb']
       when /darwin/i
-         spec.platform = Gem::Platform.new('universal-darwin')
+         spec.platform = Gem::Platform.new(['universal', 'darwin'])
          spec.files << 'ext/darwin/sys/proctable.c'
          spec.extra_rdoc_files << 'ext/darwin/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_darwin.rb'
          spec.extensions = ['ext/darwin/extconf.rb']
       when /hpux/i
-         spec.platform = Gem::Platform.new('universal-hpux')
+         spec.platform = Gem::Platform.new(['universal', 'hpux'])
          spec.files << 'ext/hpux/sys/proctable.c'
          spec.extra_rdoc_files << 'ext/hpux/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_hpux.rb'
          spec.extensions = ['ext/hpux/extconf.rb']
       when /linux/i
-         spec.platform = Gem::Platform.new('universal-linux')
+         spec.platform = Gem::Platform.new(['universal', 'linux'])
          spec.require_paths = ['lib', 'lib/linux']
          spec.files += ['lib/linux/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_linux.rb'
       when /sunos|solaris/i
-         spec.platform = Gem::Platform.new('universal-solaris10.0')
-         spec.platform.version = nil
+         spec.platform = Gem::Platform.new(['universal', 'solaris'])
          spec.require_paths = ['lib', 'lib/sunos']
          spec.files += ['lib/sunos/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_sunos.rb'
       when /mswin|win32|dos|cygwin|mingw|windows/i
-         spec.platform = Gem::Platform::CURRENT
-         spec.platform.cpu = 'universal'
-         spec.platform.version = nil
+         spec.platform = Gem::Platform.new(['universal', 'mingw'])
          spec.require_paths = ['lib', 'lib/windows']
          spec.files += ['lib/windows/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_windows.rb'
