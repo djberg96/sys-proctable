@@ -2,7 +2,7 @@ require 'rake'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rbconfig'
-include Config
+include RbConfig
 
 CLEAN.include(
   '**/*.core',              # Core dump files
@@ -18,7 +18,7 @@ CLEAN.include(
 
 desc 'Build the sys-proctable library for C versions of sys-proctable'
 task :build => [:clean] do
-  case Config::CONFIG['host_os']
+  case CONFIG['host_os']
     when /bsd/i
       dir = 'ext/bsd'
     when /darwin/i
@@ -27,11 +27,11 @@ task :build => [:clean] do
       dir = 'ext/hpux'
   end
 
-  unless Config::CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
+  unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
-      cp 'proctable.' + Config::CONFIG['DLEXT'], 'sys'
+      cp 'proctable.' + CONFIG['DLEXT'], 'sys'
     end
   end
 end
@@ -39,11 +39,11 @@ end
 desc 'Install the sys-proctable library'
 task :install => [:build] do
   file = nil
-  dir  = File.join(Config::CONFIG['sitelibdir'], 'sys')
+  dir  = File.join(CONFIG['sitelibdir'], 'sys')
 
   Dir.mkdir(dir) unless File.exists?(dir)
 
-  case Config::CONFIG['host_os']
+  case CONFIG['host_os']
     when /mswin|win32|msdos|cygwin|mingw|windows/i
       file = 'lib/windows/sys/proctable.rb'
     when /linux/i
@@ -63,13 +63,13 @@ end
 
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
-  case Config::CONFIG['host_os']
+  case CONFIG['host_os']
     when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
-      dir  = File.join(Config::CONFIG['sitelibdir'], 'sys')
+      dir  = File.join(CONFIG['sitelibdir'], 'sys')
       file = File.join(dir, 'proctable.rb')
     else
-      dir  = File.join(Config::CONFIG['sitearchdir'], 'sys')
-      file = File.join(dir, 'proctable.' + Config::CONFIG['DLEXT'])
+      dir  = File.join(CONFIG['sitearchdir'], 'sys')
+      file = File.join(dir, 'proctable.' + CONFIG['DLEXT'])
   end
 
   rm(file) 
@@ -90,7 +90,7 @@ Rake::TestTask.new do |t|
   task :test => :build
   t.libs << 'test' << '.'
    
-  case Config::CONFIG['host_os']
+  case CONFIG['host_os']
     when /mswin|msdos|cygwin|mingw|windows/i
       t.test_files = FileList['test/test_sys_proctable_windows.rb']
       t.libs << 'lib/windows'
@@ -121,7 +121,7 @@ namespace :gem do
     # in order to get the universal platform settings I want because
     # of some bugginess in Rubygems' platform.rb.
     #
-    case Config::CONFIG['host_os']
+    case CONFIG['host_os']
       when /bsd/i
          spec.platform = Gem::Platform.new(['universal', 'freebsd'])
          spec.platform.version = nil
