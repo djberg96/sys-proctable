@@ -136,6 +136,8 @@ module Sys
           }
         rescue Errno::EACCES, Errno::ESRCH
           # Ignore and move on.
+        rescue IOError => ioe
+          raise unless ioe.message =~ /No such process/
         end
 
         # Get /proc/<pid>/exe information
