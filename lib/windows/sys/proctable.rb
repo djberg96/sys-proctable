@@ -194,7 +194,7 @@ module Sys
     #######################################################################
     def self.parse_ms_date(str)
       return if str.nil?
-      return Date.parse(str.split('.').first)
+      return DateTime.parse(str)
     end
 
     #####################################################################
