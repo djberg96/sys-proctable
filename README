@@ -59,15 +59,6 @@
   The cmdline member on Solaris is limited to 80 characters unless you (or
   your program) own the process. This is a Solaris design flaw/feature.
 
-=== OS X
-  At the moment you do not get the full command line string. The code required
-  to get this information is obnoxious and I don't have any compelling desire
-  to add it. However, if you're willing to submit a patch I'll accept it.
-
-  You can find a good starting point with the OS X code found in Dan Urist's
-  Proc::ProcessTable module. You can find that module on CPAN. Point your
-  browser at http://search.cpan.org.
-
 === Thread Safety
   I am not currently using a thread-safe version of readdir() for versions
   of this library that use C. I am not especially concerned about it either.
@@ -95,7 +86,8 @@
   euid, gid and guid info in the Linux version, along with some general
   debugging help.
    
-  Thanks go to David Felstead for the original OS X code.
+  Thanks go to David Felstead for the original OS X code. Thanks also go
+  to Matthias Zirnstein for adding cmdline support for OS X.
 
   Finally I'd like to thank all the folks who have submitted bug reports
   and/or patches.
@@ -113,7 +105,7 @@
   Artistic 2.0
     
 == Copyright
-  (C) 2003-2010 Daniel J. Berger
+  (C) 2003-2012 Daniel J. Berger
   All Rights Reserved.
 
 == Author
