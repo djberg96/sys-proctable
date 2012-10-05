@@ -12,7 +12,7 @@
 #include <sys/types.h>
 #include <sys/user.h>
 
-#define SYS_PROCTABLE_VERSION "0.9.1"
+#define SYS_PROCTABLE_VERSION "0.9.2"
 
 VALUE cProcTableError, sProcStruct;
 

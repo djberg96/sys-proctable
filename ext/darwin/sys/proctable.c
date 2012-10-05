@@ -18,7 +18,7 @@
 #include <string.h>
 #define pid_of(pproc) pproc->kp_proc.p_pid
 
-#define SYS_PROCTABLE_VERSION "0.9.1"
+#define SYS_PROCTABLE_VERSION "0.9.2"
 
 #define PROC_MIB_LEN 4
 #define ARGS_MIB_LEN 3

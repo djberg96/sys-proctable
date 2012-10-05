@@ -10,7 +10,7 @@
 
 #define _PSTAT64
 
-#define SYS_PROCTABLE_VERSION "0.9.1"
+#define SYS_PROCTABLE_VERSION "0.9.2"
 
 #ifdef __cplusplus
 extern "C"
