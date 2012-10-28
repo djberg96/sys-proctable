@@ -152,7 +152,7 @@ namespace :gem do
          spec.files += ['lib/sunos/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_sunos.rb'
       when /mswin|win32|dos|cygwin|mingw|windows/i
-         spec.platform = Gem::Platform.new(['universal', 'mingw'])
+         spec.platform = Gem::Platform.new(['universal', 'mingw32'])
          spec.require_paths = ['lib', 'lib/windows']
          spec.files += ['lib/windows/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_windows.rb'
