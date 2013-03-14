@@ -1,6 +1,6 @@
 == 0.9.3 - ???
-* Added a .travis.yml file for Travis CI. Thanks go to Jesse Cooke for
-  the suggestion and patch.
+* Fixed a bug on OSX where a long command string arg could cause
+  a segfault. Thanks go to Nathaniel Bibler for the spot.
 * Changed the gem platform from mingw to mingw32 for Windows.
 
 == 0.9.2 - 8-Oct-2012
