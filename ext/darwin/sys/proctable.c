@@ -16,13 +16,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+
 #define pid_of(pproc) pproc->kp_proc.p_pid
 
 #define SYS_PROCTABLE_VERSION "0.9.2"
 
 #define PROC_MIB_LEN 4
 #define ARGS_MIB_LEN 3
-#define ARGS_MAX_LEN 4096
+
+#ifndef ARGS_MAX_LEN
+#define ARGS_MAX_LEN sysconf(_SC_ARG_MAX)
+#endif
+
 VALUE cProcTableError, sProcStruct;
 
 const char* fields[] = {
