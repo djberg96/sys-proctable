@@ -18,6 +18,14 @@ CLEAN.include(
 
 desc 'Build the sys-proctable library for C versions of sys-proctable'
 task :build => [:clean] do
+  if RUBY_PLATFORM == 'java'
+    if ENV['JRUBY_OPTS']
+      ENV['JRUBY_OPTS'] += ' -Xcext.enabled=true'
+    else
+      ENV['JRUBY_OPTS'] = '-Xcext.enabled=true'
+    end
+  end
+
   case CONFIG['host_os']
     when /bsd/i
       dir = 'ext/bsd'
