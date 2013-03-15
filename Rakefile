@@ -29,17 +29,20 @@ task :build => [:clean] do
   case CONFIG['host_os']
     when /bsd/i
       dir = 'ext/bsd'
+      ext = '.so'
     when /darwin/i
       dir = 'ext/darwin'
+      ext = '.bundle'
     when /hpux/i
       dir = 'ext/hpux'
+      ext = '.sl'
   end
 
   unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
-      cp 'proctable.' + CONFIG['DLEXT'], 'sys'
+      cp 'proctable' + ext, 'sys'
     end
   end
 end
