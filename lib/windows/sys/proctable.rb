@@ -15,7 +15,7 @@ module Sys
     class Error < StandardError; end
 
     # The version of the sys-proctable library
-    VERSION = '0.9.2'
+    VERSION = '0.9.3'
 
     # The comm field corresponds to the 'name' field.  The 'cmdline' field
     # is the CommandLine attribute on Windows XP or later, or the

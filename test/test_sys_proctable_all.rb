@@ -22,7 +22,7 @@ class TC_ProcTable_All < Test::Unit::TestCase
   end
 
   def test_version
-    assert_equal('0.9.2', ProcTable::VERSION)
+    assert_equal('0.9.3', ProcTable::VERSION)
   end
 
   def test_fields
