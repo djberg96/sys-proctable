@@ -1,4 +1,4 @@
-== 0.9.3 - ???
+== 0.9.3 - 17-Mar-2013
 * Fixed a bug on OSX where a long command string arg could cause
   a segfault. Thanks go to Nathaniel Bibler for the spot.
 * Changed the gem platform from mingw to mingw32 for Windows.
