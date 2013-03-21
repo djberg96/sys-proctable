@@ -269,8 +269,8 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       }*/
       char cmdline[ARGS_MAX_LEN+1];
 
-      argv_of_pid(procs[i].kp_proc.p_pid, &cmdline);
-      /* free(cmdline); */
+      argv_of_pid(procs[i].kp_proc.p_pid, cmdline);
+      // free(cmdline);
 
       // Get the start time of the process
       v_start_time = rb_time_new(
