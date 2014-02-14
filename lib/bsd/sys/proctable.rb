@@ -160,9 +160,7 @@ module Sys
     ProcTableStruct = Struct.new('ProcTableStruct',
       :pid, :ppid, :pgid, :ruid, :rgid, :comm, :state, :pctcpu, :oncpu,
       :ttynum, :ttydev, :wmesg, :time, :priority, :usrpri, :nice, :cmdline,
-      :start, :maxrss, :ixrss, :idrss, :isrss, :minflt, :majflt, :nswap,
-      :inblock, :oublock, :msgsnd, :msgrcv, :nsignals, :nvcsw, :nivcsw,
-      :utime, :stime
+      :start
     )
 
     public
@@ -175,7 +173,7 @@ module Sys
           raise SystemCallError.new('kvm_open', FFI.errno)
         end
 
-        ptr = FFI::MemoryPointer.new(:int)
+        ptr = FFI::MemoryPointer.new(:int) # count
 
         if pid
           procs = kvm_getprocs(kd, KERN_PROC_PID, pid, ptr)
@@ -187,14 +185,17 @@ module Sys
           raise SystemCallError.new('kvm_getprocs', FFI.errno)
         end
 
-        cmd = nil
+        count = ptr.read_int
+        array = []
 
-        if pid
-          kinfo = KInfoProc.new(procs)
+        0.upto(count-1){ |i|
+          cmd = nil
+          kinfo = KInfoProc.new(procs[i * KInfoProc.size])
 
           args = kvm_getargv(kd, kinfo, 0)
 
-          if args
+          # TODO: Getting some garbage here sometimes
+          unless args.null?
             cmd = ''
             ptr = args.read_pointer
 
@@ -203,9 +204,11 @@ module Sys
               cmd << str + ' '
               ptr += str.size + 1
             end
+
+            cmd.strip!
           end
 
-          ProcTableStruct.new(
+          struct = ProcTableStruct.new(
             kinfo[:ki_pid],
             kinfo[:ki_ppid],
             kinfo[:ki_pgid],
@@ -222,25 +225,21 @@ module Sys
             kinfo[:ki_pri][:pri_level],
             kinfo[:ki_pri][:pri_user],
             kinfo[:ki_nice],
-            cmd.strip,
+            cmd,
             Time.at(kinfo[:ki_start][:tv_sec]),
           )
-        else
-          count = ptr.read_int
-          array = []
 
-          0.upto(count - 1){ |i|
-            kinfo = KInfoProc.new(procs[i * KInfoProc.size])
-
-            s = ProcTableStruct.new(
-              kinfo[:ki_pid],
-              kinfo[:ki_ppid]
-            )
-          }
-        end
+          if block_given?
+            yield struct
+          else
+            array << struct
+          end
+        }
       ensure
         kvm_close(kd) unless kd.null?
       end
+
+      block_given? ? nil : array
     end
 
     private
@@ -270,6 +269,6 @@ end
 
 if $0 == __FILE__
   include Sys
-  p ProcTable.ps(2456)
+  ProcTable.ps(32841)
   #ProcTable.ps
 end
