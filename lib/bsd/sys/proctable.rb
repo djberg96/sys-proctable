@@ -8,12 +8,18 @@ module Sys
 
     ffi_lib :kvm
 
+    attach_function :devname, [:dev_t, :mode_t], :string
     attach_function :kvm_open, [:string, :string, :string, :int, :string], :pointer
     attach_function :kvm_close, [:pointer], :int
     attach_function :kvm_getprocs, [:pointer, :int, :int, :pointer], :pointer
     attach_function :kvm_getargv, [:pointer, :pointer, :int], :pointer
 
     KERN_PROC_ALL  = 0
+    KERN_PROC_PID  = 1
+    KERN_PROC_PROC = 8
+
+    S_IFCHR = 0020000
+
     WMESGLEN       = 8
     LOCKNAMELEN    = 8
     OCOMMLEN       = 16
@@ -151,6 +157,14 @@ module Sys
       )
     end
 
+    ProcTableStruct = Struct.new('ProcTableStruct',
+      :pid, :ppid, :pgid, :ruid, :rgid, :comm, :state, :pctcpu, :oncpu,
+      :ttynum, :ttydev, :wmesg, :time, :priority, :usrpri, :nice, :cmdline,
+      :start, :maxrss, :ixrss, :idrss, :isrss, :minflt, :majflt, :nswap,
+      :inblock, :oublock, :msgsnd, :msgrcv, :nsignals, :nvcsw, :nivcsw,
+      :utime, :stime
+    )
+
     public
 
     def self.ps(pid = nil)
@@ -163,19 +177,50 @@ module Sys
 
         ptr = FFI::MemoryPointer.new(:int)
 
-        procs = kvm_getprocs(kd, KERN_PROC_ALL, 0, ptr)
+        if pid
+          procs = kvm_getprocs(kd, KERN_PROC_PID, pid, ptr)
+        else
+          procs = kvm_getprocs(kd, KERN_PROC_PROC, 0, ptr)
+        end
 
         if procs.null?
           raise SystemCallError.new('kvm_getprocs', FFI.errno)
         end
 
-        count = ptr.read_int
+        if pid
+          kinfo = KInfoProc.new(procs)
+          ProcTableStruct.new(
+            kinfo[:ki_pid],
+            kinfo[:ki_ppid],
+            kinfo[:ki_pgid],
+            kinfo[:ki_ruid],
+            kinfo[:ki_rgid],
+            kinfo[:ki_ocomm].to_s,
+            kinfo[:ki_stat], # TODO: Convert to string
+            kinfo[:ki_pctcpu].to_f,
+            kinfo[:ki_oncpu],
+            kinfo[:ki_tdev], # TODO: Return -1 if > 2**32 ?
+            devname(kinfo[:ki_tdev], S_IFCHR),
+            kinfo[:ki_wmesg].to_s, # TODO: Validate, appears to differ from 0.9.3
+            kinfo[:ki_runtime]/1000000,
+            kinfo[:ki_pri][:pri_level],
+            kinfo[:ki_pri][:pri_user],
+            kinfo[:ki_nice],
+            nil, # TODO: Get cmdline
+          )
+        else
+          count = ptr.read_int
+          array = []
 
-        # BUG: Doesn't work right
-        0.upto(count - 1){ |i|
-          kinfo = KInfoProc.new(procs[i * KInfoProc.size])
-          puts "#{kinfo[:ki_pid]} : #{kinfo[:ki_ocomm]}"
-        }
+          0.upto(count - 1){ |i|
+            kinfo = KInfoProc.new(procs[i * KInfoProc.size])
+
+            s = ProcTableStruct.new(
+              kinfo[:ki_pid],
+              kinfo[:ki_ppid]
+            )
+          }
+        end
       ensure
         kvm_close(kd) unless kd.null?
       end
@@ -185,5 +230,6 @@ end
 
 if $0 == __FILE__
   include Sys
-  ProcTable.ps
+  p ProcTable.ps(2456)
+  #ProcTable.ps
 end
