@@ -27,9 +27,6 @@ task :build => [:clean] do
   end
 
   case CONFIG['host_os']
-    when /bsd/i
-      dir = 'ext/bsd'
-      ext = '.so'
     when /darwin/i
       dir = 'ext/darwin'
       ext = '.bundle'
@@ -38,7 +35,7 @@ task :build => [:clean] do
       ext = '.sl'
   end
 
-  unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
+  if CONFIG['host_os'] =~ /darwin|hpux/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
@@ -62,7 +59,7 @@ task :install => [:build] do
     when /sunos|solaris/i
       file = 'lib/sunos/sys/proctable.rb'
     when /bsd/i
-      Dir.chdir('ext/bsd'){ sh 'make install' }
+      file = 'lib/bsd/sys/proctable.rb'
     when /darwin/i
       Dir.chdir('ext/darwin'){ sh 'make install' }
     when /hpux/i
@@ -75,7 +72,7 @@ end
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
   case CONFIG['host_os']
-    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
+    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|bsd/i
       dir  = File.join(CONFIG['sitelibdir'], 'sys')
       file = File.join(dir, 'proctable.rb')
     else
@@ -115,7 +112,7 @@ Rake::TestTask.new do |t|
       t.libs << 'ext/darwin'
       t.test_files = FileList['test/test_sys_proctable_darwin.rb']
     when /bsd/i
-      t.libs << 'ext/bsd'
+      t.libs << 'lib/bsd'
       t.test_files = FileList['test/test_sys_proctable_bsd.rb']  
     when /hpux/i
       t.libs << 'ext/hpux'
@@ -135,11 +132,9 @@ namespace :gem do
     case CONFIG['host_os']
       when /bsd/i
          spec.platform = Gem::Platform.new(['universal', 'freebsd'])
-         spec.platform.version = nil
-         spec.files << 'ext/bsd/sys/proctable.c'
-         spec.extra_rdoc_files << 'ext/bsd/sys/proctable.c'
+         spec.require_paths = ['lib', 'lib/bsd']
+         spec.files += ['lib/bsd/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_bsd.rb'
-         spec.extensions = ['ext/bsd/extconf.rb']
       when /darwin/i
          spec.platform = Gem::Platform.new(['universal', 'darwin'])
          spec.files << 'ext/darwin/sys/proctable.c'
