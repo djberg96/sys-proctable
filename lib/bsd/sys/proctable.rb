@@ -187,8 +187,24 @@ module Sys
           raise SystemCallError.new('kvm_getprocs', FFI.errno)
         end
 
+        cmd = nil
+
         if pid
           kinfo = KInfoProc.new(procs)
+
+          args = kvm_getargv(kd, kinfo, 0)
+
+          if args
+            cmd = ''
+            ptr = args.read_pointer
+
+            while str = ptr.read_string
+              break if str.empty?
+              cmd << str + ' '
+              ptr += str.size + 1
+            end
+          end
+
           ProcTableStruct.new(
             kinfo[:ki_pid],
             kinfo[:ki_ppid],
@@ -206,7 +222,7 @@ module Sys
             kinfo[:ki_pri][:pri_level],
             kinfo[:ki_pri][:pri_user],
             kinfo[:ki_nice],
-            nil, # TODO: Get cmdline
+            cmd.strip,
           )
         else
           count = ptr.read_int
