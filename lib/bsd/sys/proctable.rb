@@ -211,18 +211,19 @@ module Sys
             kinfo[:ki_pgid],
             kinfo[:ki_ruid],
             kinfo[:ki_rgid],
-            kinfo[:ki_ocomm].to_s,
-            kinfo[:ki_stat], # TODO: Convert to string
+            kinfo[:ki_comm].to_s,
+            get_state(kinfo[:ki_stat]),
             kinfo[:ki_pctcpu].to_f,
             kinfo[:ki_oncpu],
-            kinfo[:ki_tdev], # TODO: Return -1 if > 2**32 ?
+            kinfo[:ki_tdev],
             devname(kinfo[:ki_tdev], S_IFCHR),
-            kinfo[:ki_wmesg].to_s, # TODO: Validate, appears to differ from 0.9.3
+            kinfo[:ki_wmesg].to_s,
             kinfo[:ki_runtime]/1000000,
             kinfo[:ki_pri][:pri_level],
             kinfo[:ki_pri][:pri_user],
             kinfo[:ki_nice],
             cmd.strip,
+            Time.at(kinfo[:ki_start][:tv_sec]),
           )
         else
           count = ptr.read_int
@@ -239,6 +240,29 @@ module Sys
         end
       ensure
         kvm_close(kd) unless kd.null?
+      end
+    end
+
+    private
+
+    SIDL   = 1
+    SRUN   = 2
+    SSLEEP = 3
+    SSTOP  = 4
+    SZOMB  = 5
+    SWAIT  = 6
+    SLOCK  = 7
+
+    def self.get_state(int)
+      case int
+        when SIDL; "idle"
+        when SRUN; "run"
+        when SSLEEP; "sleep"
+        when SSTOP; "stop"
+        when SZOMB; "zombie"
+        when SWAIT; "waiting"
+        when SLOCK; "locked"
+        else; "unknown"
       end
     end
   end
