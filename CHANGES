@@ -1,3 +1,6 @@
+== 0.9.4 - ???
+* Added support for AIX 5.3 or later courtesy of Rick Ohnemus.
+
 == 0.9.3 - 17-Mar-2013
 * Fixed a bug on OSX where a long command string arg could cause
   a segfault. Thanks go to Nathaniel Bibler for the spot.
