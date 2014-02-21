@@ -13,7 +13,7 @@ class TC_Top < Test::Unit::TestCase
   include Sys
 
   def test_version
-    assert_equal('1.0.3', Top::VERSION)
+    assert_equal('1.0.4', Top::VERSION)
   end
 
   def test_top_basic
