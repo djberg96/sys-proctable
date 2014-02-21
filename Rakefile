@@ -77,7 +77,7 @@ end
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
   case CONFIG['host_os']
-    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
+    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
       dir  = File.join(CONFIG['sitelibdir'], 'sys')
       file = File.join(dir, 'proctable.rb')
     else
