@@ -2,7 +2,7 @@ require 'rake'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rbconfig'
-include Config
+include RbConfig
 
 CLEAN.include(
   '**/*.core',              # Core dump files
@@ -18,20 +18,31 @@ CLEAN.include(
 
 desc 'Build the sys-proctable library for C versions of sys-proctable'
 task :build => [:clean] do
-  case Config::CONFIG['host_os']
-    when /bsd/i
-      dir = 'ext/bsd'
-    when /darwin/i
-      dir = 'ext/darwin'
-    when /hpux/i
-      dir = 'ext/hpux'
+  if RUBY_PLATFORM == 'java'
+    if ENV['JRUBY_OPTS']
+      ENV['JRUBY_OPTS'] += ' -Xcext.enabled=true'
+    else
+      ENV['JRUBY_OPTS'] = '-Xcext.enabled=true'
+    end
   end
 
-  unless Config::CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
+  case CONFIG['host_os']
+    when /bsd/i
+      dir = 'ext/bsd'
+      ext = '.so'
+    when /darwin/i
+      dir = 'ext/darwin'
+      ext = '.bundle'
+    when /hpux/i
+      dir = 'ext/hpux'
+      ext = '.sl'
+  end
+
+  unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
-      cp 'proctable.' + Config::CONFIG['DLEXT'], 'sys'
+      cp 'proctable' + ext, 'sys'
     end
   end
 end
@@ -39,11 +50,11 @@ end
 desc 'Install the sys-proctable library'
 task :install => [:build] do
   file = nil
-  dir  = File.join(Config::CONFIG['sitelibdir'], 'sys')
+  dir  = File.join(CONFIG['sitelibdir'], 'sys')
 
   Dir.mkdir(dir) unless File.exists?(dir)
 
-  case Config::CONFIG['host_os']
+  case CONFIG['host_os']
     when /mswin|win32|msdos|cygwin|mingw|windows/i
       file = 'lib/windows/sys/proctable.rb'
     when /linux/i
@@ -65,13 +76,13 @@ end
 
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
-  case Config::CONFIG['host_os']
+  case CONFIG['host_os']
     when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
-      dir  = File.join(Config::CONFIG['sitelibdir'], 'sys')
+      dir  = File.join(CONFIG['sitelibdir'], 'sys')
       file = File.join(dir, 'proctable.rb')
     else
-      dir  = File.join(Config::CONFIG['sitearchdir'], 'sys')
-      file = File.join(dir, 'proctable.' + Config::CONFIG['DLEXT'])
+      dir  = File.join(CONFIG['sitearchdir'], 'sys')
+      file = File.join(dir, 'proctable.' + CONFIG['DLEXT'])
   end
 
   rm(file) 
@@ -92,7 +103,7 @@ Rake::TestTask.new do |t|
   task :test => :build
   t.libs << 'test' << '.'
    
-  case Config::CONFIG['host_os']
+  case CONFIG['host_os']
     when /mswin|msdos|cygwin|mingw|windows/i
       t.test_files = FileList['test/test_sys_proctable_windows.rb']
       t.libs << 'lib/windows'
@@ -126,46 +137,43 @@ namespace :gem do
     # in order to get the universal platform settings I want because
     # of some bugginess in Rubygems' platform.rb.
     #
-    case Config::CONFIG['host_os']
+    case CONFIG['host_os']
       when /bsd/i
-         spec.platform = Gem::Platform.new('universal-freebsd8.0')
+         spec.platform = Gem::Platform.new(['universal', 'freebsd'])
          spec.platform.version = nil
          spec.files << 'ext/bsd/sys/proctable.c'
          spec.extra_rdoc_files << 'ext/bsd/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_bsd.rb'
          spec.extensions = ['ext/bsd/extconf.rb']
       when /darwin/i
-         spec.platform = Gem::Platform.new('universal-darwin')
+         spec.platform = Gem::Platform.new(['universal', 'darwin'])
          spec.files << 'ext/darwin/sys/proctable.c'
          spec.extra_rdoc_files << 'ext/darwin/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_darwin.rb'
          spec.extensions = ['ext/darwin/extconf.rb']
       when /hpux/i
-         spec.platform = Gem::Platform.new('universal-hpux')
+         spec.platform = Gem::Platform.new(['universal', 'hpux'])
          spec.files << 'ext/hpux/sys/proctable.c'
          spec.extra_rdoc_files << 'ext/hpux/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_hpux.rb'
          spec.extensions = ['ext/hpux/extconf.rb']
       when /linux/i
-         spec.platform = Gem::Platform.new('universal-linux')
+         spec.platform = Gem::Platform.new(['universal', 'linux'])
          spec.require_paths = ['lib', 'lib/linux']
          spec.files += ['lib/linux/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_linux.rb'
       when /sunos|solaris/i
-         spec.platform = Gem::Platform.new('universal-solaris10.0')
-         spec.platform.version = nil
+         spec.platform = Gem::Platform.new(['universal', 'solaris'])
          spec.require_paths = ['lib', 'lib/sunos']
          spec.files += ['lib/sunos/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_sunos.rb'
       when /aix/i
-         spec.platform = Gem::Platform.new('universal-aix5')
+         spec.platform = Gem::Platform.new(['universal', 'aix5'])
          spec.require_paths = ['lib', 'lib/aix']
          spec.files += ['lib/aix/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_aix.rb'
       when /mswin|win32|dos|cygwin|mingw|windows/i
-         spec.platform = Gem::Platform::CURRENT
-         spec.platform.cpu = 'universal'
-         spec.platform.version = nil
+         spec.platform = Gem::Platform.new(['universal', 'mingw32'])
          spec.require_paths = ['lib', 'lib/windows']
          spec.files += ['lib/windows/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_windows.rb'
