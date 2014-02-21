@@ -8,7 +8,7 @@ CLEAN.include(
   '**/*.core',              # Core dump files
   '**/*.gem',               # Gem files
   '**/*.rbc',               # Rubinius
-  '.rbx', '**/*/.rbx',      # Rubinius
+  '**/*/.rbx',              # Rubinius
   '**/*.o',                 # C object file
   '**/*.log',               # Ruby extension build log
   '**/Makefile',            # C Makefile
