@@ -3,6 +3,7 @@
 * Rakefile
 * README
 * sys-proctable.gemspec
+* doc/aix.txt
 * doc/bsd.txt
 * doc/hpux.txt
 * doc/linux.txt
@@ -17,9 +18,11 @@
 * ext/hpux/extconf.rb
 * ext/hpux/sys/proctable.c
 * lib/sys/top.rb
+* lib/aix/sys/proctable.rb
 * lib/linux/sys/proctable.rb
 * lib/sunos/sys/proctable.rb
 * lib/windows/sys/proctable.rb
+* test/test_sys_proctable_aix.rb
 * test/test_sys_proctable_all.rb
 * test/test_sys_proctable_darwin.rb
 * test/test_sys_proctable_hpux.rb

@@ -7,19 +7,21 @@ module Sys
   class Top
 
     # The version of the sys-top library
-    VERSION = '1.0.3'
+    VERSION = '1.0.4'
 
     # Returns an array of Struct::ProcTableStruct elements containing up
     # to +num+ elements, sorted by +field+. The default number of elements
     # is 10, while the default field is 'pctcpu'.
     #
-    # Exception: the default sort field is 'pid' on Linux and Windows.
+    # Exception: the default sort field is 'pid' on AIX and Windows.
     #
     def self.top(num=10, field='pctcpu')
       field = field.to_s if field.is_a?(Symbol)
 
-      # Sort by pid on Windows by default
-      if File::ALT_SEPARATOR && field == 'pctcpu'
+      aix = RbConfig::CONFIG['host_os'] =~ /aix/i
+
+      # Sort by pid on Windows and AIX by default
+      if (File::ALT_SEPARATOR || aix) && field == 'pctcpu'
         field = 'pid'
       end
 

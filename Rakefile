@@ -38,7 +38,7 @@ task :build => [:clean] do
       ext = '.sl'
   end
 
-  unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris/i
+  unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
@@ -61,6 +61,8 @@ task :install => [:build] do
       file = 'lib/linux/sys/proctable.rb'
     when /sunos|solaris/i
       file = 'lib/sunos/sys/proctable.rb'
+    when /aix/i
+      file = 'lib/aix/sys/proctable.rb'
     when /bsd/i
       Dir.chdir('ext/bsd'){ sh 'make install' }
     when /darwin/i
@@ -111,6 +113,9 @@ Rake::TestTask.new do |t|
     when /sunos|solaris/i
       t.test_files = FileList['test/test_sys_proctable_sunos.rb']
       t.libs << 'lib/sunos'
+    when /aix/i
+      t.test_files = FileList['test/test_sys_proctable_aix.rb']
+      t.libs << 'lib/aix'
     when /darwin/i
       t.libs << 'ext/darwin'
       t.test_files = FileList['test/test_sys_proctable_darwin.rb']
@@ -162,6 +167,11 @@ namespace :gem do
          spec.require_paths = ['lib', 'lib/sunos']
          spec.files += ['lib/sunos/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_sunos.rb'
+      when /aix/i
+         spec.platform = Gem::Platform.new(['universal', 'aix5'])
+         spec.require_paths = ['lib', 'lib/aix']
+         spec.files += ['lib/aix/sys/proctable.rb']
+         spec.test_files << 'test/test_sys_proctable_aix.rb'
       when /mswin|win32|dos|cygwin|mingw|windows/i
          spec.platform = Gem::Platform.new(['universal', 'mingw32'])
          spec.require_paths = ['lib', 'lib/windows']
