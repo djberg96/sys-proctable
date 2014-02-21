@@ -14,12 +14,12 @@ module Sys
     # to +num+ elements, sorted by +field+. The default number of elements
     # is 10, while the default field is 'pctcpu'.
     #
-    # Exception: the default sort field is 'pid' on Linux and Windows.
+    # Exception: the default sort field is 'pid' on AIX and Windows.
     #
     def self.top(num=10, field='pctcpu')
       field = field.to_s if field.is_a?(Symbol)
 
-      windows = /mswin|win32|windows|dos|cygwin|mingw/i
+      windows = /mswin|win32|windows|dos|cygwin|mingw|aix/i
 
       # Sort by pid on Windows by default
       if Config::CONFIG['host_os'].match(windows) && field == 'pctcpu'
