@@ -1,10 +1,12 @@
-== Description
-  A Ruby interface for gathering process information.
+sys-proctable
+=============
+A Ruby interface for gathering process information.
 
-== Prerequisites
+### Prerequisites
+
 * Test::Unit 2.x (development only)
 
-== Supported Platforms
+### Supported Platforms
 * Windows 2000 or later
 * Linux 2.6+
 * BSD (various flavors)
@@ -12,17 +14,20 @@
 * HP-UX 10+
 * OS X 10.4+
 
-== Installation
-  gem install sys-proctable
+### Installation
+```ruby
+gem install sys-proctable
+```
 
-  You may need to specify a platform in some cases. For example:
+You may need to specify a platform in some cases. For example:
 
-  gem install sys-proctable --platform mswin32 # Windows
-  gem install sys-proctable --platform sunos   # Solaris
-  gem install sys-proctable --platform linux   # Linux
-  gem install sys-proctable --platform freebsd # BSD (any flavor)
+gem install sys-proctable --platform mswin32 # Windows
+gem install sys-proctable --platform sunos   # Solaris
+gem install sys-proctable --platform linux   # Linux
+gem install sys-proctable --platform freebsd # BSD (any flavor)
 
-== Synopsis
+### Synopsis
+```ruby
   require 'sys/proctable'
   include Sys
 
@@ -45,33 +50,33 @@
     puts a.pid
     # ...
   end
-
-== Notes 
+```
+### Notes 
   Windows users may pass a host name as a second argument to get process
   information from a different host. This relies on the WMI service running.
 
-== Known Issues
-=== BSD
+## Known Issues
+### BSD
   A kvm interface is used. That means the owner of the process using the
   sys-proctable library needs to be a member of the kvm group (or root).
 
-=== Solaris
+### Solaris
   The cmdline member on Solaris is limited to 80 characters unless you (or
   your program) own the process. This is a Solaris design flaw/feature.
 
-=== Thread Safety
+### Thread Safety
   I am not currently using a thread-safe version of readdir() for versions
   of this library that use C. I am not especially concerned about it either.
   If you are trying to read information out of /proc from different threads
   at the same time there is something seriously wrong with your code logic.
   Using readdir_r() still won't solve all potential thread safety issues anyway.
 
-== Future Plans
+## Future Plans
   Research has indicated that the kvm approach is less favored than a sysctl
   approach on BSD variants. I will try to add this interface in a future
   release.
 
-== Acknowledgements
+## Acknowledgements
   This library is largely based on the Perl module Proc::ProcessTable by
   Dan Urist. Many ideas, as well as large chunks of code, were taken
   from his work. So, a big THANK YOU goes out to Dan Urist.
@@ -92,21 +97,21 @@
   Finally I'd like to thank all the folks who have submitted bug reports
   and/or patches.
 
-== Help Wanted
+## Help Wanted
   I do not have access to all platforms. If your platform is not supported
   then you will need to either submit a patch or give me a remote account
   on a box with a compiler so that I can write the code.
 
-== More documentation
+## More documentation
   See the documentation under the 'doc' directory for more information,
   including platform specific notes and issues.
 
-== License
+## License
   Artistic 2.0
     
-== Copyright
+### Copyright
   (C) 2003-2012 Daniel J. Berger
   All Rights Reserved.
 
-== Author
+### Author
   Daniel J. Berger
