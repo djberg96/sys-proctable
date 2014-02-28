@@ -276,8 +276,8 @@ module Sys
         struct.time  = psinfo[:pr_time][:tv_sec]
         struct.ctime = psinfo[:pr_ctime][:tv_sec]
 
-        struct.fname  = psinfo[:pr_fname]
-        struct.psargs = psinfo[:pr_psargs]
+        struct.fname  = psinfo[:pr_fname].to_s
+        struct.psargs = psinfo[:pr_psargs].to_s
         struct.wstat  = psinfo[:pr_wstat]
         struct.argc   = psinfo[:pr_argc]
         struct.argv   = psinfo[:pr_argv]
@@ -297,12 +297,12 @@ module Sys
         struct.wchan    = psinfo[:pr_lwp][:pr_wchan]
         struct.stype    = psinfo[:pr_lwp][:pr_stype]
         struct.state    = psinfo[:pr_lwp][:pr_state]
-        struct.sname    = psinfo[:pr_lwp][:pr_sname]
+        struct.sname    = psinfo[:pr_lwp][:pr_sname].chr
         struct.nice     = psinfo[:pr_lwp][:pr_nice]
         struct.syscall  = psinfo[:pr_lwp][:pr_syscall]
         struct.pri      = psinfo[:pr_lwp][:pr_pri]
-        struct.clname   = psinfo[:pr_lwp][:pr_clname]
-        struct.name     = psinfo[:pr_lwp][:pr_name]
+        struct.clname   = psinfo[:pr_lwp][:pr_clname].to_s
+        struct.name     = psinfo[:pr_lwp][:pr_name].to_s
         struct.onpro    = psinfo[:pr_lwp][:pr_onpro]
         struct.bindpro  = psinfo[:pr_lwp][:pr_bindpro]
         struct.bindpset = psinfo[:pr_lwp][:pr_bindpset]
