@@ -4,10 +4,7 @@
 # Test suite for methods common to all platforms. Generally speaking
 # you should run this test case using the 'rake test' task.
 #######################################################################
-require 'rubygems'
-gem 'test-unit'
-
-require 'test/unit'
+require 'test-unit'
 require 'sys/proctable'
 require 'test/test_sys_top'
 include Sys
@@ -22,7 +19,7 @@ class TC_ProcTable_All < Test::Unit::TestCase
   end
 
   def test_version
-    assert_equal('0.9.3', ProcTable::VERSION)
+    assert_equal('0.9.4', ProcTable::VERSION)
   end
 
   def test_fields
