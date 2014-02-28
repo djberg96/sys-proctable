@@ -129,7 +129,7 @@ module Sys
       )
     end
 
-    PRNODEV = -1 # non-existent device
+    PRNODEV = (1<<FFI::Platform::ADDRESS_SIZE)-1
 
     @fields = [
       :flag,      # process flags (deprecated)
@@ -268,7 +268,7 @@ module Sys
         struct.addr   = psinfo[:pr_addr]
         struct.size   = psinfo[:pr_size] * 1024 # bytes
         struct.rssize = psinfo[:pr_rssize] * 1024 # bytes
-        struct.ttydev = psinfo[:pr_ttydev]
+        struct.ttydev = psinfo[:pr_ttydev] == PRNODEV ? -1 : psinfo[:pr_ttydev]
         struct.pctcpu = (psinfo[:pr_pctcpu] * 100).to_f / 0x8000
         struct.pctmem = (psinfo[:pr_pctmem] * 100).to_f / 0x8000
 
@@ -339,7 +339,7 @@ module Sys
               env_address += data.length + 1 # Add 1 for the space
             end
           end
-        rescue Errno::EACCES, Errno::EOVERFLOW, EOFError
+        rescue Errno::EACCES, Errno::EOVERFLOW, EOFError, RangeError
           # Skip this if we don't have proper permissions, if there's
           # no associated environment, or if there's a largefile issue.
         rescue Errno::ENOENT
@@ -453,5 +453,6 @@ if $0 == __FILE__
   include Sys
   ProcTable.ps do |s|
     p s.fname
+    p s.ttydev
   end
 end
