@@ -4,9 +4,7 @@
 # Test suite for the Darwin version of the sys-proctable library. You
 # should run these tests via the 'rake test' task.
 ########################################################################
-require 'rubygems'
-gem 'test-unit'
-
+require 'test-unit'
 require 'sys/proctable'
 require 'test/test_sys_proctable_all'
 include Sys
