@@ -3,460 +3,455 @@
 #
 # A pure Ruby version of sys-proctable for SunOS 5.8 or later.
 ########################################################################
+require 'ffi'
 
 # The Sys module serves as a namespace only.
 module Sys
 
-   # The ProcTable class encapsulates process table information.
-   class ProcTable
+  # The ProcTable class encapsulates process table information.
+  class ProcTable
+    extend FFI::Library
 
-      class Error < StandardError; end
+    class Error < StandardError; end
 
-      # There is no constructor
-      private_class_method :new
+    # There is no constructor
+    private_class_method :new
 
-      # The version of the sys-proctable library
-      VERSION = '0.9.3'
+    # The version of the sys-proctable library
+    VERSION = '0.9.4'
 
-      private
+    private
 
-      PRNODEV = -1 # non-existent device
+    class Timeval < FFI::Struct
+      layout(:tv_sec, :time_t, :tv_usec, :time_t)
+    end
 
-      @fields = [
-         :flag,      # process flags (deprecated)
-         :nlwp,      # number of active lwp's in the process
-         :pid,       # unique process id
-         :ppid,      # process id of parent
-         :pgid,      # pid of session leader
-         :sid,       # session id
-         :uid,       # real user id
-         :euid,      # effective user id
-         :gid,       # real group id
-         :egid,      # effective group id
-         :addr,      # address of the process
-         :size,      # size of process in kbytes
-         :rssize,    # resident set size in kbytes
-         :ttydev,    # tty device (or PRNODEV)
-         :pctcpu,    # % of recent cpu used by all lwp's
-         :pctmem,    # % of system memory used by process
-         :start,     # absolute process start time
-         :time,      # usr + sys cpu time for this process
-         :ctime,     # usr + sys cpu time for reaped children
-         :fname,     # name of the exec'd file
-         :psargs,    # initial characters argument list - same as cmdline
-         :wstat,     # if a zombie, the wait status
-         :argc,      # initial argument count
-         :argv,      # address of initial argument vector
-         :envp,      # address of initial environment vector
-         :dmodel,    # data model of the process
-         :taskid,    # task id
-         :projid,    # project id
-         :nzomb,     # number of zombie lwp's in the process
-         :poolid,    # pool id
-         :zoneid,    # zone id
-         :contract,  # process contract
-         :lwpid,     # lwp id
-         :wchan,     # wait address for sleeping lwp
-         :stype,     # synchronization event type
-         :state,     # numeric lwp state
-         :sname,     # printable character for state
-         :nice,      # nice for cpu usage
-         :syscall,   # system call number (if in syscall)
-         :pri,       # priority
-         :clname,    # scheduling class name
-         :name,      # name of system lwp
-         :onpro,     # processor which last ran thsi lwp
-         :bindpro,   # processor to which lwp is bound
-         :bindpset,  # processor set to which lwp is bound
-         :count,     # number of contributing lwp's
-         :tstamp,    # current time stamp
-         :create,    # process/lwp creation time stamp
-         :term,      # process/lwp termination time stamp
-         :rtime,     # total lwp real (elapsed) time
-         :utime,     # user level cpu time
-         :stime,     # system call cpu time
-         :ttime,     # other system trap cpu time
-         :tftime,    # text page fault sleep time
-         :dftime,    # text page fault sleep time
-         :kftime,    # kernel page fault sleep time
-         :ltime,     # user lock wait sleep time
-         :slptime,   # all other sleep time
-         :wtime,     # wait-cpu (latency) time
-         :stoptime,  # stopped time
-         :minf,      # minor page faults
-         :majf,      # major page faults
-         :nswap,     # swaps
-         :inblk,     # input blocks
-         :oublk,     # output blocks
-         :msnd,      # messages sent
-         :mrcv,      # messages received
-         :sigs,      # signals received
-         :vctx,      # voluntary context switches
-         :ictx,      # involuntary context switches
-         :sysc,      # system calls
-         :ioch,      # chars read and written
-         :path,      # array of symbolic link paths from /proc/<pid>/path
-         :contracts, # array symbolic link paths from /proc/<pid>/contracts
-         :fd,        # array of used file descriptors
-         :cmd_args,  # array of command line arguments
-         :environ,   # hash of environment associated with the process,
-         :cmdline    # joined cmd_args if present, otherwise psargs
-      ]
+    class LWPSInfo < FFI::Struct
+      layout(
+        :pr_flag, :int,
+        :pr_lwpid, :id_t,
+        :pr_addr, :uintptr_t,
+        :pr_wchan, :uintptr_t,
+        :pr_stype, :char,
+        :pr_state, :char,
+        :pr_sname, :char,
+        :pr_nice, :char,
+        :pr_syscall, :short,
+        :pr_oldpri, :char,
+        :pr_cpu, :char,
+        :pr_pri, :int,
+        :pr_pctcpu, :ushort_t,
+        :pr_pad, :ushort_t,
+        :pr_start, Timeval,
+        :pr_time, Timeval,
+        :pr_clname, [:char, 8],
+        :pr_name, [:char, 16],
+        :pr_onpro, :int,
+        :pr_bindpro, :int,
+        :pr_bindpset, :int,
+        :pr_filler, [:int, 5],
+      )
+    end
 
-      @psinfo_pack_directive = [
-         'i',   # pr_flag
-         'i',   # pr_nlwp
-         'i',   # pr_pid
-         'i',   # pr_ppid
-         'i',   # pr_pgid
-         'i',   # pr_sid
-         'i',   # pr_uid
-         'i',   # pr_euid
-         'i',   # pr_gid
-         'i',   # pr_egid
-         'L',   # pr_addr
-         'L',   # pr_size
-         'L',   # pr_rssize
-         'L',   # pr_pad1
-         'i',   # pr_ttydev
-         'S',   # pr_pctcpu
-         'S',   # pr_pctmem
-         'LL',  # pr_start
-         'LL',  # pr_time
-         'LL',  # pr_ctime
-         'A16', # pr_fname[PRFNSZ]
-         'A80', # pr_psargs[PRARGSZ]
-         'i',   # pr_wstat
-         'i',   # pr_argc
-         'L',   # pr_argv
-         'L',   # pr_envp
-         'C',   # pr_dmodel
-         'A3',  # pr_pad2[3]
-         'i',   # pr_taskid
-         'i',   # pr_projid
-         'i',   # pr_nzomb
-         'i',   # pr_poolid
-         'i',   # pr_zoneid
-         'i',   # pr_contract
-         'i',   # pr_filler
-         # --- LWPSINFO ---
-         'i',   # pr_flag
-         'i',   # pr_lwpid
-         'L',   # pr_addr
-         'L',   # pr_wchan
-         'C',   # pr_stype
-         'C',   # pr_state
-         'A',   # pr_sname
-         'C',   # pr_nice
-         's',   # pr_syscall
-         'C',   # pr_oldpri
-         'C',   # pr_cpu
-         'i',   # pr_pri
-         'S',   # pr_pctcpu
-         'S',   # pr_pad
-         'LL',  # pr_start
-         'LL',  # pr_time
-         'A8',  # pr_clname[PRCLSZ]
-         'A16', # pr_name[PRFNSZ]
-         'i',   # pr_onpro
-         'i',   # pr_bindpro
-         'i',   # pr_bindpset
-      ].join
+    class PSInfo < FFI::Struct
+      layout(
+        :pr_flag, :int,
+        :pr_nlwp, :int,
+        :pr_pid, :pid_t,
+        :pr_ppid, :pid_t,
+        :pr_pgid, :pid_t,
+        :pr_sid, :pid_t,
+        :pr_uid, :uid_t,
+        :pr_euid, :uid_t,
+        :pr_gid, :gid_t,
+        :pr_egid, :gid_t,
+        :pr_addr, :uintptr_t,
+        :pr_size, :size_t,
+        :pr_rssize, :size_t,
+        :pr_pad1, :size_t,
+        :pr_ttydev, :dev_t,
+        :pr_pctcpu, :ushort_t,
+        :pr_pctmem, :ushort_t,
+        :pr_start, Timeval,
+        :pr_time, Timeval,
+        :pr_ctime, Timeval,
+        :pr_fname, [:char, 16],
+        :pr_psargs, [:char, 80],
+        :pr_wstat, :int,
+        :pr_argc, :int,
+        :pr_argv, :uintptr_t,
+        :pr_envp, :uintptr_t,
+        :pr_dmodel, :char,
+        :pr_pad2, [:char, 3],
+        :pr_taskid, :taskid_t,
+        :pr_projid, :projid_t,
+        :pr_nzomb, :int,
+        :pr_poolid, :poolid_t,
+        :pr_zoneid, :zoneid_t,
+        :pr_contract, :id_t,
+        :pr_filler, [:int, 1],
+        :pr_lwp, LWPSInfo
+      )
+    end
 
-      @prusage_pack_directive = [
-         'i',     # pr_lwpid
-         'i',     # pr_count
-         'L2',    # pr_tstamp
-         'L2',    # pr_create
-         'L2',    # pr_term
-         'L2',    # pr_rtime
-         'L2',    # pr_utime
-         'L2',    # pr_stime
-         'L2',    # pr_ttime
-         'L2',    # pr_tftime
-         'L2',    # pr_dftime
-         'L2',    # pr_kftime
-         'L2',    # pr_ltime
-         'L2',    # pr_slptime
-         'L2',    # pr_wtime
-         'L2',    # pr_stoptime
-         'L12', # pr_filltime
-         'L',     # pr_minf
-         'L',     # pr_majf
-         'L',     # pr_nswap
-         'L',     # pr_inblk
-         'L',     # pr_oublk
-         'L',     # pr_msnd
-         'L',     # pr_mrcv
-         'L',     # pr_sigs
-         'L',     # pr_vctx
-         'L',     # pr_ictx
-         'L',     # pr_sysc
-         'L',     # pr_ioch
-      ].join
+    class PRUsage < FFI::Struct
+      layout(
+        :pr_lwpid, :id_t,
+        :pr_count, :int,
+        :pr_tstamp, Timeval,
+        :pr_create, Timeval,
+        :pr_term, Timeval,
+        :pr_rtime, Timeval,
+        :pr_utime, Timeval,
+        :pr_stime, Timeval,
+        :pr_ttime, Timeval,
+        :pr_tftime, Timeval,
+        :pr_dftime, Timeval,
+        :pr_kftime, Timeval,
+        :pr_ltime, Timeval,
+        :pr_slptime, Timeval,
+        :pr_wtime, Timeval,
+        :pr_stoptime, Timeval,
+        :pr_filetime, [Timeval,6],
+        :pr_minf, :ulong_t,
+        :pr_majf, :ulong_t,
+        :pr_nswap, :ulong_t,
+        :pr_inblk, :ulong_t,
+        :pr_oublk, :ulong_t,
+        :pr_msnd, :ulong_t,
+        :pr_mrcv, :ulong_t,
+        :pr_sigs, :ulong_t,
+        :pr_vctx, :ulong_t,
+        :pr_ictx, :ulong_t,
+        :pr_sysc, :ulong_t,
+        :pr_ioch, :ulong_t,
+        :filler, [:ulong_t, 10]
+      )
+    end
 
-      public
+    PRNODEV = -1 # non-existent device
 
-      ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
-         alias comm fname
-      end
+    @fields = [
+      :flag,      # process flags (deprecated)
+      :nlwp,      # number of active lwp's in the process
+      :pid,       # unique process id
+      :ppid,      # process id of parent
+      :pgid,      # pid of session leader
+      :sid,       # session id
+      :uid,       # real user id
+      :euid,      # effective user id
+      :gid,       # real group id
+      :egid,      # effective group id
+      :addr,      # address of the process
+      :size,      # size of process in kbytes
+      :rssize,    # resident set size in kbytes
+      :ttydev,    # tty device (or PRNODEV)
+      :pctcpu,    # % of recent cpu used by all lwp's
+      :pctmem,    # % of system memory used by process
+      :start,     # absolute process start time
+      :time,      # usr + sys cpu time for this process
+      :ctime,     # usr + sys cpu time for reaped children
+      :fname,     # name of the exec'd file
+      :psargs,    # initial characters argument list - same as cmdline
+      :wstat,     # if a zombie, the wait status
+      :argc,      # initial argument count
+      :argv,      # address of initial argument vector
+      :envp,      # address of initial environment vector
+      :dmodel,    # data model of the process
+      :taskid,    # task id
+      :projid,    # project id
+      :nzomb,     # number of zombie lwp's in the process
+      :poolid,    # pool id
+      :zoneid,    # zone id
+      :contract,  # process contract
+      :lwpid,     # lwp id
+      :wchan,     # wait address for sleeping lwp
+      :stype,     # synchronization event type
+      :state,     # numeric lwp state
+      :sname,     # printable character for state
+      :nice,      # nice for cpu usage
+      :syscall,   # system call number (if in syscall)
+      :pri,       # priority
+      :clname,    # scheduling class name
+      :name,      # name of system lwp
+      :onpro,     # processor which last ran thsi lwp
+      :bindpro,   # processor to which lwp is bound
+      :bindpset,  # processor set to which lwp is bound
+      :count,     # number of contributing lwp's
+      :tstamp,    # current time stamp
+      :create,    # process/lwp creation time stamp
+      :term,      # process/lwp termination time stamp
+      :rtime,     # total lwp real (elapsed) time
+      :utime,     # user level cpu time
+      :stime,     # system call cpu time
+      :ttime,     # other system trap cpu time
+      :tftime,    # text page fault sleep time
+      :dftime,    # text page fault sleep time
+      :kftime,    # kernel page fault sleep time
+      :ltime,     # user lock wait sleep time
+      :slptime,   # all other sleep time
+      :wtime,     # wait-cpu (latency) time
+      :stoptime,  # stopped time
+      :minf,      # minor page faults
+      :majf,      # major page faults
+      :nswap,     # swaps
+      :inblk,     # input blocks
+      :oublk,     # output blocks
+      :msnd,      # messages sent
+      :mrcv,      # messages received
+      :sigs,      # signals received
+      :vctx,      # voluntary context switches
+      :ictx,      # involuntary context switches
+      :sysc,      # system calls
+      :ioch,      # chars read and written
+      :path,      # array of symbolic link paths from /proc/<pid>/path
+      :contracts, # array symbolic link paths from /proc/<pid>/contracts
+      :fd,        # array of used file descriptors
+      :cmd_args,  # array of command line arguments
+      :environ,   # hash of environment associated with the process,
+      :cmdline    # joined cmd_args if present, otherwise psargs
+    ]
 
-      # In block form, yields a ProcTableStruct for each process entry that you
-      # have rights to. This method returns an array of ProcTableStruct's in
-      # non-block form.
-      #
-      # If a +pid+ is provided, then only a single ProcTableStruct is yielded or
-      # returned, or nil if no process information is found for that +pid+.
-      #
-      # Example:
-      #
-      #   # Iterate over all processes
-      #   ProcTable.ps do |proc_info|
-      #      p proc_info
-      #   end
-      #
-      #   # Print process table information for only pid 1001
-      #   p ProcTable.ps(1001)
-      #
-      def self.ps(pid = nil)
-         raise TypeError unless pid.is_a?(Fixnum) if pid
+    public
 
-         array  = block_given? ? nil : []
-         struct = nil
+    ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
+      alias comm fname
+    end
 
-         Dir.foreach("/proc") do |file|
-            next if file =~ /\D/ # Skip non-numeric entries under /proc
+    # In block form, yields a ProcTableStruct for each process entry that you
+    # have rights to. This method returns an array of ProcTableStruct's in
+    # non-block form.
+    #
+    # If a +pid+ is provided, then only a single ProcTableStruct is yielded or
+    # returned, or nil if no process information is found for that +pid+.
+    #
+    # Example:
+    #
+    #   # Iterate over all processes
+    #   ProcTable.ps do |proc_info|
+    #      p proc_info
+    #   end
+    #
+    #   # Print process table information for only pid 1001
+    #   p ProcTable.ps(1001)
+    #
+    def self.ps(pid = nil)
+      raise TypeError unless pid.is_a?(Fixnum) if pid
 
-            # Only return information for a given pid, if provided
-            if pid
-               next unless file.to_i == pid
-            end
+      array  = block_given? ? nil : []
+      struct = nil
 
-            # Skip over any entries we don't have permissions to read
-            next unless File.readable?("/proc/#{file}/psinfo")
+      Dir.foreach("/proc") do |file|
+        next if file =~ /\D/ # Skip non-numeric entries under /proc
 
-            psinfo = IO.read("/proc/#{file}/psinfo") rescue next
+        # Only return information for a given pid, if provided
+        next unless file.to_i == pid if pid
 
-            psinfo_array = psinfo.unpack(@psinfo_pack_directive)
+        # Skip over any entries we don't have permissions to read
+        next unless File.readable?("/proc/#{file}/psinfo")
 
-            struct = ProcTableStruct.new
+        data = IO.read("/proc/#{file}/psinfo") rescue next
+        psinfo = PSInfo.new(FFI::MemoryPointer.from_string(data))
 
-            struct.flag   = psinfo_array[0]         # pr_flag
-            struct.nlwp   = psinfo_array[1]         # pr_nlwp
-            struct.pid    = psinfo_array[2]         # pr_pid
-            struct.ppid   = psinfo_array[3]         # pr_ppid
-            struct.pgid   = psinfo_array[4]         # pr_pgid
-            struct.sid    = psinfo_array[5]         # pr_sid
-            struct.uid    = psinfo_array[6]         # pr_uid
-            struct.euid   = psinfo_array[7]         # pr_euid
-            struct.gid    = psinfo_array[8]         # pr_gid
-            struct.egid   = psinfo_array[9]         # pr_egid
-            struct.addr   = psinfo_array[10]        # pr_addr
-            struct.size   = psinfo_array[11] * 1024 # pr_size (in bytes)
-            struct.rssize = psinfo_array[12] * 1024 # pr_rssize (in bytes)
+        struct = ProcTableStruct.new
 
-            # skip pr_pad1
+        struct.flag   = psinfo[:pr_flag]
+        struct.nlwp   = psinfo[:pr_nlwp]
+        struct.pid    = psinfo[:pr_pid]
+        struct.ppid   = psinfo[:pr_ppid]
+        struct.pgid   = psinfo[:pr_pgid]
+        struct.sid    = psinfo[:pr_sid]
+        struct.uid    = psinfo[:pr_uid]
+        struct.euid   = psinfo[:pr_euid]
+        struct.gid    = psinfo[:pr_gid]
+        struct.egid   = psinfo[:pr_egid]
+        struct.addr   = psinfo[:pr_addr]
+        struct.size   = psinfo[:pr_size] * 1024 # bytes
+        struct.rssize = psinfo[:pr_rssize] * 1024 # bytes
+        struct.ttydev = psinfo[:pr_ttydev]
+        struct.pctcpu = (psinfo[:pr_pctcpu] * 100).to_f / 0x8000
+        struct.pctmem = (psinfo[:pr_pctmem] * 100).to_f / 0x8000
 
-            struct.ttydev = psinfo_array[14] # pr_ttydev
-            struct.pctcpu = (psinfo_array[15] * 100).to_f / 0x8000 # pr_pctcpu
-            struct.pctmem = (psinfo_array[16] * 100).to_f / 0x8000 # pr_pctmem
+        struct.start = Time.at(psinfo[:pr_start][:tv_sec])
+        struct.time  = psinfo[:pr_time][:tv_sec]
+        struct.ctime = psinfo[:pr_ctime][:tv_sec]
 
-            struct.start = Time.at(psinfo_array[17]) # pr_start (tv_sec)
-            struct.time  = psinfo_array[19]          # pr_time (tv_sec)
-            struct.ctime = psinfo_array[21]          # pr_ctime (tv_sec)
+        struct.fname  = psinfo[:pr_fname]
+        struct.psargs = psinfo[:pr_psargs]
+        struct.wstat  = psinfo[:pr_wstat]
+        struct.argc   = psinfo[:pr_argc]
+        struct.argv   = psinfo[:pr_argv]
+        struct.envp   = psinfo[:pr_envp]
+        struct.dmodel = psinfo[:pr_dmodel]
 
-            struct.fname  = psinfo_array[23] # pr_fname
-            struct.psargs = psinfo_array[24] # pr_psargs
-            struct.wstat  = psinfo_array[25] # pr_wstat
-            struct.argc   = psinfo_array[26] # pr_argc
-            struct.argv   = psinfo_array[27] # pr_argv
-            struct.envp   = psinfo_array[28] # pr_envp
-            struct.dmodel = psinfo_array[29] # pr_dmodel
+        struct.taskid   = psinfo[:pr_taskid]
+        struct.projid   = psinfo[:pr_projid]
+        struct.nzomb    = psinfo[:pr_nzomb]
+        struct.poolid   = psinfo[:pr_poolid]
+        struct.zoneid   = psinfo[:pr_zoneid]
+        struct.contract = psinfo[:pr_contract]
 
-            # skip pr_pad2
+        ### LWPSINFO struct info
 
-            struct.taskid   = psinfo_array[31] # pr_taskid
-            struct.projid   = psinfo_array[32] # pr_projid
-            struct.nzomb    = psinfo_array[33] # pr_nzomb
-            struct.poolid   = psinfo_array[34] # pr_poolid
-            struct.zoneid   = psinfo_array[35] # pr_zoneid
-            struct.contract = psinfo_array[36] # pr_contract
+        struct.lwpid    = psinfo[:pr_lwp][:pr_lwpid]
+        struct.wchan    = psinfo[:pr_lwp][:pr_wchan]
+        struct.stype    = psinfo[:pr_lwp][:pr_stype]
+        struct.state    = psinfo[:pr_lwp][:pr_state]
+        struct.sname    = psinfo[:pr_lwp][:pr_sname]
+        struct.nice     = psinfo[:pr_lwp][:pr_nice]
+        struct.syscall  = psinfo[:pr_lwp][:pr_syscall]
+        struct.pri      = psinfo[:pr_lwp][:pr_pri]
+        struct.clname   = psinfo[:pr_lwp][:pr_clname]
+        struct.name     = psinfo[:pr_lwp][:pr_name]
+        struct.onpro    = psinfo[:pr_lwp][:pr_onpro]
+        struct.bindpro  = psinfo[:pr_lwp][:pr_bindpro]
+        struct.bindpset = psinfo[:pr_lwp][:pr_bindpset]
 
-            # skip pr_filler
+        # Get the full command line out of /proc/<pid>/as.
+        begin
+          File.open("/proc/#{file}/as") do |fd|
+            fd.sysseek(struct.argv, IO::SEEK_SET)
+            address = fd.sysread(struct.argc * 4).unpack("L")[0]
 
-            ### LWPSINFO struct info
+            struct.cmd_args = []
 
-            # skip pr_flag
-
-            struct.lwpid = psinfo_array[39] # pr_lwpid
-
-            # skip pr_addr
-
-            struct.wchan   = psinfo_array[41] # pr_wchan
-            struct.stype   = psinfo_array[42] # pr_stype
-            struct.state   = psinfo_array[43] # pr_state
-            struct.sname   = psinfo_array[44] # pr_sname
-            struct.nice    = psinfo_array[45] # pr_nice
-            struct.syscall = psinfo_array[46] # pr_syscall
-
-            # skip pr_oldpri
-            # skip pr_cpu
-
-            struct.pri = psinfo_array[49] # pr_pri
-
-            # skip pr_pctcpu
-            # skip pr_pad
-            # skip pr_start
-            # skip pr_time
-
-            struct.clname   = psinfo_array[56] # pr_clname
-            struct.name     = psinfo_array[57] # pr_name
-            struct.onpro    = psinfo_array[58] # pr_onpro
-            struct.bindpro  = psinfo_array[59] # pr_bindpro
-            struct.bindpset = psinfo_array[60] # pr_bindpset
-
-            # Get the full command line out of /proc/<pid>/as.
-            begin
-               File.open("/proc/#{file}/as") do |fd|
-                  fd.sysseek(struct.argv, IO::SEEK_SET)
-                  address = fd.sysread(struct.argc * 4).unpack("L")[0]
-
-                  struct.cmd_args = []
-
-                  0.upto(struct.argc - 1){ |i|
-                     fd.sysseek(address, IO::SEEK_SET)
-                     data = fd.sysread(128)[/^[^\0]*/] # Null strip
-                     struct.cmd_args << data
-                     address += data.length + 1 # Add 1 for the space
-                  }
-
-                  # Get the environment hash associated with the process.
-                  struct.environ = {}
-
-                  fd.sysseek(struct.envp, IO::SEEK_SET)
-
-                  env_address = fd.sysread(128).unpack("L")[0]
-
-                  # TODO: Optimization potential here.
-                  loop do
-                     fd.sysseek(env_address, IO::SEEK_SET)
-                     data = fd.sysread(1024)[/^[^\0]*/] # Null strip
-                     break if data.empty?
-                     key, value = data.split('=')
-                     struct.environ[key] = value
-                     env_address += data.length + 1 # Add 1 for the space
-                  end
-               end
-            rescue Errno::EACCES, Errno::EOVERFLOW, EOFError
-               # Skip this if we don't have proper permissions, if there's
-               # no associated environment, or if there's a largefile issue.
-            rescue Errno::ENOENT
-               next # The process has terminated. Bail out!
-            end
-
-            ### struct prusage
-
-            begin
-               prusage = 0.chr * 512
-               prusage = IO.read("/proc/#{file}/usage")
-
-               prusage_array = prusage.unpack(@prusage_pack_directive)
-
-               # skip pr_lwpid
-               struct.count    = prusage_array[1]
-               struct.tstamp   = prusage_array[2]
-               struct.create   = prusage_array[4]
-               struct.term     = prusage_array[6]
-               struct.rtime    = prusage_array[8]
-               struct.utime    = prusage_array[10]
-               struct.stime    = prusage_array[12]
-               struct.ttime    = prusage_array[14]
-               struct.tftime   = prusage_array[16]
-               struct.dftime   = prusage_array[18]
-               struct.kftime   = prusage_array[20]
-               struct.ltime    = prusage_array[22]
-               struct.slptime  = prusage_array[24]
-               struct.wtime    = prusage_array[26]
-               struct.stoptime = prusage_array[28]
-               # skip filltime
-               struct.minf     = prusage_array[42]
-               struct.majf     = prusage_array[43]
-               struct.nswap    = prusage_array[44]
-               struct.inblk    = prusage_array[45]
-               struct.oublk    = prusage_array[46]
-               struct.msnd     = prusage_array[47]
-               struct.mrcv     = prusage_array[48]
-               struct.sigs     = prusage_array[49]
-               struct.vctx     = prusage_array[50]
-               struct.ictx     = prusage_array[51]
-               struct.sysc     = prusage_array[52]
-               struct.ioch     = prusage_array[53]
-            rescue Errno::EACCES
-               # Do nothing if we lack permissions. Just move on.
-            rescue Errno::ENOENT
-               next # The process has terminated. Bail out!
-            end
-
-            # Information from /proc/<pid>/path. This is represented as a hash,
-            # with the symbolic link name as the key, and the file it links to
-            # as the value, or nil if it cannot be found.
-            #--
-            # Note that cwd information can be gathered from here, too.
-            struct.path = {}
-
-            Dir["/proc/#{file}/path/*"].each{ |entry|
-               link = File.readlink(entry) rescue nil
-               struct.path[File.basename(entry)] = link
+            0.upto(struct.argc - 1){ |i|
+              fd.sysseek(address, IO::SEEK_SET)
+              data = fd.sysread(128)[/^[^\0]*/] # Null strip
+              struct.cmd_args << data
+              address += data.length + 1 # Add 1 for the space
             }
 
-            # Information from /proc/<pid>/contracts. This is represented as
-            # a hash, with the symbolic link name as the key, and the file
-            # it links to as the value.
-            struct.contracts = {}
+            # Get the environment hash associated with the process.
+            struct.environ = {}
 
-            Dir["/proc/#{file}/contracts/*"].each{ |entry|
-               link = File.readlink(entry) rescue nil
-               struct.contracts[File.basename(entry)] = link
-            }
+            fd.sysseek(struct.envp, IO::SEEK_SET)
 
-            # Information from /proc/<pid>/fd. This returns an array of
-            # numeric file descriptors used by the process.
-            struct.fd = Dir["/proc/#{file}/fd/*"].map{ |f| File.basename(f).to_i }
+            env_address = fd.sysread(128).unpack("L")[0]
 
-            # Use the cmd_args as the cmdline if available. Otherwise use
-            # the psargs. This struct member is provided to provide a measure
-            # of consistency with the other platform implementations.
-            if struct.cmd_args && struct.cmd_args.length > 0
-               struct.cmdline = struct.cmd_args.join(' ')
-            else
-               struct.cmdline = struct.psargs
+            # TODO: Optimization potential here.
+            loop do
+              fd.sysseek(env_address, IO::SEEK_SET)
+              data = fd.sysread(1024)[/^[^\0]*/] # Null strip
+              break if data.empty?
+              key, value = data.split('=')
+              struct.environ[key] = value
+              env_address += data.length + 1 # Add 1 for the space
             end
+          end
+        rescue Errno::EACCES, Errno::EOVERFLOW, EOFError
+          # Skip this if we don't have proper permissions, if there's
+          # no associated environment, or if there's a largefile issue.
+        rescue Errno::ENOENT
+          next # The process has terminated. Bail out!
+        end
 
-            # This is read-only data
-            struct.freeze
+        ### struct prusage
 
-            if block_given?
-               yield struct
-            else
-               array << struct
-            end
-         end
+        begin
+          data = IO.read("/proc/#{file}/usage")
+          prusage = PRUsage.new(FFI::MemoryPointer.from_string(data))
 
-         pid ? struct : array
+          struct.count    = prusage[:pr_count]
+          struct.tstamp   = prusage[:pr_tstamp][:tv_sec]
+          struct.create   = prusage[:pr_create][:tv_sec]
+          struct.term     = prusage[:pr_term][:tv_sec]
+          struct.rtime    = prusage[:pr_rtime][:tv_sec]
+          struct.utime    = prusage[:pr_utime][:tv_sec]
+          struct.stime    = prusage[:pr_stime][:tv_sec]
+          struct.ttime    = prusage[:pr_ttime][:tv_sec]
+          struct.tftime   = prusage[:pr_tftime][:tv_sec]
+          struct.dftime   = prusage[:pr_dftime][:tv_sec]
+          struct.kftime   = prusage[:pr_kftime][:tv_sec]
+          struct.ltime    = prusage[:pr_ltime][:tv_sec]
+          struct.slptime  = prusage[:pr_slptime][:tv_sec]
+          struct.wtime    = prusage[:pr_wtime][:tv_sec]
+          struct.stoptime = prusage[:pr_stoptime][:tv_sec]
+          struct.minf     = prusage[:pr_minf]
+          struct.majf     = prusage[:pr_majf]
+          struct.nswap    = prusage[:pr_nswap]
+          struct.inblk    = prusage[:pr_inblk]
+          struct.oublk    = prusage[:pr_oublk]
+          struct.msnd     = prusage[:pr_msnd]
+          struct.mrcv     = prusage[:pr_mrcv]
+          struct.sigs     = prusage[:pr_sigs]
+          struct.vctx     = prusage[:pr_vctx]
+          struct.ictx     = prusage[:pr_ictx]
+          struct.sysc     = prusage[:pr_sysc]
+          struct.ioch     = prusage[:pr_ioch]
+        rescue Errno::EACCES
+          # Do nothing if we lack permissions. Just move on.
+        rescue Errno::ENOENT
+          next # The process has terminated. Bail out!
+        end
+
+        # Information from /proc/<pid>/path. This is represented as a hash,
+        # with the symbolic link name as the key, and the file it links to
+        # as the value, or nil if it cannot be found.
+        #--
+        # Note that cwd information can be gathered from here, too.
+        struct.path = {}
+
+        Dir["/proc/#{file}/path/*"].each{ |entry|
+          link = File.readlink(entry) rescue nil
+          struct.path[File.basename(entry)] = link
+        }
+
+        # Information from /proc/<pid>/contracts. This is represented as
+        # a hash, with the symbolic link name as the key, and the file
+        # it links to as the value.
+        struct.contracts = {}
+
+        Dir["/proc/#{file}/contracts/*"].each{ |entry|
+          link = File.readlink(entry) rescue nil
+          struct.contracts[File.basename(entry)] = link
+        }
+
+        # Information from /proc/<pid>/fd. This returns an array of
+        # numeric file descriptors used by the process.
+        struct.fd = Dir["/proc/#{file}/fd/*"].map{ |f| File.basename(f).to_i }
+
+        # Use the cmd_args as the cmdline if available. Otherwise use
+        # the psargs. This struct member is provided to provide a measure
+        # of consistency with the other platform implementations.
+        if struct.cmd_args && struct.cmd_args.length > 0
+          struct.cmdline = struct.cmd_args.join(' ')
+        else
+          struct.cmdline = struct.psargs
+        end
+
+        # This is read-only data
+        struct.freeze
+
+        if block_given?
+          yield struct
+        else
+          array << struct
+        end
       end
 
-      # Returns an array of fields that each ProcTableStruct will contain. This
-      # may be useful if you want to know in advance what fields are available
-      # without having to perform at least one read of the /proc table.
-      #
-      # Example:
-      #
-      #   Sys::ProcTable.fields.each{ |field|
-      #      puts "Field: #{field}"
-      #   }
-      #
-      def self.fields
-         @fields.map{ |f| f.to_s }
-      end
-   end
+      pid ? struct : array
+    end
+
+    # Returns an array of fields that each ProcTableStruct will contain. This
+    # may be useful if you want to know in advance what fields are available
+    # without having to perform at least one read of the /proc table.
+    #
+    # Example:
+    #
+    #   Sys::ProcTable.fields.each{ |field|
+    #      puts "Field: #{field}"
+    #   }
+    #
+    def self.fields
+      @fields.map{ |f| f.to_s }
+    end
+  end
+end
+
+if $0 == __FILE__
+  include Sys
+  ProcTable.ps do |s|
+    p s.fname
+  end
 end
