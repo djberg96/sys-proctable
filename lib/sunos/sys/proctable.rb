@@ -49,7 +49,7 @@ module Sys
         :pr_onpro, :int,
         :pr_bindpro, :int,
         :pr_bindpset, :int,
-        :pr_filler, [:int, 5],
+        :pr_filler, [:int, 5]
       )
     end
 
