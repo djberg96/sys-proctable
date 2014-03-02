@@ -8,7 +8,7 @@ CLEAN.include(
   '**/*.core',              # Core dump files
   '**/*.gem',               # Gem files
   '**/*.rbc',               # Rubinius
-  '.rbx', '**/*/.rbx',      # Rubinius
+  '**/*/.rbx',              # Rubinius
   '**/*.o',                 # C object file
   '**/*.log',               # Ruby extension build log
   '**/Makefile',            # C Makefile
@@ -27,6 +27,9 @@ task :build => [:clean] do
   end
 
   case CONFIG['host_os']
+    when /bsd/i
+      dir = 'ext/bsd'
+      ext = '.so'
     when /darwin/i
       dir = 'ext/darwin'
       ext = '.bundle'
@@ -35,7 +38,7 @@ task :build => [:clean] do
       ext = '.sl'
   end
 
-  if CONFIG['host_os'] =~ /darwin|hpux/i
+  unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
@@ -58,8 +61,10 @@ task :install => [:build] do
       file = 'lib/linux/sys/proctable.rb'
     when /sunos|solaris/i
       file = 'lib/sunos/sys/proctable.rb'
+    when /aix/i
+      file = 'lib/aix/sys/proctable.rb'
     when /bsd/i
-      file = 'lib/bsd/sys/proctable.rb'
+      Dir.chdir('ext/bsd'){ sh 'make install' }
     when /darwin/i
       Dir.chdir('ext/darwin'){ sh 'make install' }
     when /hpux/i
@@ -72,7 +77,7 @@ end
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
   case CONFIG['host_os']
-    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|bsd/i
+    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
       dir  = File.join(CONFIG['sitelibdir'], 'sys')
       file = File.join(dir, 'proctable.rb')
     else
@@ -108,11 +113,14 @@ Rake::TestTask.new do |t|
     when /sunos|solaris/i
       t.test_files = FileList['test/test_sys_proctable_sunos.rb']
       t.libs << 'lib/sunos'
+    when /aix/i
+      t.test_files = FileList['test/test_sys_proctable_aix.rb']
+      t.libs << 'lib/aix'
     when /darwin/i
       t.libs << 'ext/darwin'
       t.test_files = FileList['test/test_sys_proctable_darwin.rb']
     when /bsd/i
-      t.libs << 'lib/bsd'
+      t.libs << 'ext/bsd'
       t.test_files = FileList['test/test_sys_proctable_bsd.rb']  
     when /hpux/i
       t.libs << 'ext/hpux'
@@ -132,9 +140,11 @@ namespace :gem do
     case CONFIG['host_os']
       when /bsd/i
          spec.platform = Gem::Platform.new(['universal', 'freebsd'])
-         spec.require_paths = ['lib', 'lib/bsd']
-         spec.files += ['lib/bsd/sys/proctable.rb']
+         spec.platform.version = nil
+         spec.files << 'ext/bsd/sys/proctable.c'
+         spec.extra_rdoc_files << 'ext/bsd/sys/proctable.c'
          spec.test_files << 'test/test_sys_proctable_bsd.rb'
+         spec.extensions = ['ext/bsd/extconf.rb']
       when /darwin/i
          spec.platform = Gem::Platform.new(['universal', 'darwin'])
          spec.files << 'ext/darwin/sys/proctable.c'
@@ -157,6 +167,11 @@ namespace :gem do
          spec.require_paths = ['lib', 'lib/sunos']
          spec.files += ['lib/sunos/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_sunos.rb'
+      when /aix/i
+         spec.platform = Gem::Platform.new(['universal', 'aix5'])
+         spec.require_paths = ['lib', 'lib/aix']
+         spec.files += ['lib/aix/sys/proctable.rb']
+         spec.test_files << 'test/test_sys_proctable_aix.rb'
       when /mswin|win32|dos|cygwin|mingw|windows/i
          spec.platform = Gem::Platform.new(['universal', 'mingw32'])
          spec.require_paths = ['lib', 'lib/windows']
@@ -167,7 +182,12 @@ namespace :gem do
     # https://github.com/rubygems/rubygems/issues/147
     spec.original_platform = spec.platform
 
-    Gem::Builder.new(spec).build
+    if Gem::VERSION < "2.0"
+      Gem::Builder.new(spec).build
+    else
+      require 'rubygems/package'
+      Gem::Package.build(spec)
+    end
   end
 
   desc 'Install the sys-proctable library as a gem'
