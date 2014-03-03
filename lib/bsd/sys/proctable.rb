@@ -14,6 +14,8 @@ module Sys
     attach_function :kvm_getprocs, [:pointer, :int, :int, :pointer], :pointer
     attach_function :kvm_getargv, [:pointer, :pointer, :int], :pointer
 
+    POSIX_ARG_MAX = 4096
+
     KERN_PROC_ALL  = 0
     KERN_PROC_PID  = 1
     KERN_PROC_PROC = 8
@@ -158,9 +160,9 @@ module Sys
     end
 
     ProcTableStruct = Struct.new('ProcTableStruct',
-      :pid, :ppid, :pgid, :ruid, :rgid, :comm, :state, :pctcpu, :oncpu,
-      :ttynum, :ttydev, :wmesg, :time, :priority, :usrpri, :nice, :cmdline,
-      :start
+      :pid, :ppid, :pgid, :sid, :jobc, :uid, :ruid, :rgid, :comm, :state,
+      :pctcpu, :oncpu, :ttynum, :ttydev, :wmesg, :time, :priority, :usrpri,
+      :nice, :cmdline, :start
     )
 
     public
@@ -200,7 +202,7 @@ module Sys
             ptr = args.read_pointer
 
             while str = ptr.read_string
-              break if str.empty?
+              break if str.empty? || cmd.size >= POSIX_ARG_MAX
               cmd << str + ' '
               ptr += str.size + 1
             end
@@ -212,6 +214,9 @@ module Sys
             kinfo[:ki_pid],
             kinfo[:ki_ppid],
             kinfo[:ki_pgid],
+            kinfo[:ki_sid],
+            kinfo[:ki_jobc],
+            kinfo[:ki_uid],
             kinfo[:ki_ruid],
             kinfo[:ki_rgid],
             kinfo[:ki_comm].to_s,
@@ -269,6 +274,6 @@ end
 
 if $0 == __FILE__
   include Sys
-  ProcTable.ps(32841)
+  p ProcTable.ps(45893).first
   #ProcTable.ps
 end
