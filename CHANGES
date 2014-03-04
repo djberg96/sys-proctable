@@ -1,4 +1,4 @@
-== 0.9.4 - ???
+== 0.9.4 - 4-Mar-2014
 * Added support for AIX 5.3 or later courtesy of Rick Ohnemus.
 * The Solaris version now uses FFI structs instead of a packed array.
   It solved issues with 64-bit versions of Ruby and it's self-documenting.
