@@ -26,7 +26,8 @@ Gem::Specification.new do |spec|
   spec.rubyforge_project = 'sysutils'
   spec.extra_rdoc_files  = ['CHANGES', 'README', 'MANIFEST', 'doc/top.txt']
 
-  spec.add_development_dependency('test-unit', '>= 2.4.0')
+  spec.add_development_dependency('test-unit')
+  spec.add_development_dependency('rake')
 
   spec.description = <<-EOF
     The sys-proctable library provides an interface for gathering information
