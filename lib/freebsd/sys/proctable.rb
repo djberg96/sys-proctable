@@ -200,7 +200,7 @@ module Sys
     #
     def self.ps(pid = nil)
       begin
-        kd = kvm_open(nil, nil, nil, 0, 'kvm_open')
+        kd = kvm_open(nil, nil, nil, 0, nil)
 
         if kd.null?
           raise SystemCallError.new('kvm_open', FFI.errno)
@@ -215,7 +215,11 @@ module Sys
         end
 
         if procs.null?
-          raise SystemCallError.new('kvm_getprocs', FFI.errno)
+          if pid && FFI.errno == Errno::ESRCH::Errno
+            return nil
+          else
+            raise SystemCallError.new('kvm_getprocs', FFI.errno)
+          end
         end
 
         count = ptr.read_int
