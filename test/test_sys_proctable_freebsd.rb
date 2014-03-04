@@ -1,29 +1,29 @@
 ################################################################
-# test_sys_proctable_bsd.rb
+# test_sys_proctable_freebsd.rb
 #
-# Test suite for various BSD flavors for the sys-proctable
-# library. You should run these tests via 'rake test'.
+# Test suite for FreeBSD for the sys-proctable library.
+# You should run these tests via 'rake test'.
 ################################################################
-require 'rubygems'
-gem 'test-unit'
-
-require 'test/unit'
+require 'test-unit'
 require 'sys/proctable'
 require 'test/test_sys_proctable_all'
 include Sys
 
-class TC_Sys_ProcTable_BSD < Test::Unit::TestCase
+class TC_Sys_ProcTable_FreeBSD < Test::Unit::TestCase
   def self.startup
-    @@fields = %w/
-      pid ppid pgid ruid rgid comm state pctcpu oncpu ttynum ttydev
-      wmesg time priority usrpri nice cmdline start
-      maxrss ixrss idrss isrss minflt majflt nswap inblock oublock
-      msgsnd msgrcv nsignals nvcsw nivcsw utime stime
-    /
+    @@fields = %w[
+      pid ppid pgid tpgid sid tsid jobc uid ruid rgid
+      ngroups groups size rssize swrss tsize dsize ssize
+      xstat acflag pctcpu estcpu slptime swtime runtime start
+      flag state nice lock rqindex oncpu lastcpu wmesg login
+      lockname comm ttynum ttydev jid priority usrpri cmdline
+      utime stime maxrss ixrss idrss isrss minflt majflt nswap
+      inblock oublock msgsnd msgrcv nsignals nvcsw nivcsw
+    ]
   end
 
   def setup
-    @ptable = ProcTable.ps.last
+    @ptable = ProcTable.ps(Process.pid)
   end
 
   def test_fields
@@ -92,9 +92,9 @@ class TC_Sys_ProcTable_BSD < Test::Unit::TestCase
     assert_kind_of(String, @ptable.wmesg)
   end
 
-  def test_time
-    assert_respond_to(@ptable, :time)
-    assert_kind_of(Fixnum, @ptable.time)
+  def test_runtime
+    assert_respond_to(@ptable, :runtime)
+    assert_kind_of(Fixnum, @ptable.runtime)
   end
 
   def test_priority
@@ -124,82 +124,82 @@ class TC_Sys_ProcTable_BSD < Test::Unit::TestCase
 
   def test_maxrss
     assert_respond_to(@ptable, :maxrss)
-    assert_true(@ptable.maxrss.kind_of?(Fixnum) || @ptable.maxrss.nil?)
+    assert_kind_of(Fixnum, @ptable.maxrss)
   end
 
   def test_ixrss
     assert_respond_to(@ptable, :ixrss)
-    assert_true(@ptable.ixrss.kind_of?(Fixnum) || @ptable.ixrss.nil?)
+    assert_kind_of(Fixnum, @ptable.ixrss)
   end
 
   def test_idrss
     assert_respond_to(@ptable, :idrss)
-    assert_true(@ptable.idrss.kind_of?(Fixnum) || @ptable.idrss.nil?)
+    assert_kind_of(Fixnum, @ptable.idrss)
   end
 
   def test_isrss
     assert_respond_to(@ptable, :isrss)
-    assert_true(@ptable.isrss.kind_of?(Fixnum) || @ptable.isrss.nil?)
+    assert_kind_of(Fixnum, @ptable.isrss)
   end
 
   def test_minflt
     assert_respond_to(@ptable, :minflt)
-    assert_true(@ptable.minflt.kind_of?(Fixnum) || @ptable.minflt.nil?)
+    assert_kind_of(Fixnum, @ptable.minflt)
   end
 
   def test_majflt
     assert_respond_to(@ptable, :majflt)
-    assert_true(@ptable.majflt.kind_of?(Fixnum) || @ptable.majflt.nil?)
+    assert_kind_of(Fixnum, @ptable.majflt)
   end
 
   def test_nswap
     assert_respond_to(@ptable, :nswap)
-    assert_true(@ptable.nswap.kind_of?(Fixnum) || @ptable.nswap.nil?)
+    assert_kind_of(Fixnum, @ptable.nswap)
   end
 
   def test_inblock
     assert_respond_to(@ptable, :inblock)
-    assert_true(@ptable.inblock.kind_of?(Fixnum) || @ptable.inblock.nil?)
+    assert_kind_of(Fixnum, @ptable.inblock)
   end
 
   def test_oublock
     assert_respond_to(@ptable, :oublock)
-    assert_true(@ptable.oublock.kind_of?(Fixnum) || @ptable.oublock.nil?)
+    assert_kind_of(Fixnum, @ptable.oublock)
   end
 
   def test_msgsnd
     assert_respond_to(@ptable, :msgsnd)
-    assert_true(@ptable.msgsnd.kind_of?(Fixnum) || @ptable.msgsnd.nil?)
+    assert_kind_of(Fixnum, @ptable.msgsnd)
   end
 
   def test_msgrcv
     assert_respond_to(@ptable, :msgrcv)
-    assert_true(@ptable.msgrcv.kind_of?(Fixnum) || @ptable.msgrcv.nil?)
+    assert_kind_of(Fixnum, @ptable.msgrcv)
   end
 
   def test_nsignals
     assert_respond_to(@ptable, :nsignals)
-    assert_true(@ptable.nsignals.kind_of?(Fixnum) || @ptable.nsignals.nil?)
+    assert_kind_of(Fixnum, @ptable.nsignals)
   end
 
   def test_nvcsw
     assert_respond_to(@ptable, :nvcsw)
-    assert_true(@ptable.nvcsw.kind_of?(Fixnum) || @ptable.nvcsw.nil?)
+    assert_kind_of(Fixnum, @ptable.nvcsw)
   end
 
   def test_nivcsw
     assert_respond_to(@ptable, :nivcsw)
-    assert_true(@ptable.nivcsw.kind_of?(Fixnum) || @ptable.nivcsw.nil?)
+    assert_kind_of(Fixnum, @ptable.nivcsw)
   end
 
   def test_utime
     assert_respond_to(@ptable, :utime)
-    assert_true(@ptable.utime.kind_of?(Fixnum) || @ptable.utime.nil?)
+    assert_kind_of(Fixnum, @ptable.utime)
   end
 
   def test_stime
     assert_respond_to(@ptable, :stime)
-    assert_true(@ptable.stime.kind_of?(Fixnum) || @ptable.stime.nil?)
+    assert_kind_of(Fixnum, @ptable.stime)
   end
 
   def teardown
