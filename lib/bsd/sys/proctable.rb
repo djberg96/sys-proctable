@@ -160,8 +160,14 @@ module Sys
     end
 
     ProcTableStruct = Struct.new('ProcTableStruct',
-      :pid, :ppid, :pgid, :sid, :jobc, :uid, :ruid, :rgid, :comm, :state,
-      :pctcpu, :oncpu, :ttynum, :ttydev, :wmesg, :time, :priority, :usrpri,
+      :pid, :ppid, :pgid, :tpgid, :sid, :tsid, :jobc,
+      :uid, :ruid, :rgid, :ngroups, :groups,
+      :size, :rssize, :swrss, :tsize, :dsize, :ssize,
+      :xstat, :acflag, :pctcpu, :estcpu,
+      :slptime, :swtime, :runtime, :start,
+      :comm, :state,
+      :oncpu, :ttynum, :ttydev, :wmesg, :time,
+      :priority, :usrpri,
       :nice, :cmdline, :start
     )
 
@@ -211,14 +217,31 @@ module Sys
             kinfo[:ki_pid],
             kinfo[:ki_ppid],
             kinfo[:ki_pgid],
+            kinfo[:ki_tpgid],
             kinfo[:ki_sid],
+            kinfo[:ki_tsid],
             kinfo[:ki_jobc],
             kinfo[:ki_uid],
             kinfo[:ki_ruid],
             kinfo[:ki_rgid],
+            kinfo[:ki_ngroups],
+            kinfo[:ki_groups].to_a[0...kinfo[:ki_ngroups]],
+            kinfo[:ki_size],
+            kinfo[:ki_rssize],
+            kinfo[:ki_swrss],
+            kinfo[:ki_tsize],
+            kinfo[:ki_dsize],
+            kinfo[:ki_ssize],
+            kinfo[:ki_xstat],
+            kinfo[:ki_acflag],
+            kinfo[:ki_pctcpu].to_f,
+            kinfo[:ki_estcpu],
+            kinfo[:ki_slptime],
+            kinfo[:ki_swtime],
+            kinfo[:ki_runtime],
+            Time.at(kinfo[:ki_start][:tv_sec]),
             kinfo[:ki_comm].to_s,
             get_state(kinfo[:ki_stat]),
-            kinfo[:ki_pctcpu].to_f,
             kinfo[:ki_oncpu],
             kinfo[:ki_tdev],
             devname(kinfo[:ki_tdev], S_IFCHR),
@@ -228,7 +251,6 @@ module Sys
             kinfo[:ki_pri][:pri_user],
             kinfo[:ki_nice],
             cmd,
-            Time.at(kinfo[:ki_start][:tv_sec]),
           )
 
           if block_given?
@@ -271,6 +293,6 @@ end
 
 if $0 == __FILE__
   include Sys
-  #p ProcTable.ps(45893).first
-  ProcTable.ps{ |s| p s.cmdline }
+  p ProcTable.ps(45893).first
+  #ProcTable.ps{ |s| p s.groups }
 end
