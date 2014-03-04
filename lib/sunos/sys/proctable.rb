@@ -448,11 +448,3 @@ module Sys
     end
   end
 end
-
-if $0 == __FILE__
-  include Sys
-  ProcTable.ps do |s|
-    p s.fname
-    p s.ttydev
-  end
-end
