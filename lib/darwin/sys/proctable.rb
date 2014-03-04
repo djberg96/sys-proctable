@@ -62,7 +62,7 @@ module Sys
       )
     end
 
-    def self.ps
+    def self.ps(pid = nil)
       len = FFI::MemoryPointer.new(:size_t)
       mib = FFI::MemoryPointer.new(:int, 4)
 
@@ -83,4 +83,9 @@ module Sys
       # count = len.read_long / KInfoStruct.size
     end
   end
+end
+
+if $0 == __FILE__
+  include Sys
+  ProcTable.ps(Process.pid)
 end
