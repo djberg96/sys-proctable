@@ -2,6 +2,12 @@
 * Added support for AIX 5.3 or later courtesy of Rick Ohnemus.
 * The Solaris version now uses FFI structs instead of a packed array.
   It solved issues with 64-bit versions of Ruby and it's self-documenting.
+* The FreeBSD version has been converted to use FFI. In addition, additional
+  struct members have been added, and members that previously returned nil
+  now return meaningful data.
+* Support for NetBSD and OpenBSD has been temporarily dropped. Considering
+  that the C code did not build on those platforms anyway, I doubt most of
+  you will notice. Patches for those platforms are welcome, but only using FFI.
 
 == 0.9.3 - 17-Mar-2013
 * Fixed a bug on OSX where a long command string arg could cause
