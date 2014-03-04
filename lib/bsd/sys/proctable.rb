@@ -196,18 +196,15 @@ module Sys
 
           args = kvm_getargv(kd, kinfo, 0)
 
-          # TODO: Getting some garbage here sometimes
           unless args.null?
-            cmd = ''
-            ptr = args.read_pointer
+            cmd = []
 
-            while str = ptr.read_string
-              break if str.empty? || cmd.size >= POSIX_ARG_MAX
-              cmd << str + ' '
-              ptr += str.size + 1
+            until ((ptr = args.read_pointer).null?)
+              cmd << ptr.read_string
+              args += FFI::Type::POINTER.size
             end
 
-            cmd.strip!
+            cmd = cmd.join(' ')
           end
 
           struct = ProcTableStruct.new(
@@ -274,6 +271,6 @@ end
 
 if $0 == __FILE__
   include Sys
-  p ProcTable.ps(45893).first
-  #ProcTable.ps
+  #p ProcTable.ps(45893).first
+  ProcTable.ps{ |s| p s.cmdline }
 end
