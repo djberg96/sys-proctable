@@ -4,6 +4,9 @@ module Sys
   class ProcTable
     extend FFI::Library
 
+    # The version of the sys-proctable library.
+    VERSION = '0.9.4'
+
     private
 
     ffi_lib :kvm
@@ -16,7 +19,6 @@ module Sys
 
     POSIX_ARG_MAX = 4096
 
-    KERN_PROC_ALL  = 0
     KERN_PROC_PID  = 1
     KERN_PROC_PROC = 8
 
@@ -171,6 +173,23 @@ module Sys
 
     public
 
+    # In block form, yields a ProcTableStruct for each process entry that you
+    # have rights to. This method returns an array of ProcTableStruct's in
+    # non-block form.
+    #
+    # If a +pid+ is provided, then only a single ProcTableStruct is yielded or
+    # returned, or nil if no process information is found for that +pid+.
+    #
+    # Example:
+    #
+    #   # Iterate over all processes
+    #   ProcTable.ps do |proc_info|
+    #      p proc_info
+    #   end
+    #
+    #   # Print process table information for only pid 1001
+    #   p ProcTable.ps(1001)
+    #
     def self.ps(pid = nil)
       begin
         kd = kvm_open(nil, nil, nil, 0, 'kvm_open')
@@ -281,7 +300,11 @@ module Sys
         kvm_close(kd) unless kd.null?
       end
 
-      block_given? ? nil : array
+      if block_given?
+        nil
+      else
+        pid ? array.first : array
+      end
     end
 
     private
@@ -307,10 +330,4 @@ module Sys
       end
     end
   end
-end
-
-if $0 == __FILE__
-  include Sys
-  p ProcTable.ps(45893).first
-  #ProcTable.ps{ |s| p s.groups }
 end
