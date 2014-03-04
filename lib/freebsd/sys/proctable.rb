@@ -7,6 +7,12 @@ module Sys
     # The version of the sys-proctable library.
     VERSION = '0.9.4'
 
+    # Error typically raised if the ProcTable.ps method fails.
+    class Error < StandardError; end
+
+    # There is no constructor
+    private_class_method :new
+
     private
 
     ffi_lib :kvm
@@ -161,15 +167,17 @@ module Sys
       )
     end
 
-    ProcTableStruct = Struct.new('ProcTableStruct',
-      :pid, :ppid, :pgid, :tpgid, :sid, :tsid, :jobc, :uid, :ruid, :rgid,
-      :ngroups, :groups, :size, :rssize, :swrss, :tsize, :dsize, :ssize,
-      :xstat, :acflag, :pctcpu, :estcpu, :slptime, :swtime, :runtime, :start,
-      :flag, :state, :nice, :lock, :rqindex, :oncpu, :lastcpu, :wmesg, :login,
-      :lockname, :comm, :ttynum, :ttydev, :jid, :priority, :usrpri, :cmdline,
-      :maxrss, :ixrss, :idrss, :isrss, :minflt, :majflt, :nswap, :inblock,
-      :oublock, :msgsnd, :msgrcv, :nsignals, :nvcsw, :nivcsw
-    )
+    @fields = %w[
+      pid ppid pgid tpgid sid tsid jobc uid ruid rgid
+      ngroups groups size rssize swrss tsize dsize ssize
+      xstat acflag pctcpu estcpu slptime swtime runtime start
+      flag state nice lock rqindex oncpu lastcpu wmesg login
+      lockname comm ttynum ttydev jid priority usrpri cmdline
+      utime stime maxrss ixrss idrss isrss minflt majflt nswap
+      inblock oublock msgsnd msgrcv nsignals nvcsw nivcsw
+    ]
+
+    ProcTableStruct = Struct.new('ProcTableStruct', *@fields)
 
     public
 
@@ -274,6 +282,8 @@ module Sys
             kinfo[:ki_pri][:pri_level],
             kinfo[:ki_pri][:pri_user],
             cmd,
+            kinfo[:ki_rusage][:ru_utime][:tv_sec],
+            kinfo[:ki_rusage][:ru_stime][:tv_sec],
             kinfo[:ki_rusage][:ru_maxrss],
             kinfo[:ki_rusage][:ru_ixrss],
             kinfo[:ki_rusage][:ru_idrss],
@@ -290,6 +300,8 @@ module Sys
             kinfo[:ki_rusage][:ru_nivcsw]
           )
 
+          struct.freeze # This is readonly data
+
           if block_given?
             yield struct
           else
@@ -305,6 +317,20 @@ module Sys
       else
         pid ? array.first : array
       end
+    end
+
+    # Returns an array of fields that each ProcTableStruct will contain. This
+    # may be useful if you want to know in advance what fields are available
+    # without having to perform at least one read of the /proc table.
+    #
+    # Example:
+    #
+    #   Sys::ProcTable.fields.each{ |field|
+    #      puts "Field: #{field}"
+    #   }
+    #
+    def self.fields
+      @fields
     end
 
     private
