@@ -7,7 +7,7 @@
 == Supported Platforms
 * Windows 2000 or later
 * Linux 2.6+
-* BSD (various flavors)
+* FreeBSD
 * Solaris 8+
 * HP-UX 10+
 * OS X 10.4+
@@ -20,7 +20,7 @@
   gem install sys-proctable --platform mswin32 # Windows
   gem install sys-proctable --platform sunos   # Solaris
   gem install sys-proctable --platform linux   # Linux
-  gem install sys-proctable --platform freebsd # BSD (any flavor)
+  gem install sys-proctable --platform freebsd # FreeBSD
 
 == Synopsis
   require 'sys/proctable'
@@ -51,7 +51,7 @@
   information from a different host. This relies on the WMI service running.
 
 == Known Issues
-=== BSD
+=== FreeBSD
   A kvm interface is used. That means the owner of the process using the
   sys-proctable library needs to be a member of the kvm group (or root).
 
@@ -67,13 +67,12 @@
   Using readdir_r() still won't solve all potential thread safety issues anyway.
 
 == Future Plans
-  Research has indicated that the kvm approach is less favored than a sysctl
-  approach on BSD variants. I will try to add this interface in a future
-  release.
+  Add support for NetBSD and OpenBSD.
+  Convert existing C code to FFI.
 
 == Acknowledgements
-  This library is largely based on the Perl module Proc::ProcessTable by
-  Dan Urist. Many ideas, as well as large chunks of code, were taken
+  This library was originally based on the Perl module Proc::ProcessTable
+  by Dan Urist. Many ideas, as well as large chunks of code, were taken
   from his work. So, a big THANK YOU goes out to Dan Urist.
 
   A big thanks also goes out to Mike Hall who was very helpful with ideas,
@@ -105,7 +104,7 @@
   Artistic 2.0
     
 == Copyright
-  (C) 2003-2012 Daniel J. Berger
+  (C) 2003-2014 Daniel J. Berger
   All Rights Reserved.
 
 == Author
