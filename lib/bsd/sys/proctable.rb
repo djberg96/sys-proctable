@@ -160,15 +160,13 @@ module Sys
     end
 
     ProcTableStruct = Struct.new('ProcTableStruct',
-      :pid, :ppid, :pgid, :tpgid, :sid, :tsid, :jobc,
-      :uid, :ruid, :rgid, :ngroups, :groups,
-      :size, :rssize, :swrss, :tsize, :dsize, :ssize,
-      :xstat, :acflag, :pctcpu, :estcpu,
-      :slptime, :swtime, :runtime, :start,
-      :comm, :state,
-      :oncpu, :ttynum, :ttydev, :wmesg, :time,
-      :priority, :usrpri,
-      :nice, :cmdline, :start
+      :pid, :ppid, :pgid, :tpgid, :sid, :tsid, :jobc, :uid, :ruid, :rgid,
+      :ngroups, :groups, :size, :rssize, :swrss, :tsize, :dsize, :ssize,
+      :xstat, :acflag, :pctcpu, :estcpu, :slptime, :swtime, :runtime, :start,
+      :flag, :state, :nice, :lock, :rqindex, :oncpu, :lastcpu, :wmesg, :login,
+      :lockname, :comm, :ttynum, :ttydev, :jid, :priority, :usrpri, :cmdline,
+      :maxrss, :ixrss, :idrss, :isrss, :minflt, :majflt, :nswap, :inblock,
+      :oublock, :msgsnd, :msgrcv, :nsignals, :nvcsw, :nivcsw
     )
 
     public
@@ -240,17 +238,37 @@ module Sys
             kinfo[:ki_swtime],
             kinfo[:ki_runtime],
             Time.at(kinfo[:ki_start][:tv_sec]),
-            kinfo[:ki_comm].to_s,
+            kinfo[:ki_flag],
             get_state(kinfo[:ki_stat]),
+            kinfo[:ki_nice],
+            kinfo[:ki_lock],
+            kinfo[:ki_rqindex],
             kinfo[:ki_oncpu],
+            kinfo[:ki_lastcpu],
+            kinfo[:ki_wmesg].to_s,
+            kinfo[:ki_login].to_s,
+            kinfo[:ki_lockname].to_s,
+            kinfo[:ki_comm].to_s,
             kinfo[:ki_tdev],
             devname(kinfo[:ki_tdev], S_IFCHR),
-            kinfo[:ki_wmesg].to_s,
-            kinfo[:ki_runtime]/1000000,
+            kinfo[:ki_jid],
             kinfo[:ki_pri][:pri_level],
             kinfo[:ki_pri][:pri_user],
-            kinfo[:ki_nice],
             cmd,
+            kinfo[:ki_rusage][:ru_maxrss],
+            kinfo[:ki_rusage][:ru_ixrss],
+            kinfo[:ki_rusage][:ru_idrss],
+            kinfo[:ki_rusage][:ru_isrss],
+            kinfo[:ki_rusage][:ru_minflt],
+            kinfo[:ki_rusage][:ru_majflt],
+            kinfo[:ki_rusage][:ru_nswap],
+            kinfo[:ki_rusage][:ru_inblock],
+            kinfo[:ki_rusage][:ru_oublock],
+            kinfo[:ki_rusage][:ru_msgsnd],
+            kinfo[:ki_rusage][:ru_msgrcv],
+            kinfo[:ki_rusage][:ru_nsignals],
+            kinfo[:ki_rusage][:ru_nvcsw],
+            kinfo[:ki_rusage][:ru_nivcsw]
           )
 
           if block_given?
