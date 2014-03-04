@@ -137,9 +137,10 @@ namespace :gem do
     case CONFIG['host_os']
       when /freebsd/i
          spec.platform = Gem::Platform.new(['universal', 'freebsd'])
-         spec.require_paths = ['lib', 'lib/linux']
-         spec.files += ['lib/linux/sys/proctable.rb']
-         spec.test_files << 'test/test_sys_proctable_linux.rb'
+         spec.require_paths = ['lib', 'lib/freebsd']
+         spec.files += ['lib/freebsd/sys/proctable.rb']
+         spec.test_files << 'test/test_sys_proctable_freebsd.rb'
+         spec.add_dependency('ffi')
       when /darwin/i
          spec.platform = Gem::Platform.new(['universal', 'darwin'])
          spec.files << 'ext/darwin/sys/proctable.c'
