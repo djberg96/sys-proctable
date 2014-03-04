@@ -8,7 +8,7 @@ CLEAN.include(
   '**/*.core',              # Core dump files
   '**/*.gem',               # Gem files
   '**/*.rbc',               # Rubinius
-  '**/*/.rbx',              # Rubinius
+  '**/*.rbx',               # Rubinius
   '**/*.o',                 # C object file
   '**/*.log',               # Ruby extension build log
   '**/Makefile',            # C Makefile
@@ -27,9 +27,6 @@ task :build => [:clean] do
   end
 
   case CONFIG['host_os']
-    when /bsd/i
-      dir = 'ext/bsd'
-      ext = '.so'
     when /darwin/i
       dir = 'ext/darwin'
       ext = '.bundle'
@@ -38,7 +35,7 @@ task :build => [:clean] do
       ext = '.sl'
   end
 
-  unless CONFIG['host_os'] =~ /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
+  if CONFIG['host_os'] =~ /darwin|hpux/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
@@ -63,8 +60,8 @@ task :install => [:build] do
       file = 'lib/sunos/sys/proctable.rb'
     when /aix/i
       file = 'lib/aix/sys/proctable.rb'
-    when /bsd/i
-      Dir.chdir('ext/bsd'){ sh 'make install' }
+    when /freebsd/i
+      file = 'lib/freebsd/sys/proctable.rb'
     when /darwin/i
       Dir.chdir('ext/darwin'){ sh 'make install' }
     when /hpux/i
@@ -77,12 +74,12 @@ end
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
   case CONFIG['host_os']
-    when /win32|mswin|dos|cygwin|mingw|windows|linux|sunos|solaris|aix/i
-      dir  = File.join(CONFIG['sitelibdir'], 'sys')
-      file = File.join(dir, 'proctable.rb')
-    else
+    when /darwin|hpux/i
       dir  = File.join(CONFIG['sitearchdir'], 'sys')
       file = File.join(dir, 'proctable.' + CONFIG['DLEXT'])
+    else
+      dir  = File.join(CONFIG['sitelibdir'], 'sys')
+      file = File.join(dir, 'proctable.rb')
   end
 
   rm(file) 
@@ -116,12 +113,12 @@ Rake::TestTask.new do |t|
     when /aix/i
       t.test_files = FileList['test/test_sys_proctable_aix.rb']
       t.libs << 'lib/aix'
+    when /freebsd/i
+      t.test_files = FileList['test/test_sys_proctable_freebsd.rb']  
+      t.libs << 'lib/freebsd'
     when /darwin/i
       t.libs << 'ext/darwin'
       t.test_files = FileList['test/test_sys_proctable_darwin.rb']
-    when /bsd/i
-      t.libs << 'ext/bsd'
-      t.test_files = FileList['test/test_sys_proctable_bsd.rb']  
     when /hpux/i
       t.libs << 'ext/hpux'
       t.test_files = FileList['test/test_sys_proctable_hpux.rb']  
@@ -138,13 +135,11 @@ namespace :gem do
     # of some bugginess in Rubygems' platform.rb.
     #
     case CONFIG['host_os']
-      when /bsd/i
+      when /freebsd/i
          spec.platform = Gem::Platform.new(['universal', 'freebsd'])
-         spec.platform.version = nil
-         spec.files << 'ext/bsd/sys/proctable.c'
-         spec.extra_rdoc_files << 'ext/bsd/sys/proctable.c'
-         spec.test_files << 'test/test_sys_proctable_bsd.rb'
-         spec.extensions = ['ext/bsd/extconf.rb']
+         spec.require_paths = ['lib', 'lib/linux']
+         spec.files += ['lib/linux/sys/proctable.rb']
+         spec.test_files << 'test/test_sys_proctable_linux.rb'
       when /darwin/i
          spec.platform = Gem::Platform.new(['universal', 'darwin'])
          spec.files << 'ext/darwin/sys/proctable.c'
