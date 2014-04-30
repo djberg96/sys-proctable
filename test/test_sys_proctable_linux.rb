@@ -42,7 +42,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
 
   def test_exe
     assert_respond_to(@ptable, :exe)
-    assert_kind_of(String, @ptable.exe)
+    assert_kind_of([NilClass, String], @ptable.exe)
   end
 
   def test_fd
@@ -52,7 +52,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
 
   def test_root
     assert_respond_to(@ptable, :root)
-    assert_kind_of(String, @ptable.root)
+    assert_kind_of([NilClass, String], @ptable.root)
   end
 
   def test_pid
@@ -97,7 +97,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
 
   def test_flags
     assert_respond_to(@ptable, :flags)
-    assert_kind_of(Fixnum, @ptable.flags)
+    assert_kind_of(Numeric, @ptable.flags)
   end
 
   def test_minflt
@@ -212,7 +212,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
 
   def test_sigignore
     assert_respond_to(@ptable, :sigignore)
-    assert_kind_of(Fixnum, @ptable.sigignore)
+    assert_kind_of(Numeric, @ptable.sigignore)
   end
 
   def test_sigcatch
@@ -227,17 +227,17 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
 
   def test_nswap
     assert_respond_to(@ptable, :nswap)
-    assert_kind_of(Fixnum, @ptable.nswap)
+    assert_kind_of(Numeric, @ptable.nswap)
   end
 
   def test_cnswap
     assert_respond_to(@ptable, :cnswap)
-    assert_kind_of(Fixnum, @ptable.cnswap)
+    assert_kind_of(Numeric, @ptable.cnswap)
   end
 
   def test_exit_signal
     assert_respond_to(@ptable, :exit_signal)
-    assert_kind_of(Fixnum, @ptable.exit_signal)
+    assert_kind_of(Numeric, @ptable.exit_signal)
   end
 
   def test_processor
