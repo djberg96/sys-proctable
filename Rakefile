@@ -174,6 +174,8 @@ namespace :gem do
          spec.files += ['lib/windows/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_windows.rb'
     end
+
+    spec.test_files << 'test/test_sys_top.rb'
  
     # https://github.com/rubygems/rubygems/issues/147
     spec.original_platform = spec.platform
