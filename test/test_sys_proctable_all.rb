@@ -71,6 +71,12 @@ class TC_ProcTable_All < Test::Unit::TestCase
     assert_kind_of(StandardError, Sys::ProcTable::Error.new)
   end
 
+  def test_from_thread
+    Thread.new do
+      Sys::ProcTable.ps
+    end.value
+  end
+
   def teardown
     @pid  = nil
   end
