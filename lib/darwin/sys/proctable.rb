@@ -5,13 +5,10 @@ module Sys
     extend FFI::Library
     ffi_lib FFI::Library::LIBC
 
-    attach_function(
-      :sysctl,
-      [:pointer, :uint, :pointer, :pointer, :pointer, :size_t],
-      :int
-    )
+    private
 
-    attach_function(:strerror, [:int], :string)
+    attach_function :sysctl, [:pointer, :uint, :pointer, :pointer, :pointer, :size_t], :int
+    attach_function :strerror, [:int], :string
 
     private_class_method :sysctl
 
@@ -29,7 +26,6 @@ module Sys
       layout(
         :p_un, UnUnion,
         :p_vmspace, VmspaceStruct,
-
       )
     end
 
@@ -61,6 +57,8 @@ module Sys
         :eproc, EProcStruct
       )
     end
+
+    public
 
     def self.ps(pid = nil)
       len = FFI::MemoryPointer.new(:size_t)
