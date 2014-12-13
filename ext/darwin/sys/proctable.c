@@ -39,7 +39,7 @@ const char* fields[] = {
   "nivcsw", "utime", "stime"
 };
 
-int argv_of_pid(int pid, char* cmdline) {
+int argv_of_pid(int pid, VALUE* v_cmdline) {
   int    mib[3], argmax, nargs, c = 0;
   size_t    size;
   char    *procargs, *sp, *np, *cp;
@@ -180,8 +180,8 @@ int argv_of_pid(int pid, char* cmdline) {
     goto ERROR_B;
   }
 
-  /* Make a copy of the string. */
-  strcpy(cmdline, sp);
+  /* Make a copy of the string to ruby String. */
+  *v_cmdline = rb_str_new2(sp);
 
   /* Clean up. */
   free(procargs);
@@ -214,6 +214,7 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
   VALUE v_array = rb_ary_new();
   size_t length, count;
   size_t i = 0;
+  VALUE v_cmdline;
 
   // Passed into sysctl call
   static const int name_mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
@@ -249,10 +250,10 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
     if( (!NIL_P(v_pid)) && (procs[i].kp_proc.p_pid != NUM2INT(v_pid)) )
       continue;
 
-    char cmdline[ARGS_MAX_LEN+1];
-
-    argv_of_pid(procs[i].kp_proc.p_pid, cmdline);
-    // free(cmdline);
+    // cmdline will be set only if process exists and belongs to current user or
+    // current user is root
+    v_cmdline = Qnil;
+    argv_of_pid(procs[i].kp_proc.p_pid, &v_cmdline);
 
     // Get the start time of the process
     v_start_time = rb_time_new(
@@ -307,7 +308,7 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       INT2FIX(procs[i].kp_proc.p_priority),
       INT2FIX(procs[i].kp_proc.p_usrpri),
       INT2FIX(procs[i].kp_proc.p_nice),
-      rb_str_new2(cmdline),
+      v_cmdline,
       v_start_time,
       (procs[i].kp_proc.p_ru && procs[i].kp_proc.p_stat != 5) ? LONG2NUM(procs[i].kp_proc.p_ru->ru_maxrss) : Qnil,
       (procs[i].kp_proc.p_ru && procs[i].kp_proc.p_stat != 5) ? LONG2NUM(procs[i].kp_proc.p_ru->ru_ixrss) : Qnil,
