@@ -214,7 +214,6 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
   VALUE v_array = rb_ary_new();
   size_t length, count;
   size_t i = 0;
-  char args[ARGS_MAX_LEN+1];
 
   // Passed into sysctl call
   static const int name_mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
@@ -250,23 +249,6 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
     if( (!NIL_P(v_pid)) && (procs[i].kp_proc.p_pid != NUM2INT(v_pid)) )
       continue;
 
-    *args = '\0';
-
-    /* Query the command line args */
-    /* TODO: Cmd line not working for now - fix */
-
-    /*args_mib[ARGS_MIB_LEN - 1] = procs[i].kp_proc.p_pid;
-    args_err = sysctl( (int *) args_mib, ARGS_MIB_LEN, args, &args_size, NULL, 0);
-
-    if(args_err >= 0) {
-      fprintf(stderr, "Ret: %d LEN: %d\n", err, args_size);
-      char *c;
-      for(c = args; c < args+args_size; c++)
-        if(*c == '\0') *c = ' ';
-      args[args_size] = '\0';
-    } else {
-      fprintf(stderr, "err: %s LEN: %d\n", strerror(errno), args_size);
-    }*/
     char cmdline[ARGS_MAX_LEN+1];
 
     argv_of_pid(procs[i].kp_proc.p_pid, cmdline);
