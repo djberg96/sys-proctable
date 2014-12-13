@@ -20,7 +20,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
   end
 
   def setup
-    @ptable = ProcTable.ps.last
+    @ptable = ProcTable.ps.find{ |ptable| ptable.pid == $$ }
   end
 
   def test_fields
