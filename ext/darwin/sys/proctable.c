@@ -31,14 +31,6 @@
 
 VALUE cProcTableError, sProcStruct;
 
-const char* fields[] = {
-  "pid", "ppid", "pgid", "ruid", "rgid", "comm", "state", "pctcpu", "oncpu",
-  "tnum", "tdev", "wmesg", "rtime", "priority", "usrpri", "nice", "cmdline",
-  "starttime", "maxrss", "ixrss", "idrss", "isrss", "minflt", "majflt",
-  "nswap", "inblock", "oublock", "msgsnd", "msgrcv", "nsignals", "nvcsw",
-  "nivcsw", "utime", "stime"
-};
-
 int argv_of_pid(int pid, VALUE* v_cmdline) {
   int    mib[3], argmax, nargs, c = 0;
   size_t    size;
@@ -358,11 +350,15 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
  */
 static VALUE pt_fields(VALUE klass){
   VALUE v_array = rb_ary_new();
-  int size = sizeof(fields) / sizeof(fields[0]);
+
+  VALUE v_members = rb_struct_s_members(sProcStruct), v_member;
+  long size = RARRAY_LEN(v_members);
   int i;
 
-  for(i = 0; i < size; i++)
-    rb_ary_push(v_array, rb_str_new2(fields[i]));
+  for(i = 0; i < size; i++) {
+    v_member = rb_funcall(rb_ary_entry(v_members, i), rb_intern("to_s"), 0);
+    rb_ary_push(v_array, v_member);
+  }
 
   return v_array;
 }
