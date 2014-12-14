@@ -13,7 +13,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
   def self.startup
     @@fields = %w/
       pid ppid pgid ruid rgid comm state pctcpu oncpu tnum
-      tdev wmesg rtime priority usrpri nice cmdline starttime
+      tdev wmesg rtime priority usrpri nice cmdline exe starttime
       maxrss ixrss idrss isrss minflt majflt nswap inblock oublock
       msgsnd msgrcv nsignals nvcsw nivcsw utime stime
     /

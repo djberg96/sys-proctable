@@ -31,7 +31,7 @@
 
 VALUE cProcTableError, sProcStruct;
 
-int argv_of_pid(int pid, VALUE* v_cmdline) {
+int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe) {
   int    mib[3], argmax, nargs, c = 0;
   size_t    size;
   char    *procargs, *sp, *np, *cp;
@@ -107,6 +107,9 @@ int argv_of_pid(int pid, VALUE* v_cmdline) {
 
   memcpy(&nargs, procargs, sizeof(nargs));
   cp = procargs + sizeof(nargs);
+
+  /* Copy exec_path to ruby String. */
+  *v_exe = rb_str_new2(cp);
 
   /* Skip the saved exec_path. */
   for (; cp < &procargs[size]; cp++) {
@@ -206,7 +209,7 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
   VALUE v_array = rb_ary_new();
   size_t length, count;
   size_t i = 0;
-  VALUE v_cmdline;
+  VALUE v_cmdline, v_exe;
 
   // Passed into sysctl call
   static const int name_mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
@@ -245,7 +248,8 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
     // cmdline will be set only if process exists and belongs to current user or
     // current user is root
     v_cmdline = Qnil;
-    argv_of_pid(procs[i].kp_proc.p_pid, &v_cmdline);
+    v_exe = Qnil;
+    argv_of_pid(procs[i].kp_proc.p_pid, &v_cmdline, &v_exe);
 
     // Get the start time of the process
     v_start_time = rb_time_new(
@@ -301,6 +305,7 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       INT2FIX(procs[i].kp_proc.p_usrpri),
       INT2FIX(procs[i].kp_proc.p_nice),
       v_cmdline,
+      v_exe,
       v_start_time,
       (procs[i].kp_proc.p_ru && procs[i].kp_proc.p_stat != 5) ? LONG2NUM(procs[i].kp_proc.p_ru->ru_maxrss) : Qnil,
       (procs[i].kp_proc.p_ru && procs[i].kp_proc.p_stat != 5) ? LONG2NUM(procs[i].kp_proc.p_ru->ru_ixrss) : Qnil,
@@ -411,6 +416,7 @@ void Init_proctable(){
     "usrpri",      /* User-priority */
     "nice",        /* Process "nice" value */
     "cmdline",     /* Complete command line */
+    "exe",         /* Saved pathname of the executed command */
     "starttime",   /* Process start time */
     "maxrss",      /* Max resident set size (PL) */
     "ixrss",       /* Integral shared memory size (NU) */
