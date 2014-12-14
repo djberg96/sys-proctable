@@ -31,7 +31,7 @@
 
 VALUE cProcTableError, sProcStruct;
 
-int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe) {
+int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
   int    mib[3], argmax, nargs, c = 0;
   size_t    size;
   char    *procargs, *sp, *np, *cp;
@@ -178,6 +178,17 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe) {
   /* Make a copy of the string to ruby String. */
   *v_cmdline = rb_str_new2(sp);
 
+  /* Read environment variables to ruby Hash. */
+  *v_environ = rb_hash_new();
+  while (cp[0]) {
+    sp = strsep(&cp, "=");
+    if (sp == NULL) {
+      break;
+    }
+    rb_hash_aset(*v_environ, rb_str_new2(sp), rb_str_new2(cp));
+    cp += strlen(cp) + 1;
+  }
+
   /* Clean up. */
   free(procargs);
   return 0;
@@ -209,7 +220,7 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
   VALUE v_array = rb_ary_new();
   size_t length, count;
   size_t i = 0;
-  VALUE v_cmdline, v_exe;
+  VALUE v_cmdline, v_exe, v_environ;
 
   // Passed into sysctl call
   static const int name_mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
@@ -249,7 +260,8 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
     // current user is root
     v_cmdline = Qnil;
     v_exe = Qnil;
-    argv_of_pid(procs[i].kp_proc.p_pid, &v_cmdline, &v_exe);
+    v_environ = Qnil;
+    argv_of_pid(procs[i].kp_proc.p_pid, &v_cmdline, &v_exe, &v_environ);
 
     // Get the start time of the process
     v_start_time = rb_time_new(
@@ -306,6 +318,7 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       INT2FIX(procs[i].kp_proc.p_nice),
       v_cmdline,
       v_exe,
+      v_environ,
       v_start_time,
       (procs[i].kp_proc.p_ru && procs[i].kp_proc.p_stat != 5) ? LONG2NUM(procs[i].kp_proc.p_ru->ru_maxrss) : Qnil,
       (procs[i].kp_proc.p_ru && procs[i].kp_proc.p_stat != 5) ? LONG2NUM(procs[i].kp_proc.p_ru->ru_ixrss) : Qnil,
@@ -417,6 +430,7 @@ void Init_proctable(){
     "nice",        /* Process "nice" value */
     "cmdline",     /* Complete command line */
     "exe",         /* Saved pathname of the executed command */
+    "environ",     /* Hash with process environment variables */
     "starttime",   /* Process start time */
     "maxrss",      /* Max resident set size (PL) */
     "ixrss",       /* Integral shared memory size (NU) */
