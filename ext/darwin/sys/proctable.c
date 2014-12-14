@@ -393,11 +393,41 @@ void Init_proctable(){
 
   /* Structs */
 
-  sProcStruct = rb_struct_define("ProcTableStruct","pid","ppid","pgid","ruid",
-    "rgid","comm","state","pctcpu","oncpu","tnum","tdev","wmesg",
-    "rtime", "priority","usrpri","nice","cmdline","starttime",
-    "maxrss","ixrss","idrss","isrss","minflt","majflt","nswap",
-    "inblock","oublock","msgsnd","msgrcv","nsignals","nvcsw","nivcsw",
-    "utime","stime", NULL
+  sProcStruct = rb_struct_define("ProcTableStruct",
+    "pid",         /* Process identifier */
+    "ppid",        /* Parent process id */
+    "pgid",        /* Process group id */
+    "ruid",        /* Real user id */
+    "rgid",        /* Real group id */
+    "comm",        /* Command name (15 chars) */
+    "state",       /* Process status */
+    "pctcpu",      /* %cpu for this process during p_swtime */
+    "oncpu",       /* nil */
+    "tnum",        /* Controlling tty dev */
+    "tdev",        /* Controlling tty name */
+    "wmesg",       /* Wchan message */
+    "rtime",       /* Real time */
+    "priority",    /* Process priority */
+    "usrpri",      /* User-priority */
+    "nice",        /* Process "nice" value */
+    "cmdline",     /* Complete command line */
+    "starttime",   /* Process start time */
+    "maxrss",      /* Max resident set size (PL) */
+    "ixrss",       /* Integral shared memory size (NU) */
+    "idrss",       /* Integral unshared data (NU) */
+    "isrss",       /* Integral unshared stack (NU) */
+    "minflt",      /* Page reclaims (NU) */
+    "majflt",      /* Page faults (NU) */
+    "nswap",       /* Swaps (NU) */
+    "inblock",     /* Block input operations (atomic) */
+    "oublock",     /* Block output operations (atomic) */
+    "msgsnd",      /* Messages sent (atomic) */
+    "msgrcv",      /* Messages received (atomic) */
+    "nsignals",    /* Signals received (atomic) */
+    "nvcsw",       /* Voluntary context switches (atomic) */
+    "nivcsw",      /* Involuntary context switches (atomic) */
+    "utime",       /* User time used (PL) */
+    "stime",       /* System time used (PL) */
+    NULL
   );
 }
