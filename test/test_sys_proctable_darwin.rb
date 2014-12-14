@@ -12,15 +12,21 @@ include Sys
 class TC_ProcTable_Darwin < Test::Unit::TestCase
   def self.startup
     @@fields = %w/
-      pid ppid pgid ruid rgid comm state pctcpu oncpu tnum
-      tdev wmesg rtime priority usrpri nice cmdline starttime
+      pid ppid pgid ruid rgid euid egid groups svuid svgid
+      comm state pctcpu oncpu tnum
+      tdev wmesg rtime priority usrpri nice cmdline exe environ starttime
       maxrss ixrss idrss isrss minflt majflt nswap inblock oublock
       msgsnd msgrcv nsignals nvcsw nivcsw utime stime
     /
+
+    @@pid = fork do
+      exec('env', '-i', 'A=B', 'Z=', 'sleep', '60')
+    end
+    sleep 1 # wait to make sure env is replaced by sleep
   end
 
   def setup
-    @ptable = ProcTable.ps.last
+    @ptable = ProcTable.ps.find{ |ptable| ptable.pid == @@pid }
   end
 
   def test_fields
@@ -32,32 +38,67 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
   def test_pid
     assert_respond_to(@ptable, :pid)
     assert_kind_of(Fixnum, @ptable.pid)
+    assert_equal(@ptable.pid, @@pid)
   end
 
   def test_ppid
     assert_respond_to(@ptable, :ppid)
     assert_kind_of(Fixnum, @ptable.ppid)
+    assert_equal(Process.pid, @ptable.ppid)
   end
 
   def test_pgid
     assert_respond_to(@ptable, :pgid)
     assert_kind_of(Fixnum, @ptable.pgid)
+    assert_equal(Process.getpgrp, @ptable.pgid)
   end
 
   def test_ruid
     assert_respond_to(@ptable, :ruid)
     assert_kind_of(Fixnum, @ptable.ruid)
+    assert_equal(Process.uid, @ptable.ruid)
   end
 
   def test_rgid
     assert_respond_to(@ptable, :rgid)
     assert_kind_of(Fixnum, @ptable.rgid)
+    assert_equal(Process.gid, @ptable.rgid)
+  end
+
+  def test_euid
+    assert_respond_to(@ptable, :euid)
+    assert_kind_of(Fixnum, @ptable.euid)
+    assert_equal(Process.euid, @ptable.euid)
+  end
+
+  def test_egid
+    assert_respond_to(@ptable, :egid)
+    assert_kind_of(Fixnum, @ptable.egid)
+    assert_equal(Process.egid, @ptable.egid)
+  end
+
+  def test_groups
+    assert_respond_to(@ptable, :groups)
+    assert_kind_of(Array, @ptable.groups)
+    assert_equal(Process.groups, @ptable.groups)
+  end
+
+  def test_svuid
+    assert_respond_to(@ptable, :svuid)
+    assert_kind_of(Fixnum, @ptable.svuid)
+    assert_equal(Process.uid, @ptable.svuid) # not valid for all processes
+  end
+
+  def test_svgid
+    assert_respond_to(@ptable, :svgid)
+    assert_kind_of(Fixnum, @ptable.svgid)
+    assert_equal(Process.gid, @ptable.svgid) # not valid for all processes
   end
 
   def test_comm
     assert_respond_to(@ptable, :comm)
     assert_kind_of(String, @ptable.comm)
-    assert_true(@ptable.comm.length > 0)
+    assert_equal('sleep', @ptable.comm)
   end
 
   def test_state
@@ -114,6 +155,19 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
   def test_cmdline
     assert_respond_to(@ptable, :cmdline)
     assert_kind_of(String, @ptable.cmdline)
+    assert_equal('sleep 60', @ptable.cmdline)
+  end
+
+  def test_exe
+    assert_respond_to(@ptable, :exe)
+    assert_kind_of(String, @ptable.exe)
+    assert_equal(`which sleep`.chomp, @ptable.exe)
+  end
+
+  def test_environ
+    assert_respond_to(@ptable, :environ)
+    assert_kind_of(Hash, @ptable.environ)
+    assert_equal({'A' => 'B', 'Z' => ''}, @ptable.environ)
   end
 
   def test_starttime
@@ -207,5 +261,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
 
   def self.shutdown
     @@fields = nil
+
+    Process.kill('TERM', @@pid)
   end
 end
