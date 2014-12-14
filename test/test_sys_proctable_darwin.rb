@@ -12,7 +12,8 @@ include Sys
 class TC_ProcTable_Darwin < Test::Unit::TestCase
   def self.startup
     @@fields = %w/
-      pid ppid pgid ruid rgid comm state pctcpu oncpu tnum
+      pid ppid pgid ruid rgid euid egid groups svuid svgid
+      comm state pctcpu oncpu tnum
       tdev wmesg rtime priority usrpri nice cmdline exe environ starttime
       maxrss ixrss idrss isrss minflt majflt nswap inblock oublock
       msgsnd msgrcv nsignals nvcsw nivcsw utime stime
@@ -62,6 +63,36 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
     assert_respond_to(@ptable, :rgid)
     assert_kind_of(Fixnum, @ptable.rgid)
     assert_equal(Process.gid, @ptable.rgid)
+  end
+
+  def test_euid
+    assert_respond_to(@ptable, :euid)
+    assert_kind_of(Fixnum, @ptable.euid)
+    assert_equal(Process.euid, @ptable.euid)
+  end
+
+  def test_egid
+    assert_respond_to(@ptable, :egid)
+    assert_kind_of(Fixnum, @ptable.egid)
+    assert_equal(Process.egid, @ptable.egid)
+  end
+
+  def test_groups
+    assert_respond_to(@ptable, :groups)
+    assert_kind_of(Array, @ptable.groups)
+    assert_equal(Process.groups, @ptable.groups)
+  end
+
+  def test_svuid
+    assert_respond_to(@ptable, :svuid)
+    assert_kind_of(Fixnum, @ptable.svuid)
+    assert_equal(Process.uid, @ptable.svuid) # not valid for all processes
+  end
+
+  def test_svgid
+    assert_respond_to(@ptable, :svgid)
+    assert_kind_of(Fixnum, @ptable.svgid)
+    assert_equal(Process.gid, @ptable.svgid) # not valid for all processes
   end
 
   def test_comm

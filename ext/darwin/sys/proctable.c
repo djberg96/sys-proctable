@@ -219,8 +219,8 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
   VALUE v_pstruct = Qnil;
   VALUE v_array = rb_ary_new();
   size_t length, count;
-  size_t i = 0;
-  VALUE v_cmdline, v_exe, v_environ;
+  size_t i = 0, g;
+  VALUE v_cmdline, v_exe, v_environ, v_groups;
 
   // Passed into sysctl call
   static const int name_mib[] = {CTL_KERN, KERN_PROC, KERN_PROC_ALL, 0};
@@ -298,6 +298,11 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       v_tty_dev = rb_str_new2(devname(procs[i].kp_eproc.e_tdev, S_IFCHR));
     }
 
+    v_groups = rb_ary_new();
+    for (g = 0; g < procs[i].kp_eproc.e_ucred.cr_ngroups; ++g) {
+      rb_ary_push(v_groups, INT2FIX(procs[i].kp_eproc.e_ucred.cr_groups[g]));
+    }
+
     v_pstruct = rb_struct_new(
       sProcStruct,
       INT2FIX(procs[i].kp_proc.p_pid),
@@ -305,6 +310,11 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       INT2FIX(procs[i].kp_eproc.e_pgid),
       INT2FIX(procs[i].kp_eproc.e_pcred.p_ruid),
       INT2FIX(procs[i].kp_eproc.e_pcred.p_rgid),
+      INT2FIX(procs[i].kp_eproc.e_ucred.cr_uid),
+      rb_ary_entry(v_groups, 0),
+      v_groups,
+      INT2FIX(procs[i].kp_eproc.e_pcred.p_svuid),
+      INT2FIX(procs[i].kp_eproc.e_pcred.p_svgid),
       rb_str_new2(procs[i].kp_proc.p_comm),
       rb_str_new2(state),
       rb_float_new(procs[i].kp_proc.p_pctcpu),
@@ -417,6 +427,11 @@ void Init_proctable(){
     "pgid",        /* Process group id */
     "ruid",        /* Real user id */
     "rgid",        /* Real group id */
+    "euid",        /* Effective user id */
+    "egid",        /* Effective group id */
+    "groups",      /* All effective group ids */
+    "svuid",       /* Saved effective user id */
+    "svgid",       /* Saved effective group id */
     "comm",        /* Command name (15 chars) */
     "state",       /* Process status */
     "pctcpu",      /* %cpu for this process during p_swtime */
