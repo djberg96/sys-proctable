@@ -219,7 +219,8 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
   VALUE v_pstruct = Qnil;
   VALUE v_array = rb_ary_new();
   size_t length, count;
-  size_t i = 0, g;
+  size_t i = 0;
+  int g;
   VALUE v_cmdline, v_exe, v_environ, v_groups;
 
   // Passed into sysctl call
