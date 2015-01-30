@@ -1,6 +1,8 @@
 == 0.9.5 - ???
 * Significant cleanup and memory reduction of the OSX code. Thanks go
   to Ivan/toy for the patches.
+* Skip over /proc/<file>/status if unreadable on Linux. Thanks go to Jianjun
+  Mao for the patch.
 
 == 0.9.4 - 4-Mar-2014
 * Added support for AIX 5.3 or later courtesy of Rick Ohnemus.
