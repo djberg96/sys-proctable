@@ -10,7 +10,7 @@
 
 #define _PSTAT64
 
-#define SYS_PROCTABLE_VERSION "0.9.4"
+#define SYS_PROCTABLE_VERSION "0.9.5"
 
 #ifdef __cplusplus
 extern "C"
@@ -308,7 +308,7 @@ void Init_proctable()
 
    /* Constants */
 
-   /* 0.9.3: The version of the sys-proctable library */
+   /* 0.9.5: The version of the sys-proctable library */
    rb_define_const(cProcTable, "VERSION", rb_str_new2(SYS_PROCTABLE_VERSION));
 
    /* Structs */
