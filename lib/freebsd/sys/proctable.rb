@@ -5,7 +5,7 @@ module Sys
     extend FFI::Library
 
     # The version of the sys-proctable library.
-    VERSION = '0.9.4'
+    VERSION = '0.9.5'
 
     # Error typically raised if the ProcTable.ps method fails.
     class Error < StandardError; end
