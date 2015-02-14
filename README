@@ -11,6 +11,7 @@
 * Solaris 8+
 * HP-UX 10+
 * OS X 10.4+
+* AIX 5.3+
 
 == Installation
   gem install sys-proctable
