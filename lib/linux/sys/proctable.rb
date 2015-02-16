@@ -70,8 +70,9 @@ module Sys
       'euid',        # Effective user ID
       'gid',         # Real group ID
       'egid',        # Effective group ID
-      'pctcpu',     # Percent of CPU usage (custom field)
-      'pctmem'      # Percent of Memory usage (custom field)
+      'pctcpu',      # Percent of CPU usage (custom field)
+      'pctmem',      # Percent of Memory usage (custom field)
+      'nlwp'         # Number of Light-Weight Processes associated with the process (threads) 
     ]
 
     public
@@ -159,6 +160,10 @@ module Sys
 
         # Get /proc/<pid>/stat information
         stat = IO.read("/proc/#{file}/stat") rescue next
+
+        # Get number of LWP, one directory for each in /proc/<pid>/task/
+        # Every process has at least one thread, so if we fail to read the task directory, set nlwp to 1.
+        struct.nlwp = Dir.glob("/proc/#{file}/task/*").length rescue struct.nlwp = 1
 
         # Deal with spaces in comm name. Courtesy of Ara Howard.
         re = %r/\([^\)]+\)/
