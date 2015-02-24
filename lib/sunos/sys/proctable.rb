@@ -18,7 +18,7 @@ module Sys
     private_class_method :new
 
     # The version of the sys-proctable library
-    VERSION = '0.9.5'
+    VERSION = '0.9.6'
 
     private
 
