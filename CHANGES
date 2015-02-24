@@ -1,3 +1,6 @@
+== 0.9.6 - 24-Feb-2015
+* Added NLWP field on Linux. Thanks go to Rich Chatterton for the patch.
+
 == 0.9.5 - 10-Feb-2015
 * Significant cleanup and memory reduction of the OSX code. Thanks go
   to Ivan (toy) for the patches.
