@@ -5,7 +5,7 @@ module Sys
     extend FFI::Library
 
     # The version of the sys-proctable library.
-    VERSION = '0.9.6'
+    VERSION = '0.9.7'
 
     # Error typically raised if the ProcTable.ps method fails.
     class Error < StandardError; end
@@ -116,7 +116,7 @@ module Sys
         :ki_ngroups, :short,
         :ki_spare_short2, :short,
         :ki_groups, [:gid_t, KI_NGROUPS],
-        :ki_size, :vm_size_t,
+        :ki_size, :uint32_t,
         :ki_rssize, :segsz_t,
         :ki_swrss, :segsz_t,
         :ki_tsize, :segsz_t,
@@ -152,7 +152,7 @@ module Sys
         :ki_cr_flags, :uint,
         :ki_jid, :int,
         :ki_numthreads, :int,
-        :ki_tid, :lwpid_t,
+        :ki_tid, :pid_t,
         :ki_pri, Priority,
         :ki_rusage, Rusage,
         :ki_rusage_ch, Rusage,
