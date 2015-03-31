@@ -1,6 +1,7 @@
 require 'win32ole'
 require 'socket'
 require 'date'
+require 'sys/proctable/version'
 
 # The Sys module serves as a namespace only
 module Sys
@@ -13,9 +14,6 @@ module Sys
 
     # Error typically raised if one of the Sys::ProcTable methods fails
     class Error < StandardError; end
-
-    # The version of the sys-proctable library
-    VERSION = '0.9.6'
 
     # The comm field corresponds to the 'name' field.  The 'cmdline' field
     # is the CommandLine attribute on Windows XP or later, or the
