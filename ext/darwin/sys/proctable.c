@@ -37,22 +37,16 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
   char    *procargs, *sp, *np, *cp;
   int show_args = 1;
 
-  /* fprintf(stderr, "Getting argv of PID %d\n", pid); */
-
   mib[0] = CTL_KERN;
   mib[1] = KERN_ARGMAX;
 
   size = sizeof(argmax);
-  if (sysctl(mib, 2, &argmax, &size, NULL, 0) == -1) {
-    goto ERROR_A;
-  }
 
-  /* Allocate space for the arguments. */
-  procargs = (char *)malloc(argmax);
-  if (procargs == NULL) {
+  if (sysctl(mib, 2, &argmax, &size, NULL, 0) == -1)
     goto ERROR_A;
-  }
 
+  // Allocate space for the arguments.
+  procargs = (char *)ruby_xmalloc(argmax);
 
   /*
    * Make a sysctl() call to get the raw argument space of the process.
@@ -99,22 +93,21 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
   mib[1] = KERN_PROCARGS2;
   mib[2] = pid;
 
-
   size = (size_t)argmax;
-  if (sysctl(mib, 3, procargs, &size, NULL, 0) == -1) {
+
+  if (sysctl(mib, 3, procargs, &size, NULL, 0) == -1)
     goto ERROR_B;
-  }
 
   memcpy(&nargs, procargs, sizeof(nargs));
   cp = procargs + sizeof(nargs);
 
-  /* Copy exec_path to ruby String. */
+  // Copy exec_path to ruby String.
   *v_exe = rb_str_new2(cp);
 
-  /* Skip the saved exec_path. */
+  // Skip the saved exec_path.
   for (; cp < &procargs[size]; cp++) {
     if (*cp == '\0') {
-      /* End of exec_path reached. */
+      // End of exec_path reached.
       break;
     }
   }
@@ -122,17 +115,18 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
     goto ERROR_B;
   }
 
-  /* Skip trailing '\0' characters. */
+  // Skip trailing '\0' characters.
   for (; cp < &procargs[size]; cp++) {
     if (*cp != '\0') {
-      /* Beginning of first argument reached. */
+      // Beginning of first argument reached.
       break;
     }
   }
-  if (cp == &procargs[size]) {
+
+  if (cp == &procargs[size])
     goto ERROR_B;
-  }
-  /* Save where the argv[0] string starts. */
+
+  // Save where the argv[0] string starts.
   sp = cp;
 
   /*
@@ -146,12 +140,12 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
     if (*cp == '\0') {
       c++;
       if (np != NULL) {
-        /* Convert previous '\0'. */
+        // Convert previous '\0'.
         *np = ' ';
       } else {
         /* *argv0len = cp - sp; */
       }
-      /* Note location of current '\0'. */
+      // Note location of current '\0'.
       np = cp;
 
       if (!show_args) {
@@ -171,15 +165,16 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
    * np should point to the '\0' terminator for the string.
    */
   if (np == NULL || np == sp) {
-    /* Empty or unterminated string. */
+    // Empty or unterminated string.
     goto ERROR_B;
   }
 
-  /* Make a copy of the string to ruby String. */
+  // Make a copy of the string to ruby String.
   *v_cmdline = rb_str_new2(sp);
 
-  /* Read environment variables to ruby Hash. */
+  // Read environment variables to ruby Hash.
   *v_environ = rb_hash_new();
+
   while (cp[0]) {
     sp = strsep(&cp, "=");
     if (sp == NULL) {
@@ -189,8 +184,8 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
     cp += strlen(cp) + 1;
   }
 
-  /* Clean up. */
-  free(procargs);
+  // Cleanup.
+  ruby_xfree(procargs);
   return 0;
 
   ERROR_B:
@@ -235,10 +230,7 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
     rb_raise(cProcTableError, "sysctl: %s", strerror(errno));
 
   // Populate the kproc buffer
-  procs = malloc(length);
-
-  if(procs == NULL)
-    rb_raise(cProcTableError, "malloc: %s", strerror(errno));
+  procs = ruby_xmalloc(length);
 
   err = sysctl( (int *) name_mib, PROC_MIB_LEN, procs, &length, NULL, 0);
 
