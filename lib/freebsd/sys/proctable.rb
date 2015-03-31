@@ -1,11 +1,9 @@
 require 'ffi'
+require 'sys/proctable/version'
 
 module Sys
   class ProcTable
     extend FFI::Library
-
-    # The version of the sys-proctable library.
-    VERSION = '0.9.7'
 
     # Error typically raised if the ProcTable.ps method fails.
     class Error < StandardError; end
