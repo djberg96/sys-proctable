@@ -106,21 +106,17 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
 
   // Skip the saved exec_path.
   for (; cp < &procargs[size]; cp++) {
-    if (*cp == '\0') {
-      // End of exec_path reached.
-      break;
-    }
-  }
-  if (cp == &procargs[size]) {
-    goto ERROR_B;
+    if (*cp == '\0')
+      break; // End of exec_path reached.
   }
 
+  if (cp == &procargs[size])
+    goto ERROR_B;
+
   // Skip trailing '\0' characters.
-  for (; cp < &procargs[size]; cp++) {
-    if (*cp != '\0') {
-      // Beginning of first argument reached.
-      break;
-    }
+  for (; cp < &procargs[size]; cp++){
+    if (*cp != '\0')
+      break; // Beginning of first argument reached.
   }
 
   if (cp == &procargs[size])
@@ -139,12 +135,10 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
   for (np = NULL; c < nargs && cp < &procargs[size]; cp++) {
     if (*cp == '\0') {
       c++;
-      if (np != NULL) {
-        // Convert previous '\0'.
-        *np = ' ';
-      } else {
-        /* *argv0len = cp - sp; */
-      }
+
+      if (np != NULL)
+        *np = ' '; // Convert previous '\0'.
+
       // Note location of current '\0'.
       np = cp;
 
@@ -164,10 +158,8 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
    * sp points to the beginning of the arguments/environment string, and
    * np should point to the '\0' terminator for the string.
    */
-  if (np == NULL || np == sp) {
-    // Empty or unterminated string.
-    goto ERROR_B;
-  }
+  if (np == NULL || np == sp)
+    goto ERROR_B; // Empty or unterminated string.
 
   // Make a copy of the string to ruby String.
   *v_cmdline = rb_str_new2(sp);
@@ -177,9 +169,10 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
 
   while (cp[0]) {
     sp = strsep(&cp, "=");
-    if (sp == NULL) {
+
+    if (sp == NULL)
       break;
-    }
+
     rb_hash_aset(*v_environ, rb_str_new2(sp), rb_str_new2(cp));
     cp += strlen(cp) + 1;
   }
