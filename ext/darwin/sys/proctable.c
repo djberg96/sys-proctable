@@ -20,7 +20,7 @@
 
 #define pid_of(pproc) pproc->kp_proc.p_pid
 
-#define SYS_PROCTABLE_VERSION "0.9.6"
+#define SYS_PROCTABLE_VERSION "0.9.7"
 
 #define PROC_MIB_LEN 4
 #define ARGS_MIB_LEN 3
@@ -402,7 +402,7 @@ void Init_proctable(){
 
   /* Constants */
 
-  /* 0.9.6: The version of the sys-proctable library */
+  /* 0.9.7: The version of the sys-proctable library */
   rb_define_const(cProcTable, "VERSION", rb_str_new2(SYS_PROCTABLE_VERSION));
 
   /* Structs */
