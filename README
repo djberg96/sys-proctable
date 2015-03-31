@@ -43,7 +43,7 @@
   # Return the results as an array of ProcTableStructs
   a = ProcTable.ps
   a.each do |p|
-    puts a.pid
+    puts p.pid
     # ...
   end
 
