@@ -1,6 +1,8 @@
 == 0.9.7 - ???
 * Fixed a bug in the OSX code that could cause the ps method to fail. Thanks
   go to Koshevoy Anton for the spot.
+* Some internal refactoring of version handling. Now all platforms use a
+  single version file.
 
 == 0.9.6 - 24-Feb-2015
 * Added NLWP field on Linux. Thanks go to Rich Chatterton for the patch.
