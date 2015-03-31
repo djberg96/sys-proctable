@@ -191,7 +191,7 @@ namespace :gem do
   desc 'Install the sys-proctable library as a gem'
   task :install => [:create] do
     gem_name = Dir['*.gem'].first
-    sh "gem install #{gem_name}"
+    sh "gem install -l #{gem_name}"
   end
 end
 
