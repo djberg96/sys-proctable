@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'sys-proctable'
-  spec.version    = '0.9.6'
+  spec.version    = '0.9.7'
   spec.author     = 'Daniel J. Berger'
   spec.license    = 'Artistic 2.0' 
   spec.email      = 'djberg96@gmail.com'
