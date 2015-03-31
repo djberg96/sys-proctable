@@ -32,9 +32,9 @@
 VALUE cProcTableError, sProcStruct;
 
 int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
-  int    mib[3], argmax, nargs, c = 0;
-  size_t    size;
-  char    *procargs, *sp, *np, *cp;
+  int mib[3], argmax, nargs, c = 0;
+  size_t size;
+  char *procargs, *sp, *np, *cp;
   int show_args = 1;
 
   mib[0] = CTL_KERN;
@@ -170,7 +170,7 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
   while (cp[0]) {
     sp = strsep(&cp, "=");
 
-    if (sp == NULL)
+    if (!sp || !cp)
       break;
 
     rb_hash_aset(*v_environ, rb_str_new2(sp), rb_str_new2(cp));
