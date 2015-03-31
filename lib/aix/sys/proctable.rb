@@ -3,6 +3,7 @@
 #
 # A pure Ruby version of sys-proctable for AIX 5.3 or later.
 ########################################################################
+require 'sys/proctable/version'
 
 # The Sys module serves as a namespace only.
 module Sys
@@ -14,9 +15,6 @@ module Sys
 
     # There is no constructor
     private_class_method :new
-
-    # The version of the sys-proctable library
-    VERSION = '0.9.6'
 
     private
 
