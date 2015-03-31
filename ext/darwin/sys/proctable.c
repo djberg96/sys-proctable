@@ -20,8 +20,6 @@
 
 #define pid_of(pproc) pproc->kp_proc.p_pid
 
-#define SYS_PROCTABLE_VERSION "0.9.7"
-
 #define PROC_MIB_LEN 4
 #define ARGS_MIB_LEN 3
 
@@ -383,6 +381,8 @@ static VALUE pt_fields(VALUE klass){
 void Init_proctable(){
   VALUE mSys, cProcTable;
 
+  rb_require("sys/proctable/version");
+
   /* The Sys module serves as a namespace only */
   mSys = rb_define_module("Sys");
 
@@ -399,11 +399,6 @@ void Init_proctable(){
 
   /* There is no constructor */
   rb_funcall(cProcTable, rb_intern("private_class_method"), 1, ID2SYM(rb_intern("new")));
-
-  /* Constants */
-
-  /* 0.9.7: The version of the sys-proctable library */
-  rb_define_const(cProcTable, "VERSION", rb_str_new2(SYS_PROCTABLE_VERSION));
 
   /* Structs */
 
