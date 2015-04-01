@@ -180,7 +180,7 @@ int argv_of_pid(int pid, VALUE* v_cmdline, VALUE* v_exe, VALUE* v_environ) {
   return 0;
 
   ERROR_B:
-  free(procargs);
+  ruby_xfree(procargs);
   ERROR_A:
   return -1;
 }
@@ -283,9 +283,9 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
     }
 
     v_groups = rb_ary_new();
-    for (g = 0; g < procs[i].kp_eproc.e_ucred.cr_ngroups; ++g) {
+
+    for (g = 0; g < procs[i].kp_eproc.e_ucred.cr_ngroups; ++g)
       rb_ary_push(v_groups, INT2FIX(procs[i].kp_eproc.e_ucred.cr_groups[g]));
-    }
 
     v_pstruct = rb_struct_new(
       sProcStruct,
@@ -340,7 +340,8 @@ static VALUE pt_ps(int argc, VALUE* argv, VALUE klass){
       rb_ary_push(v_array, v_pstruct);
   }
 
-  if(procs) free(procs);
+  if(procs)
+    free(procs);
 
   if(!rb_block_given_p()){
     if(NIL_P(v_pid))
