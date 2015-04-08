@@ -21,12 +21,15 @@ Description
 
   You may need to specify a platform in some cases. For example:
 
+```sh
   gem install sys-proctable --platform mswin32 # Windows
   gem install sys-proctable --platform sunos   # Solaris
   gem install sys-proctable --platform linux   # Linux
   gem install sys-proctable --platform freebsd # FreeBSD
+```
 
 ## Synopsis
+  ```rb
   require 'sys/proctable'
   include Sys
 
@@ -49,6 +52,7 @@ Description
     puts p.pid
     # ...
   end
+  ```
 
 ## Notes 
   Windows users may pass a host name as a second argument to get process
