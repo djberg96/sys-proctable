@@ -1,11 +1,14 @@
-== 0.9.8 - 18-Apr-2015
-* Fixed a bug in the gemspec.
+== 0.9.8 - ???
+* Fixed a bug in the gemspec. Last version got yanked.
 
 == 0.9.7 - 18-Apr-2015
 * Fixed a bug in the OSX code that could cause the ps method to fail. Thanks
   go to Koshevoy Anton for the spot.
 * Some internal refactoring of version handling. Now all platforms use a
   single version file.
+* Replaced vm_size_t and lwpid_t with universal data types on FreeBSD because
+  FFI on FreeBSD 10 no longer understands them. Thanks go to Mike Owens for
+  the spot.
 
 == 0.9.6 - 24-Feb-2015
 * Added NLWP field on Linux. Thanks go to Rich Chatterton for the patch.
