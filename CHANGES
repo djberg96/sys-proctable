@@ -1,4 +1,4 @@
-== 0.9.7 - ???
+== 0.9.7 - 18-Apr-2015
 * Fixed a bug in the OSX code that could cause the ps method to fail. Thanks
   go to Koshevoy Anton for the spot.
 * Some internal refactoring of version handling. Now all platforms use a
