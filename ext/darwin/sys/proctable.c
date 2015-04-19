@@ -382,8 +382,6 @@ static VALUE pt_fields(VALUE klass){
 void Init_proctable(){
   VALUE mSys, cProcTable;
 
-  rb_require("sys/proctable/version");
-
   /* The Sys module serves as a namespace only */
   mSys = rb_define_module("Sys");
 
@@ -400,6 +398,9 @@ void Init_proctable(){
 
   /* There is no constructor */
   rb_funcall(cProcTable, rb_intern("private_class_method"), 1, ID2SYM(rb_intern("new")));
+
+  /* 0.9.8: The version of the sys-proctable library */
+  rb_define_const(cProcTable, "VERSION", rb_str_new2("0.9.8"));
 
   /* Structs */
 
