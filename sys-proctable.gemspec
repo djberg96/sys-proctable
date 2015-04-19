@@ -2,7 +2,7 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'sys-proctable'
-  spec.version    = '0.9.7'
+  spec.version    = '0.9.8'
   spec.author     = 'Daniel J. Berger'
   spec.license    = 'Artistic 2.0' 
   spec.email      = 'djberg96@gmail.com'
@@ -15,6 +15,7 @@ Gem::Specification.new do |spec|
   spec.files = [
     'benchmarks/bench_ps.rb',
     'examples/example_ps.rb',
+    'lib/sys/proctable/version.rb',
     'lib/sys/top.rb',
     'CHANGES',
     'MANIFEST',
