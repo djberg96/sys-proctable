@@ -6,7 +6,7 @@ Gem::Specification.new do |spec|
   spec.author     = 'Daniel J. Berger'
   spec.license    = 'Artistic 2.0' 
   spec.email      = 'djberg96@gmail.com'
-  spec.homepage   = 'http://www.rubyforge.org/projects/sysutils'
+  spec.homepage   = 'http://github.com/djberg96/sys-proctable'
   spec.platform   = Gem::Platform::CURRENT # Probably altered by Rake task
   spec.summary    = 'An interface for providing process table information'
   spec.test_files = ['test/test_sys_proctable_all.rb']
@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
     'sys-proctable.gemspec'
   ]
 
-  spec.rubyforge_project = 'sysutils'
   spec.extra_rdoc_files  = ['CHANGES', 'README', 'MANIFEST', 'doc/top.txt']
 
   spec.add_development_dependency('test-unit')
