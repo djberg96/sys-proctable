@@ -17,7 +17,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
       stime cutime cstime priority nice itrealvalue starttime vsize
       rss rlim startcode endcode startstack kstkesp kstkeip signal blocked
       sigignore sigcatch wchan nswap cnswap exit_signal processor environ
-      pctcpu pctmem nlwp
+      pctcpu pctmem nlwp cgroup
       /
   end
 
@@ -293,6 +293,12 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
   def test_nlwp
     assert_respond_to(@ptable, :nlwp)
     assert_kind_of(Fixnum, @ptable.nlwp)
+  end
+
+  def test_cgroup
+    assert_respond_to(@ptable, :cgroup)
+    assert_kind_of(Array, @ptable.cgroup)
+    assert_kind_of(CgroupEntry, @ptable.cgroup.first)
   end
 
   def teardown

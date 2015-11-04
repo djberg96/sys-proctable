@@ -1,4 +1,5 @@
 require 'sys/proctable/version'
+require 'linux/sys/cgroup_entry'
 
 # The Sys module serves as a namespace only.
 module Sys
@@ -71,7 +72,8 @@ module Sys
       'egid',        # Effective group ID
       'pctcpu',      # Percent of CPU usage (custom field)
       'pctmem',      # Percent of Memory usage (custom field)
-      'nlwp'         # Number of Light-Weight Processes associated with the process (threads) 
+      'nlwp',        # Number of Light-Weight Processes associated with the process (threads) 
+      'cgroup'       # Control groups to which the process belongs
     ]
 
     public
@@ -163,6 +165,9 @@ module Sys
         # Get number of LWP, one directory for each in /proc/<pid>/task/
         # Every process has at least one thread, so if we fail to read the task directory, set nlwp to 1.
         struct.nlwp = Dir.glob("/proc/#{file}/task/*").length rescue struct.nlwp = 1
+
+        # Get control groups to which the process belongs
+        struct.cgroup = IO.readlines("/proc/#{file}/cgroup").map { |l| CgroupEntry.new(l) } rescue []
 
         # Deal with spaces in comm name. Courtesy of Ara Howard.
         re = %r/\([^\)]+\)/
