@@ -1,5 +1,5 @@
 require 'sys/proctable/version'
-require 'linux/sys/cgroup_entry'
+require_relative 'proctable/cgroup_entry'
 
 # The Sys module serves as a namespace only.
 module Sys
@@ -72,7 +72,7 @@ module Sys
       'egid',        # Effective group ID
       'pctcpu',      # Percent of CPU usage (custom field)
       'pctmem',      # Percent of Memory usage (custom field)
-      'nlwp',        # Number of Light-Weight Processes associated with the process (threads) 
+      'nlwp',        # Number of Light-Weight Processes associated with the process (threads)
       'cgroup'       # Control groups to which the process belongs
     ]
 

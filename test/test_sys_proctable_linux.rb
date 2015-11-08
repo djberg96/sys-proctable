@@ -298,7 +298,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
   def test_cgroup
     assert_respond_to(@ptable, :cgroup)
     assert_kind_of(Array, @ptable.cgroup)
-    assert_kind_of(CgroupEntry, @ptable.cgroup.first)
+    assert_kind_of(ProcTable::CgroupEntry, @ptable.cgroup.first)
   end
 
   def teardown
