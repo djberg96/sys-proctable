@@ -10,6 +10,7 @@ Gem::Specification.new do |spec|
   spec.platform   = Gem::Platform::CURRENT # Probably altered by Rake task
   spec.summary    = 'An interface for providing process table information'
   spec.test_files = ['test/test_sys_proctable_all.rb']
+  spec.cert_chain = ['certs/djberg96_pub.pem']
    
   # Additional files for your platform are added by the 'rake gem' task.
   spec.files = [

@@ -183,6 +183,8 @@ namespace :gem do
     # https://github.com/rubygems/rubygems/issues/147
     spec.original_platform = spec.platform
 
+    spec.signing_key = File.join(Dir.home, '.ssh', 'gem-private_key.pem')
+
     Gem::Package.build(spec)
   end
 
