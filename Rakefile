@@ -131,6 +131,7 @@ namespace :gem do
     require 'rubygems/package'
 
     spec = eval(IO.read('sys-proctable.gemspec'))
+    spec.files += ['lib/sys-proctable.rb']
 
     # I've had to manually futz with the spec here in some cases
     # in order to get the universal platform settings I want because
