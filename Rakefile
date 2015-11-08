@@ -126,11 +126,16 @@ Rake::TestTask.new do |t|
 end
 
 namespace :gem do
-  desc 'Create a gem for your current OS'
-  task :create => [:clean] do |t, os|
+  desc 'Create a gem for the specified OS, or your current OS by default'
+  task :create, [:os] => [:clean] do |_task, args|
     require 'rubygems/package'
 
-    os ||= CONFIG['host_os']
+    if args.is_a?(String)
+      os = args
+    else
+      args.with_defaults(:os => CONFIG['host_os'])
+      os = args[:os]
+    end
 
     spec = eval(IO.read('sys-proctable.gemspec'))
     spec.files += ['lib/sys-proctable.rb']
@@ -178,6 +183,8 @@ namespace :gem do
          spec.require_paths = ['lib', 'lib/windows']
          spec.files += ['lib/windows/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_windows.rb'
+      else
+         raise "Unsupported platform: #{os}"
     end
 
     spec.test_files << 'test/test_sys_top.rb'
@@ -187,10 +194,10 @@ namespace :gem do
 
     spec.signing_key = File.join(Dir.home, '.ssh', 'gem-private_key.pem')
 
-    Gem::Package.build(spec)
+    Gem::Package.build(spec, true)
   end
 
-  desc 'Create gems for each supported OS'
+  desc 'Create a gem for each supported OS'
   task :create_all => [:clean] do
     platforms = %w[aix darwin freebsd hpux linux solaris windows]
     Rake::Task["clean"].execute
