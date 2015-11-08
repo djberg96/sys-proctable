@@ -126,9 +126,11 @@ Rake::TestTask.new do |t|
 end
 
 namespace :gem do
-  desc 'Create a gem'
-  task :create => [:clean] do
+  desc 'Create a gem for your current OS'
+  task :create => [:clean] do |t, os|
     require 'rubygems/package'
+
+    os ||= CONFIG['host_os']
 
     spec = eval(IO.read('sys-proctable.gemspec'))
     spec.files += ['lib/sys-proctable.rb']
@@ -137,7 +139,7 @@ namespace :gem do
     # in order to get the universal platform settings I want because
     # of some bugginess in Rubygems' platform.rb.
     #
-    case CONFIG['host_os']
+    case os
       when /freebsd/i
          spec.platform = Gem::Platform.new(['universal', 'freebsd'])
          spec.require_paths = ['lib', 'lib/freebsd']
@@ -186,6 +188,13 @@ namespace :gem do
     spec.signing_key = File.join(Dir.home, '.ssh', 'gem-private_key.pem')
 
     Gem::Package.build(spec)
+  end
+
+  desc 'Create gems for each supported OS'
+  task :create_all => [:clean] do
+    platforms = %w[aix darwin freebsd hpux linux solaris windows]
+    Rake::Task["clean"].execute
+    platforms.each{ |os| Rake::Task["gem:create"].execute(os) }
   end
 
   desc 'Install the sys-proctable library as a gem'
