@@ -15,6 +15,7 @@
 * ext/darwin/sys/proctable.c
 * ext/hpux/extconf.rb
 * ext/hpux/sys/proctable.c
+* lib/sys-proctable.rb
 * lib/sys/top.rb
 * lib/sys/proctable/version.rb
 * lib/aix/sys/proctable.rb
