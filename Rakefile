@@ -201,7 +201,11 @@ namespace :gem do
   task :create_all => [:clean] do
     platforms = %w[aix darwin freebsd hpux linux solaris windows]
     Rake::Task["clean"].execute
-    platforms.each{ |os| Rake::Task["gem:create"].execute(os) }
+    platforms.each{ |os|
+      FileUtils.mkdir_p("pkg/#{os}")
+      Rake::Task["gem:create"].execute(os)
+      Dir.glob("*.gem").each{ |gem| FileUtils.mv(gem, "pkg/#{os}") }
+    }
   end
 
   desc 'Install the sys-proctable library as a gem'
