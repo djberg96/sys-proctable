@@ -128,6 +128,8 @@ end
 namespace :gem do
   desc 'Create a gem'
   task :create => [:clean] do
+    require 'rubygems/package'
+
     spec = eval(IO.read('sys-proctable.gemspec'))
 
     # I've had to manually futz with the spec here in some cases
@@ -180,12 +182,7 @@ namespace :gem do
     # https://github.com/rubygems/rubygems/issues/147
     spec.original_platform = spec.platform
 
-    if Gem::VERSION < "2.0"
-      Gem::Builder.new(spec).build
-    else
-      require 'rubygems/package'
-      Gem::Package.build(spec)
-    end
+    Gem::Package.build(spec)
   end
 
   desc 'Install the sys-proctable library as a gem'
