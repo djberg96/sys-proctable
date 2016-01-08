@@ -3,7 +3,7 @@ module Sys
     # This represents a cgroup entry
     #
     # Have a look at `man 5 proc` on a linux distribution, to get some more
-    # information about the lines and there fields in `/proc/[pid]/cgroup`.
+    # information about the lines and their fields in `/proc/[pid]/cgroup`.
     #
     # Example:
     #
