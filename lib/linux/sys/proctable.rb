@@ -1,5 +1,6 @@
 require 'sys/proctable/version'
 require_relative 'proctable/cgroup_entry'
+require_relative 'proctable/smaps'
 
 # The Sys module serves as a namespace only.
 module Sys
@@ -73,7 +74,8 @@ module Sys
       'pctcpu',      # Percent of CPU usage (custom field)
       'pctmem',      # Percent of Memory usage (custom field)
       'nlwp',        # Number of Light-Weight Processes associated with the process (threads)
-      'cgroup'       # Control groups to which the process belongs
+      'cgroup',      # Control groups to which the process belongs
+      'smaps'        # Process memory size for all mapped files
     ]
 
     public
@@ -168,6 +170,13 @@ module Sys
 
         # Get control groups to which the process belongs
         struct.cgroup = IO.readlines("/proc/#{file}/cgroup").map { |l| CgroupEntry.new(l) } rescue []
+
+        # Read smaps, returning a parsable string if we don't have permissions.
+        # Note: We're blindly rescuing because File.readable?/readable_real?
+        # are true for a file in the /proc fileystem but raises a ErrNo:EACCESS
+        # when your try to read it without permissions.
+        smaps_contents = IO.read("/proc/#{file}/smaps") rescue ""
+        struct.smaps = Smaps.new(file, smaps_contents)
 
         # Deal with spaces in comm name. Courtesy of Ara Howard.
         re = %r/\([^\)]+\)/

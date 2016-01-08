@@ -166,7 +166,7 @@ namespace :gem do
       when /linux/i
          spec.platform = Gem::Platform.new(['universal', 'linux'])
          spec.require_paths = ['lib', 'lib/linux']
-         spec.files += ['lib/linux/sys/proctable.rb', 'lib/linux/sys/proctable/cgroup_entry.rb']
+         spec.files += ['lib/linux/sys/proctable.rb', 'lib/linux/sys/proctable/cgroup_entry.rb', 'lib/linux/sys/proctable/smaps.rb']
          spec.test_files << 'test/test_sys_proctable_linux.rb'
       when /sunos|solaris/i
          spec.platform = Gem::Platform.new(['universal', 'solaris'])

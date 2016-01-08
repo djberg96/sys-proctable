@@ -17,7 +17,7 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
       stime cutime cstime priority nice itrealvalue starttime vsize
       rss rlim startcode endcode startstack kstkesp kstkeip signal blocked
       sigignore sigcatch wchan nswap cnswap exit_signal processor environ
-      pctcpu pctmem nlwp cgroup
+      pctcpu pctmem nlwp cgroup smaps
       /
   end
 
@@ -299,6 +299,11 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
     assert_respond_to(@ptable, :cgroup)
     assert_kind_of(Array, @ptable.cgroup)
     assert_kind_of(ProcTable::CgroupEntry, @ptable.cgroup.first)
+  end
+
+  def test_smaps
+    assert_respond_to(@ptable, :smaps)
+    assert_kind_of(ProcTable::Smaps, @ptable.smaps)
   end
 
   def teardown
