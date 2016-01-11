@@ -1,5 +1,6 @@
-== 1.0.0 - ???
+== 1.0.0 - 11-Jan-2016
 * Added smaps information for Linux. Thanks go to Joe Rafaniello for the patch.
+* This is not really a major release. I just ran out of version numbers.
 
 == 0.9.9 - 8-Nov-2015
 * Added support for cgroups on Linux. Thanks go to Dennis Günnewig for the patch.
