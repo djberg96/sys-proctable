@@ -69,20 +69,16 @@ module Sys
     attach_function :proc_listallpids, [:pointer, :int], :int
 
     def self.ps(pid = nil)
-      size = proc_listpids(PROC_PIDTASKALLINFO, 0, nil, 0)
-      ptr  = FFI::MemoryPointer.new(ProcTaskAllInfo, size)
+      num = proc_listallpids(nil, 0)
+      ptr = FFI::MemoryPointer.new(ProcTaskAllInfo, num)
 
-      if proc_listpids(PROC_PIDTASKALLINFO, 0, ptr, ptr.size) == 0
-        raise SystemCallError.new('proc_listpids', FFI.errno)
-      end
+      num = proc_listallpids(ptr, ptr.size)
 
-      count = proc_listallpids(ptr, ptr.size)
-
-      raise SystemCallError.new('proc_listallpids', FFI.errno) if count == 0
+      raise SystemCallError.new('proc_listallpids', FFI.errno) if num == 0
 
       # TODO: Fix
-      0.upto(count) do |index|
-        struct = ProcTaskAllInfo.new(ptr + (index * ProcTaskAllInfo.size))
+      0.upto(num) do |n|
+        struct = ProcTaskAllInfo.new(ptr + (n * ProcTaskAllInfo.size))
         p struct[:pbsd][:pbi_pid]
         p struct[:pbsd][:pbi_comm].to_s
       end
