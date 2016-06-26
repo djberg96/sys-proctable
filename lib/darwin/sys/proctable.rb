@@ -5,11 +5,14 @@ module Sys
     extend FFI::Library
     ffi_lib 'proc'
 
+    private
+
     PROC_ALL_PIDS       = 1
     PROC_PIDTASKALLINFO = 2
     PROC_PIDTASKINFO    = 4
 
     MAXCOMLEN = 16
+
 
     class ProcBsdInfo < FFI::Struct
       layout(
@@ -24,7 +27,7 @@ module Sys
         :pbi_rgid, :gid_t,
         :pbi_svuid, :uid_t,
         :pbi_svgid, :gid_t,
-        :rfu_1, :uint32_t,
+        :rfu1, :uint32_t,
         :pbi_comm, [:char, MAXCOMLEN],
         :pbi_name, [:char, MAXCOMLEN * 2],
         :pbi_nfiles, :uint32_t,
@@ -69,6 +72,27 @@ module Sys
     attach_function :proc_listallpids, [:pointer, :int], :int
     attach_function :proc_pidinfo, [:int, :int, :uint64_t, :pointer, :int], :int
 
+    @fields = %w[
+      flags status xstatus pid ppid uid gid ruid rgid svuid svgid rfu1 comm
+      name nfiles pgid pjobc tdev tpgid nice start_tvsec start_tvusec
+      virtual_size resident_size total_user total_system threads_user
+      threads_system policy faults pageins cow_faults messages_sent
+      messages_received syscalls_mach syscalls_unix csw threadnum numrunning
+      priority
+    ]
+
+    # Add a couple aliases to make it similar to Linux
+    ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
+      alias vsize virtual_size
+      alias rss resident_size
+    end
+
+    public
+
+    def self.fields
+      @fields
+    end
+
     def self.ps(pid = nil)
       num = proc_listallpids(nil, 0)
       ptr = FFI::MemoryPointer.new(:pid_t, num)
@@ -76,21 +100,43 @@ module Sys
 
       raise SystemCallError.new('proc_listallpids', FFI.errno) if num == 0
 
-      pids = ptr.get_array_of_int32(0, num).sort
+      pids  = ptr.get_array_of_int32(0, num).sort
+      array = block_given? ? nil : []
 
-      pids.each do |pid|
-        struct = ProcTaskAllInfo.new
+      pids.each do |lpid|
+        next unless pid == lpid if pid
+        info = ProcTaskAllInfo.new
 
-        if proc_pidinfo(pid, PROC_PIDTASKALLINFO, 0, struct, struct.size) <= 0
+        if proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size) <= 0
           if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
-            next
+            next # Either we don't have permission, or the pid no longer exists
           else
             raise SystemCallError.new('proc_pidinfo', FFI.errno)
           end
         end
+
+        struct = ProcTableStruct.new
+
+        info.members.each do |nested|
+          info[nested].members.each do |member|
+            temp = member.to_s.split('_')
+            sproperty = temp.size > 1 ? temp[1..-1].join('_') : temp.first
+            if info[nested][member].is_a?(FFI::StructLayout::CharArray)
+              struct[sproperty.to_sym] = info[nested][member].to_s
+            else
+              struct[sproperty.to_sym] = info[nested][member]
+            end
+          end
+        end
+
+        if block_given?
+          yield struct
+        else
+          array << struct
+        end
       end
+
+      pid ? array.first : array
     end
   end
 end
-
-Sys::ProcTable.ps
