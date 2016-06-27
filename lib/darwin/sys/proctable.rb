@@ -186,6 +186,7 @@ module Sys
         end
       end
 
+      return nil if array.nil?
       pid ? array.first : array
     end
 
