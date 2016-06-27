@@ -2,45 +2,64 @@
 # test_sys_top.rb
 #
 # Test suite for the sys-top library that is included with this distribution.
+#
+# Tests omitted on OSX until I figure out how to get pctcpu information.
 ##############################################################################
-require 'rubygems'
-gem 'test-unit'
-
-require 'test/unit'
+require 'test-unit'
 require 'sys/top'
 
 class TC_Top < Test::Unit::TestCase
   include Sys
 
-  def test_version
+  def setup
+    @osx = RbConfig::CONFIG['host_os'] =~ /darwin/i
+  end
+
+  test "top version" do
     assert_equal('1.0.4', Top::VERSION)
   end
 
-  def test_top_basic
+  test "top basic functionality" do
     assert_respond_to(Top, :top)
+  end
+
+  test "top works with no arguments" do
+    omit_if(@osx)
     assert_nothing_raised{ Top.top }
+  end
+
+  test "top accepts optional arguments" do
+    omit_if(@osx)
     assert_nothing_raised{ Top.top(5) }
     assert_nothing_raised{ Top.top(5, 'cmdline') }
   end
 
-  def test_top
+  test "top with no arguments returns expected results" do
+    omit_if(@osx)
     assert_equal(10, Top.top.length)
     assert_kind_of(Struct::ProcTableStruct, Top.top.first)
   end
 
-  def test_top_with_size
+  test "top with size argument returns expected result" do
+    omit_if(@osx)
     assert_equal(5, Top.top(5).length)
   end
 
-  def test_top_with_size_and_sort_by_field
+  test "top with size and sort_by argument returns expected result" do
+    omit_if(@osx)
     assert_equal(5, Top.top(5, :cmdline).length)
   end
 
-  def test_top_return_type
+  test "top returns an array" do
+    omit_if(@osx)
     assert_kind_of(Array, Top.top)
   end
 
-  def test_top_expected_errors
+  test "top accepts a maximum of two arguments" do
     assert_raises(ArgumentError){ Top.top(1, 'foo', 2) }
+  end
+
+  def teardown
+    @osx = nil
   end
 end
