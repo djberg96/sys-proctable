@@ -2,9 +2,9 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'sys-proctable'
-  spec.version    = '1.0.0'
+  spec.version    = '1.1.0'
   spec.author     = 'Daniel J. Berger'
-  spec.license    = 'Artistic 2.0' 
+  spec.license    = 'Apache 2.0'
   spec.email      = 'djberg96@gmail.com'
   spec.homepage   = 'http://github.com/djberg96/sys-proctable'
   spec.platform   = Gem::Platform::CURRENT # Probably altered by Rake task
