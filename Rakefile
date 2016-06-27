@@ -27,15 +27,12 @@ task :build => [:clean] do
   end
 
   case CONFIG['host_os']
-    when /darwin/i
-      dir = 'ext/darwin'
-      ext = '.bundle'
     when /hpux/i
       dir = 'ext/hpux'
       ext = '.sl'
   end
 
-  if CONFIG['host_os'] =~ /darwin|hpux/i
+  if CONFIG['host_os'] =~ /hpux/i
     Dir.chdir(dir) do
       ruby 'extconf.rb'
       sh 'make'
@@ -63,7 +60,7 @@ task :install => [:build] do
     when /freebsd/i
       file = 'lib/freebsd/sys/proctable.rb'
     when /darwin/i
-      Dir.chdir('ext/darwin'){ sh 'make install' }
+      file = 'lib/darwin/sys/proctable.rb'
     when /hpux/i
       Dir.chdir('ext/hpux'){ sh 'make install' }
   end
@@ -74,7 +71,7 @@ end
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
   case CONFIG['host_os']
-    when /darwin|hpux/i
+    when /hpux/i
       dir  = File.join(CONFIG['sitearchdir'], 'sys')
       file = File.join(dir, 'proctable.' + CONFIG['DLEXT'])
     else
@@ -117,7 +114,7 @@ Rake::TestTask.new do |t|
       t.test_files = FileList['test/test_sys_proctable_freebsd.rb']  
       t.libs << 'lib/freebsd'
     when /darwin/i
-      t.libs << 'ext/darwin'
+      t.libs << 'lib/darwin'
       t.test_files = FileList['test/test_sys_proctable_darwin.rb']
     when /hpux/i
       t.libs << 'ext/hpux'
@@ -153,10 +150,10 @@ namespace :gem do
          spec.add_dependency('ffi')
       when /darwin/i
          spec.platform = Gem::Platform.new(['universal', 'darwin'])
-         spec.files << 'ext/darwin/sys/proctable.c'
-         spec.extra_rdoc_files << 'ext/darwin/sys/proctable.c'
+         spec.require_paths = ['lib', 'lib/darwin']
+         spec.files += ['lib/darwin/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_darwin.rb'
-         spec.extensions = ['ext/darwin/extconf.rb']
+         spec.add_dependency('ffi')
       when /hpux/i
          spec.platform = Gem::Platform.new(['universal', 'hpux'])
          spec.files << 'ext/hpux/sys/proctable.c'
