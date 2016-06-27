@@ -12,7 +12,8 @@ module Sys
     PROC_PIDTASKINFO    = 4
 
     MAXCOMLEN = 16
-
+    MAXPATHLEN = 256
+    PROC_PIDPATHINFO_MAXSIZE = MAXPATHLEN * 4
 
     class ProcBsdInfo < FFI::Struct
       layout(
@@ -71,6 +72,7 @@ module Sys
     attach_function :proc_listpids, [:uint32_t, :uint32_t, :pointer, :int], :int
     attach_function :proc_listallpids, [:pointer, :int], :int
     attach_function :proc_pidinfo, [:int, :int, :uint64_t, :pointer, :int], :int
+    attach_function :proc_pidpath, [:int, :pointer, :uint32_t], :int
 
     @fields = %w[
       flags status xstatus pid ppid uid gid ruid rgid svuid svgid rfu1 comm
@@ -78,7 +80,7 @@ module Sys
       virtual_size resident_size total_user total_system threads_user
       threads_system policy faults pageins cow_faults messages_sent
       messages_received syscalls_mach syscalls_unix csw threadnum numrunning
-      priority
+      priority path
     ]
 
     # Add a couple aliases to make it similar to Linux
@@ -103,6 +105,7 @@ module Sys
       pids  = ptr.get_array_of_int32(0, num).sort
       array = block_given? ? nil : []
 
+
       pids.each do |lpid|
         next unless pid == lpid if pid
         info = ProcTaskAllInfo.new
@@ -116,6 +119,12 @@ module Sys
         end
 
         struct = ProcTableStruct.new
+
+        path = FFI::MemoryPointer.new(:char, PROC_PIDPATHINFO_MAXSIZE)
+
+        if proc_pidpath(pid, path, path.size) > 0
+          struct[:path] = path.read_string
+        end
 
         info.members.each do |nested|
           info[nested].members.each do |member|
