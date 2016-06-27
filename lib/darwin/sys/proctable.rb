@@ -3,7 +3,6 @@ require 'ffi'
 module Sys
   class ProcTable
     extend FFI::Library
-    ffi_lib 'proc'
 
     private
 
@@ -11,6 +10,9 @@ module Sys
     PROC_PIDTASKALLINFO = 2
     PROC_PIDTASKINFO    = 4
 
+    CTL_KERN = 1
+    KERN_PROCARGS = 38
+    KERN_PROCARGS2 = 49
     MAXCOMLEN = 16
     MAXPATHLEN = 256
     PROC_PIDPATHINFO_MAXSIZE = MAXPATHLEN * 4
@@ -69,10 +71,14 @@ module Sys
       layout(:pbsd, ProcBsdInfo, :ptinfo, ProcTaskInfo)
     end
 
-    attach_function :proc_listpids, [:uint32_t, :uint32_t, :pointer, :int], :int
+    ffi_lib 'proc'
+
     attach_function :proc_listallpids, [:pointer, :int], :int
     attach_function :proc_pidinfo, [:int, :int, :uint64_t, :pointer, :int], :int
-    attach_function :proc_pidpath, [:int, :pointer, :uint32_t], :int
+
+    ffi_lib FFI::Library::LIBC
+
+    attach_function :sysctl, [:pointer, :uint, :pointer, :pointer, :pointer, :size_t], :int
 
     @fields = %w[
       flags status xstatus pid ppid uid gid ruid rgid svuid svgid rfu1 comm
@@ -80,7 +86,7 @@ module Sys
       virtual_size resident_size total_user total_system threads_user
       threads_system policy faults pageins cow_faults messages_sent
       messages_received syscalls_mach syscalls_unix csw threadnum numrunning
-      priority path
+      priority cmdline exe environ
     ]
 
     # Add a couple aliases to make it similar to Linux
@@ -105,7 +111,6 @@ module Sys
       pids  = ptr.get_array_of_int32(0, num).sort
       array = block_given? ? nil : []
 
-
       pids.each do |lpid|
         next unless pid == lpid if pid
         info = ProcTaskAllInfo.new
@@ -119,12 +124,7 @@ module Sys
         end
 
         struct = ProcTableStruct.new
-
-        path = FFI::MemoryPointer.new(:char, PROC_PIDPATHINFO_MAXSIZE)
-
-        if proc_pidpath(pid, path, path.size) > 0
-          struct[:path] = path.read_string
-        end
+        get_args(lpid, struct)
 
         info.members.each do |nested|
           info[nested].members.each do |member|
@@ -147,5 +147,56 @@ module Sys
 
       pid ? array.first : array
     end
+
+    # Get the command line arguments, as well as the environment settings,
+    # for the given PID.
+    #
+    def self.get_args(pid, struct)
+      len = FFI::MemoryPointer.new(:size_t)
+      mib = FFI::MemoryPointer.new(:int, 3)
+
+      # Since we may not have access to the process information due
+      # to improper privileges, just bail if we see a failure here.
+
+      mib.write_array_of_int([CTL_KERN, KERN_PROCARGS, pid])
+      return if sysctl(mib, 3, nil, len, nil, 0) < 0
+
+      buf = FFI::MemoryPointer.new(:char, len.read_ulong)
+      return if sysctl(mib, 3, buf, len, nil, 0) < 0
+
+      exe = buf.read_string # Read up to first null, does not include args
+      full_string = buf.read_bytes(len.read_ulong)
+
+      struct[:exe] = exe
+      cmdline = exe.dup
+
+      array = full_string[/#{exe}\u0000{1,}.*?#{exe}\u0000{1,}(.*)/,1].split(0.chr)
+      array.delete('')
+
+      while array[0] && !array[0].include?('=')
+        cmdline << ' ' + array.shift
+      end
+
+      struct[:cmdline] = cmdline
+
+      environ = array.inject({}) do |hash, string|
+        if string && string.include?('=')
+          key, value = string.split('=')
+          hash[key] = value
+        end
+        hash
+      end
+
+      struct[:environ] = environ
+    end
   end
+end
+
+#Sys::ProcTable.ps(13788)
+#p Sys::ProcTable.ps(12522)
+Sys::ProcTable.ps do |pt|
+  p pt.comm
+  p pt.exe
+  p pt.cmdline
+  puts
 end
