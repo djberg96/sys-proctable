@@ -209,21 +209,21 @@ module Sys
       return if sysctl(mib, 3, buf, len, nil, 0) < 0
 
       exe = buf.read_string # Read up to first null, does not include args
-      full_string = buf.read_bytes(len.read_ulong)
-
       struct[:exe] = exe
-      cmdline = exe.dup
 
-      # Big ugly string with lots of embedded nulls
-      array = full_string[/#{exe}\u0000{1,}.*?#{exe}\u0000{1,}(.*)/,1].split(0.chr)
-      array.delete('')
+      # Parse the rest of the information out of big, ugly sring
+      array = buf.read_bytes(len.read_ulong).split(0.chr)
+      array.shift      # Delete first exe
+      array.delete('') # Delete empty strings
+
+      cmdline = ''
 
       # Anything that doesn't include a '=' sign is a cmdline argument.
       while array[0] && !array[0].include?('=')
         cmdline << ' ' + array.shift
       end
 
-      struct[:cmdline] = cmdline
+      struct[:cmdline] = File.basename(cmdline.strip)
 
       # Anything remaining at this point is a collect of key=value pairs which
       # we convert into a hash.
