@@ -5,6 +5,12 @@ module Sys
   class ProcTable
     extend FFI::Library
 
+    # Error typically raised if the ProcTable.ps method fails.
+    class Error < StandardError; end
+
+    # There is no constructor
+    private_class_method :new
+
     private
 
     PROC_ALL_PIDS       = 1
@@ -132,6 +138,8 @@ module Sys
     #   p ProcTable.ps(1001)
     #
     def self.ps(pid = nil)
+      raise TypeError unless pid.is_a?(Fixnum) if pid
+
       num = proc_listallpids(nil, 0)
       ptr = FFI::MemoryPointer.new(:pid_t, num)
       num = proc_listallpids(ptr, ptr.size)
@@ -168,6 +176,8 @@ module Sys
             end
           end
         end
+
+        struct.freeze
 
         if block_given?
           yield struct
