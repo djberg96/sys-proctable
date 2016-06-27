@@ -190,6 +190,8 @@ module Sys
       pid ? array.first : array
     end
 
+    private
+
     # Get the command line arguments, as well as the environment settings,
     # for the given PID.
     #
