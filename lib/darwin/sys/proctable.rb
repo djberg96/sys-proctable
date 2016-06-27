@@ -1,3 +1,4 @@
+require 'sys/proctable/version'
 require 'ffi'
 
 module Sys
