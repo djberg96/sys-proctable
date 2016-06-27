@@ -162,7 +162,7 @@ module Sys
         end
 
         struct = ProcTableStruct.new
-        get_args(lpid, struct) # Pass by reference
+        get_cmd_args_and_env(lpid, struct) # Pass by reference
 
         # Chop the leading xx_ from the FFI struct members for our ruby struct.
         info.members.each do |nested|
@@ -193,7 +193,7 @@ module Sys
     # Get the command line arguments, as well as the environment settings,
     # for the given PID.
     #
-    def self.get_args(pid, struct)
+    def self.get_cmd_args_and_env(pid, struct)
       len = FFI::MemoryPointer.new(:size_t)
       mib = FFI::MemoryPointer.new(:int, 3)
 
