@@ -10,11 +10,12 @@ module Sys
     PROC_PIDTASKALLINFO = 2
     PROC_PIDTASKINFO    = 4
 
-    CTL_KERN = 1
-    KERN_PROCARGS = 38
+    CTL_KERN       = 1
+    KERN_PROCARGS  = 38
     KERN_PROCARGS2 = 49
-    MAXCOMLEN = 16
-    MAXPATHLEN = 256
+    MAXCOMLEN      = 16
+    MAXPATHLEN     = 256
+
     PROC_PIDPATHINFO_MAXSIZE = MAXPATHLEN * 4
 
     class ProcBsdInfo < FFI::Struct
@@ -80,6 +81,7 @@ module Sys
 
     attach_function :sysctl, [:pointer, :uint, :pointer, :pointer, :pointer, :size_t], :int
 
+    # These mostly mimic the struct members, but we've added a few custom ones as well.
     @fields = %w[
       flags status xstatus pid ppid uid gid ruid rgid svuid svgid rfu1 comm
       name nfiles pgid pjobc tdev tpgid nice start_tvsec start_tvusec
@@ -97,10 +99,37 @@ module Sys
 
     public
 
+    # Returns an array of fields that each ProcTableStruct will contain. This
+    # may be useful if you want to know in advance what fields are available
+    # without having to perform at least one read of the process table.
+    #
+    # Example:
+    #
+    #   Sys::ProcTable.fields.each{ |field|
+    #      puts "Field: #{field}"
+    #   }
+    #
     def self.fields
       @fields
     end
 
+    # In block form, yields a ProcTableStruct for each process entry that you
+    # have rights to. This method returns an array of ProcTableStruct's in
+    # non-block form.
+    #
+    # If a +pid+ is provided, then only a single ProcTableStruct is yielded or
+    # returned, or nil if no process information is found for that +pid+.
+    #
+    # Example:
+    #
+    #   # Iterate over all processes
+    #   ProcTable.ps do |proc_info|
+    #      p proc_info
+    #   end
+    #
+    #   # Print process table information for only pid 1001
+    #   p ProcTable.ps(1001)
+    #
     def self.ps(pid = nil)
       num = proc_listallpids(nil, 0)
       ptr = FFI::MemoryPointer.new(:pid_t, num)
@@ -124,8 +153,9 @@ module Sys
         end
 
         struct = ProcTableStruct.new
-        get_args(lpid, struct)
+        get_args(lpid, struct) # Pass by reference
 
+        # Chop the leading xx_ from the FFI struct members for our ruby struct.
         info.members.each do |nested|
           info[nested].members.each do |member|
             temp = member.to_s.split('_')
@@ -170,15 +200,19 @@ module Sys
       struct[:exe] = exe
       cmdline = exe.dup
 
+      # Big ugly string with lots of embedded nulls
       array = full_string[/#{exe}\u0000{1,}.*?#{exe}\u0000{1,}(.*)/,1].split(0.chr)
       array.delete('')
 
+      # Anything that doesn't include a '=' sign is a cmdline argument.
       while array[0] && !array[0].include?('=')
         cmdline << ' ' + array.shift
       end
 
       struct[:cmdline] = cmdline
 
+      # Anything remaining at this point is a collect of key=value pairs which
+      # we convert into a hash.
       environ = array.inject({}) do |hash, string|
         if string && string.include?('=')
           key, value = string.split('=')
@@ -190,13 +224,4 @@ module Sys
       struct[:environ] = environ
     end
   end
-end
-
-#Sys::ProcTable.ps(13788)
-#p Sys::ProcTable.ps(12522)
-Sys::ProcTable.ps do |pt|
-  p pt.comm
-  p pt.exe
-  p pt.cmdline
-  puts
 end
