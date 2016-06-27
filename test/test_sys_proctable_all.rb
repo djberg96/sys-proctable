@@ -15,66 +15,77 @@ class TC_ProcTable_All < Test::Unit::TestCase
   end
 
   def setup
-    @pid = @@windows ? 0 : 1
+    @pid = Process.pid
   end
 
-  def test_version
-    assert_equal('1.0.0', ProcTable::VERSION)
+  test "version is set to expected value" do
+    assert_equal('1.1.0', ProcTable::VERSION)
   end
 
-  def test_fields
+  test "fields basic functionality" do
     assert_respond_to(ProcTable, :fields)
     assert_nothing_raised{ ProcTable.fields }
+  end
+
+  test "fields returns expected type" do
     assert_kind_of(Array, ProcTable.fields)
     assert_kind_of(String, ProcTable.fields.first)
   end
 
-  def test_ps
+  test "ps basic functionality" do
     assert_respond_to(ProcTable, :ps)
     assert_nothing_raised{ ProcTable.ps }
     assert_nothing_raised{ ProcTable.ps{} }
   end
 
-  def test_ps_with_pid
+  test "ps accepts an optional pid" do
     assert_nothing_raised{ ProcTable.ps(0) }
   end
 
-  def test_ps_with_explicit_nil
+  test "ps with explicit nil works as expected" do
     assert_nothing_raised{ ProcTable.ps(nil) }
     assert_kind_of(Array, ProcTable.ps(nil))
   end
 
-  def test_ps_return_value
+  test "ps returns expected results" do
     assert_kind_of(Array, ProcTable.ps)
     assert_kind_of(Struct::ProcTableStruct, ProcTable.ps(@pid))
-    assert_equal(nil, ProcTable.ps(999999999))
-    assert_equal(nil, ProcTable.ps(999999999){})
-    assert_equal(nil, ProcTable.ps{})
   end
 
-  def test_ps_returned_struct_is_frozen
+  test "ps returns nil if process does not exist" do
+    assert_nil(ProcTable.ps(999999999))
+    assert_nil(ProcTable.ps(999999999){})
+    assert_nil(ProcTable.ps{})
+  end
+
+  test "structs returned by ps are frozen" do
     assert_true(ProcTable.ps.first.frozen?)
   end
 
-  def test_ps_expected_errors
+  test "ps accepts numeric arguments only" do
     assert_raises(TypeError){ ProcTable.ps('vim') }
+  end
+
+  test "ps accepts a maximum of one argument on Unix platforms" do
     omit_if(@@windows, 'ArgumentError check skipped on MS Windows')
     assert_raises(ArgumentError){ ProcTable.ps(0, 'localhost') }
   end
 
-  def test_new_not_allowed
+  test "traditional constructor is disabled" do
     assert_raise(NoMethodError){ Sys::ProcTable.new }
   end
 
-  def test_error_class_defined
+  test "custom error class is defined" do
     assert_not_nil(Sys::ProcTable::Error)
     assert_kind_of(StandardError, Sys::ProcTable::Error.new)
   end
 
-  def test_from_thread
-    Thread.new do
-      Sys::ProcTable.ps
-    end.value
+  test "ps works within a thread" do
+    assert_nothing_raised{
+      Thread.new do
+        Sys::ProcTable.ps
+      end.value
+    }
   end
 
   def teardown
