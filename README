@@ -10,7 +10,7 @@
 * FreeBSD
 * Solaris 8+
 * HP-UX 10+
-* OS X 10.4+
+* OS X 10.7+
 * AIX 5.3+
 
 == Installation
@@ -22,6 +22,7 @@
   gem install sys-proctable --platform sunos   # Solaris
   gem install sys-proctable --platform linux   # Linux
   gem install sys-proctable --platform freebsd # FreeBSD
+  gem install sys-proctable --platform darwin  # OS X
 
 == Synopsis
   require 'sys/proctable'
@@ -60,16 +61,13 @@
   The cmdline member on Solaris is limited to 80 characters unless you (or
   your program) own the process. This is a Solaris design flaw/feature.
 
-=== Thread Safety
-  I am not currently using a thread-safe version of readdir() for versions
-  of this library that use C. I am not especially concerned about it either.
-  If you are trying to read information out of /proc from different threads
-  at the same time there is something seriously wrong with your code logic.
-  Using readdir_r() still won't solve all potential thread safety issues anyway.
+=== OS X
+  The libproc interface is used. That means you will only get list of
+  processes that you have access to. To get a full listing, run as root.
 
 == Future Plans
   Add support for NetBSD and OpenBSD.
-  Convert existing C code to FFI.
+  Convert remaining C code (just HP-UX at this point) to FFI.
 
 == Acknowledgements
   This library was originally based on the Perl module Proc::ProcessTable
@@ -87,7 +85,7 @@
   debugging help.
    
   Thanks go to David Felstead for the original OS X code. Thanks also go
-  to Matthias Zirnstein for adding cmdline support for OS X.
+  to Matthias Zirnstein for adding the original cmdline support for OS X.
 
   Finally I'd like to thank all the folks who have submitted bug reports
   and/or patches.
@@ -102,17 +100,11 @@
   including platform specific notes and issues.
 
 == License
-  Artistic 2.0
+  Apache 2.0
     
 == Copyright
   (C) 2003-2016 Daniel J. Berger
   All Rights Reserved.
-
-== Contributions
-  Although this library is free, please consider having your company
-  setup a gittip if used by your company professionally.
-
-  http://www.gittip.com/djberg96/
 
 == Author
   Daniel J. Berger
