@@ -13,16 +13,12 @@ module Sys
 
     private
 
-    PROC_ALL_PIDS       = 1
     PROC_PIDTASKALLINFO = 2
-    PROC_PIDTASKINFO    = 4
     PROC_PIDTHREADINFO  = 5
     PROC_PIDLISTTHREADS = 6
-    PROC_PIDTHREADPATHINFO = 7
 
     CTL_KERN       = 1
     KERN_PROCARGS  = 38
-    KERN_PROCARGS2 = 49
     MAXCOMLEN      = 16
     MAXPATHLEN     = 256
 
@@ -300,8 +296,8 @@ module Sys
 
       struct[:cmdline] = File.basename(cmdline.strip)
 
-      # Anything remaining at this point is a collect of key=value pairs which
-      # we convert into a hash.
+      # Anything remaining at this point is a collection of key=value
+      # pairs which we convert into a hash.
       environ = array.inject({}) do |hash, string|
         if string && string.include?('=')
           key, value = string.split('=')

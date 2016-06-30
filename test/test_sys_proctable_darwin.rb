@@ -16,7 +16,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
       virtual_size resident_size total_user total_system threads_user
       threads_system policy faults pageins cow_faults messages_sent
       messages_received syscalls_mach syscalls_unix csw threadnum numrunning
-      priority cmdline exe environ
+      priority cmdline exe environ threadinfo
     ]
 
     @@pid = fork do
