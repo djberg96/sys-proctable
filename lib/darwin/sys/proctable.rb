@@ -286,7 +286,7 @@ module Sys
       exe = buf.read_string # Read up to first null, does not include args
       struct[:exe] = exe
 
-      # Parse the rest of the information out of big, ugly sring
+      # Parse the rest of the information out of a big, ugly string
       array = buf.read_bytes(len.read_ulong).split(0.chr)
       array.shift      # Delete first exe
       array.delete('') # Delete empty strings
