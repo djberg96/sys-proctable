@@ -1,7 +1,7 @@
 /**********************************************************************
 * proctable.c
 *
-* HP-UX specific code for the Ruby ps extension.  Some code has been
+* HP-UX specific code for the Ruby ps extension. Some code has been
 * copied directly from Dan Urist's Proc::ProcessTable Perl module.
 *
 * Author: Daniel Berger
@@ -304,8 +304,8 @@ void Init_proctable()
    /* There is no constructor */
    rb_funcall(cProcTable, rb_intern("private_class_method"), 1, ID2SYM(rb_intern("new")));
 
-   /* 1.0.0: The version of the sys-proctable library. */
-   rb_define_const(cProcTable, "VERSION", rb_str_new2("1.0.0"));
+   /* 1.1.1: The version of the sys-proctable library. */
+   rb_define_const(cProcTable, "VERSION", rb_str_new2("1.1.1"));
 
    /* Structs */
 
