@@ -235,7 +235,7 @@ module Sys
 
       0.upto(max-1) do |index|
         tinfo = ProcThreadInfo.new
-        nb = proc_pidinfo(pid, PROC_PIDTHREADINFO, buf[index].read_int64, tinfo, tinfo.size)
+        nb = proc_pidinfo(pid, PROC_PIDTHREADINFO, buf[index].read_uint64, tinfo, tinfo.size)
 
         if nb <= 0
           if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
