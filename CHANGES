@@ -1,5 +1,6 @@
-== 1.1.1 - ???
+== 1.1.1 - 30-Jun-2016
 * Added thread information for OS X.
+* Fixed VERSION constant for HP-UX.
 
 == 1.1.0 - 27-Jun-2016
 * License was changed to Apache 2.0.
