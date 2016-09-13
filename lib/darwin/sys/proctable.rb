@@ -284,17 +284,23 @@ module Sys
 
       # Parse the rest of the information out of a big, ugly string
       array = buf.read_bytes(len.read_ulong).split(0.chr)
-      array.shift      # Delete first exe
       array.delete('') # Delete empty strings
+
+      # sysctl command line entry returns in the following format:
+      #  <executable> [arguments]... \xFFxBF <executable>
+      # remove those portions from the array
+      array = array[1..-3]
 
       cmdline = ''
 
       # Anything that doesn't include a '=' sign is a cmdline argument.
-      while array[0] && !array[0].include?('=')
-        cmdline << ' ' + array.shift
+      array.each do |arg|
+        if !arg.include?('=')
+          cmdline += ' ' + arg
+        end
       end
 
-      struct[:cmdline] = File.basename(cmdline.strip)
+      struct[:cmdline] = cmdline.strip
 
       # Anything remaining at this point is a collection of key=value
       # pairs which we convert into a hash.
