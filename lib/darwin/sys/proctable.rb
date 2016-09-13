@@ -19,6 +19,7 @@ module Sys
 
     CTL_KERN       = 1
     KERN_PROCARGS  = 38
+    KERN_PROCARGS2 = 49
     MAXCOMLEN      = 16
     MAXPATHLEN     = 256
 
@@ -273,6 +274,18 @@ module Sys
       # Since we may not have access to the process information due
       # to improper privileges, just bail if we see a failure here.
 
+      # First use KERN_PROCARGS2 to discover the argc value of the running process.
+      mib.write_array_of_int([CTL_KERN, KERN_PROCARGS2, pid])
+      return if sysctl(mib, 3, nil, len, nil, 0) < 0
+
+      buf = FFI::MemoryPointer.new(:char, len.read_ulong)
+      return if sysctl(mib, 3, buf, len, nil, 0) < 0
+
+      # The argc value is located in the first byte of buf
+      argc = buf.read_bytes(1).ord
+      buf.free
+
+      # Now use KERN_PROCARGS to fetch the rest of the process information
       mib.write_array_of_int([CTL_KERN, KERN_PROCARGS, pid])
       return if sysctl(mib, 3, nil, len, nil, 0) < 0
 
@@ -284,17 +297,30 @@ module Sys
 
       # Parse the rest of the information out of a big, ugly string
       array = buf.read_bytes(len.read_ulong).split(0.chr)
-      array.shift      # Delete first exe
       array.delete('') # Delete empty strings
+      
+      # The format that sysctl outputs is as follows:
+      #
+      #   [full executable path]
+      #   [executable name]
+      #   [arguments]
+      #   [environment variables]
+      #   ...
+      #   \FF\BF
+      #   [full executable path]
+      #
+      # Strip the first executable path and the last two entries from the array.
+      # What is left is the name, arguments, and environment variables
+      array = array[1..-3]
 
       cmdline = ''
 
-      # Anything that doesn't include a '=' sign is a cmdline argument.
-      while array[0] && !array[0].include?('=')
+      # Extract the full command line and it's arguments from the array
+      argc.times do
         cmdline << ' ' + array.shift
       end
 
-      struct[:cmdline] = File.basename(cmdline.strip)
+      struct[:cmdline] = cmdline.strip
 
       # Anything remaining at this point is a collection of key=value
       # pairs which we convert into a hash.
