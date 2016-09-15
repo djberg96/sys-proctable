@@ -23,11 +23,16 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
       exec('env', '-i', 'A=B', 'Z=', 'sleep', '60')
     end
 
+    @@pid2 = fork do
+      exec('php', '-d setting=true', '-d directory=/usr/bin', '-R', '\'sleep(120);\'')
+    end
+
     sleep 1 # wait to make sure env is replaced by sleep
   end
 
   def setup
     @ptable = Sys::ProcTable.ps(@@pid)
+    @ptable2 = Sys::ProcTable.ps(@@pid2)
   end
 
   test "fields basic functionality" do
@@ -90,6 +95,12 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
     assert_equal('sleep 60', @ptable.cmdline)
   end
 
+  test "cmdline struct member is defined and returns expected value" do
+    assert_respond_to(@ptable2, :cmdline)
+    assert_kind_of(String, @ptable2.cmdline)
+    assert_equal('php -d setting=true -d directory=/usr/bin -R \'sleep(120);\'', @ptable2.cmdline)
+  end
+
   test "exe struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :exe)
     assert_kind_of(String, @ptable.exe)
@@ -104,10 +115,12 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
 
   def teardown
     @ptable = nil
+    @ptable2 = nil
   end
 
   def self.shutdown
     @@fields = nil
     Process.kill('TERM', @@pid)
+    Process.kill('TERM', @@pid2)
   end
 end
