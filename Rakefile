@@ -205,6 +205,13 @@ namespace :gem do
     }
   end
 
+  desc 'Push all gems for each supported OS'
+  task :push_all do
+    Dir["pkg/**/*.gem"].each{ |file|
+      sh "gem push #{file}"
+    }
+  end
+
   desc 'Install the sys-proctable library as a gem'
   task :install => [:create] do
     gem_name = Dir['*.gem'].first
