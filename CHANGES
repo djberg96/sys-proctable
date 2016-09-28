@@ -1,3 +1,6 @@
+== 1.1.3 - 28-Sep-2016
+* Fixed an issue on OSX where the value returned for argc is invalid.
+
 == 1.1.2 - 18-Sep-2016
 * Fixed cmdline parsing and handling for OSX. Thanks go to Ben Mathwig for
   the spot and the patch.
