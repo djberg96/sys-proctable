@@ -305,7 +305,7 @@ void Init_proctable()
    rb_funcall(cProcTable, rb_intern("private_class_method"), 1, ID2SYM(rb_intern("new")));
 
    /* 1.1.2: The version of the sys-proctable library. */
-   rb_define_const(cProcTable, "VERSION", rb_str_new2("1.1.2"));
+   rb_define_const(cProcTable, "VERSION", rb_str_new2("1.1.3"));
 
    /* Structs */
 
