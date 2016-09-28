@@ -251,9 +251,9 @@ module Sys
           tinfo[:pth_system_time],
           tinfo[:pth_cpu_usage],
           tinfo[:pth_policy],
-          tinfo[:pth_run_state], 
-          tinfo[:pth_flags], 
-          tinfo[:pth_sleep_time], 
+          tinfo[:pth_run_state],
+          tinfo[:pth_flags],
+          tinfo[:pth_sleep_time],
           tinfo[:pth_curpri],
           tinfo[:pth_priority],
           tinfo[:pth_maxpriority],
@@ -298,7 +298,7 @@ module Sys
       # Parse the rest of the information out of a big, ugly string
       array = buf.read_bytes(len.read_ulong).split(0.chr)
       array.delete('') # Delete empty strings
-      
+
       # The format that sysctl outputs is as follows:
       #
       #   [full executable path]
@@ -312,6 +312,14 @@ module Sys
       # Strip the first executable path and the last two entries from the array.
       # What is left is the name, arguments, and environment variables
       array = array[1..-3]
+
+      # It seems that argc sometimes returns a bogus value. In that case, delete
+      # any environment variable strings, and reset the argc value.
+      #
+      if argc > array.size
+        array.delete_if{ |e| e.include?('=') }
+        argc = array.size
+      end
 
       cmdline = ''
 
