@@ -24,7 +24,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
     end
 
     @@pid2 = fork do
-      exec('php', '-d setting=true', '-d directory=/usr/bin', '-R', '\'sleep(120);\'')
+      exec('ruby', '-Ilib', '-e', 'sleep \'120\'.to_i', '--', 'foo bar')
     end
 
     sleep 1 # wait to make sure env is replaced by sleep
@@ -98,7 +98,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
   test "cmdline struct member is defined and returns expected value" do
     assert_respond_to(@ptable2, :cmdline)
     assert_kind_of(String, @ptable2.cmdline)
-    assert_equal('php -d setting=true -d directory=/usr/bin -R \'sleep(120);\'', @ptable2.cmdline)
+    assert_equal('ruby -Ilib -e sleep \'120\'.to_i -- foo bar', @ptable2.cmdline)
   end
 
   test "exe struct member is defined and returns expected value" do
