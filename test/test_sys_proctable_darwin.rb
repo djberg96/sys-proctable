@@ -95,7 +95,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
     assert_equal('sleep 60', @ptable.cmdline)
   end
 
-  test "cmdline struct member is defined and returns expected value" do
+  test "cmdline struct member is defined and returns expected string with arguments" do
     assert_respond_to(@ptable2, :cmdline)
     assert_kind_of(String, @ptable2.cmdline)
     assert_equal('ruby -Ilib -e sleep \'120\'.to_i -- foo bar', @ptable2.cmdline)

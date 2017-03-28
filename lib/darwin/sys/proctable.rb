@@ -175,13 +175,18 @@ module Sys
         next unless pid == lpid if pid
         info = ProcTaskAllInfo.new
 
-        if proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size) <= 0
+        nb = proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size)
+
+        if nb <= 0
           if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
             next # Either we don't have permission, or the pid no longer exists
           else
             raise SystemCallError.new('proc_pidinfo', FFI.errno)
           end
         end
+
+        # Avoid potentially invalid data
+        next if nb != info.size
 
         struct = ProcTableStruct.new
 
