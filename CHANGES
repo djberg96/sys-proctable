@@ -1,3 +1,8 @@
+== 1.1.4 - 30-Mar-2017
+* Fixed a potential issue where OSX could return a struct with invalid data.
+* Set the default field to :pid for OSX when using Sys::Top.
+* Fixed a duplicate test warning for OSX.
+
 == 1.1.3 - 28-Sep-2016
 * Fixed an issue on OSX where the value returned for argc is invalid.
 
