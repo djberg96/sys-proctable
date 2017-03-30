@@ -138,7 +138,7 @@ module Sys
             key, value = str.split('=')
             struct.environ[key] = value
           }
-        rescue Errno::EACCES, Errno::ESRCH, Errno::ENOENT
+        rescue Errno::EACCES, Errno::ESRCH, Errno::ENOENT, ArgumentError
           # Ignore and move on.
         end
 
