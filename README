@@ -57,6 +57,16 @@
   A kvm interface is used. That means the owner of the process using the
   sys-proctable library needs to be a member of the kvm group (or root).
 
+=== Bundler
+  Bundler seems to have trouble installing the proper gem because of the
+  platform specific gem names. To deal with that, run this command first:
+
+    bundle config specific_platform true
+
+  You can follow the issue at:
+
+    https://github.com/bundler/bundler/issues/5536  
+
 === Solaris
   The cmdline member on Solaris is limited to 80 characters unless you (or
   your program) own the process. This is a Solaris design flaw/feature.
