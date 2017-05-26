@@ -112,7 +112,7 @@ module Sys
       virtual_size resident_size total_user total_system threads_user
       threads_system policy faults pageins cow_faults messages_sent
       messages_received syscalls_mach syscalls_unix csw threadnum numrunning
-      priority cmdline exe environ threadinfo
+      priority cmdline exe arguments environ threadinfo
     ]
 
     # Add a couple aliases to make it similar to Linux
@@ -297,13 +297,6 @@ module Sys
       buf = FFI::MemoryPointer.new(:char, len.read_ulong)
       return if sysctl(mib, 3, buf, len, nil, 0) < 0
 
-      exe = buf.read_string # Read up to first null, does not include args
-      struct[:exe] = exe
-
-      # Parse the rest of the information out of a big, ugly string
-      array = buf.read_bytes(len.read_ulong).split(0.chr)
-      array.delete('') # Delete empty strings
-
       # The format that sysctl outputs is as follows:
       #
       #   [full executable path]
@@ -314,38 +307,36 @@ module Sys
       #   \FF\BF
       #   [full executable path]
       #
-      # Strip the first executable path and the last two entries from the array.
-      # What is left is the name, arguments, and environment variables
-      array = array[1..-3]
+      env_regexp = Regexp.new(/\s*[A-Z_-]*=.*/)
+      array = buf.read_bytes(len.read_ulong).split(0.chr)
+      array.delete('') # Delete empty strings
 
-      # It seems that argc sometimes returns a bogus value. In that case, delete
-      # any environment variable strings, and reset the argc value.
-      #
-      if argc > array.size
-        array.delete_if{ |e| e.include?('=') }
-        argc = array.size
-      end
-
-      cmdline = ''
-
-      # Extract the full command line and it's arguments from the array
-      argc.times do
-        cmdline << ' ' + array.shift
-      end
-
-      struct[:cmdline] = cmdline.strip
-
-      # Anything remaining at this point is a collection of key=value
-      # pairs which we convert into a hash.
-      environ = array.inject({}) do |hash, string|
-        if string && string.include?('=')
-          key, value = string.split('=')
-          hash[key] = value
+      environment = {}
+      struct[:arguments] = []
+      array.each do |str|
+        # Break on '\xFF\xBF'
+        if str.length == 2 && str.split('').map(&:ord) == [255, 191]
+          break
         end
-        hash
+        if str.match(env_regexp)
+          # Store environment variables separately
+          key, value = str.split('=')
+          environment[key] = value
+        else
+          # Order priority for exe & name.
+          # Everything else is an argument
+          if struct[:exe].nil?
+            struct[:exe] = str
+          elsif struct[:name].nil?
+            struct[:name] = str
+          else
+            struct[:arguments] << str
+          end
+        end
       end
 
-      struct[:environ] = environ
+      struct[:cmdline] = struct[:name] + ' ' + struct[:arguments].join(' ')
+      struct[:environ] = environment
     end
   end
 end

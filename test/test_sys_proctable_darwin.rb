@@ -16,7 +16,7 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
       virtual_size resident_size total_user total_system threads_user
       threads_system policy faults pageins cow_faults messages_sent
       messages_received syscalls_mach syscalls_unix csw threadnum numrunning
-      priority cmdline exe environ threadinfo
+      priority cmdline exe arguments environ threadinfo
     ]
 
     @@pid = fork do
@@ -101,10 +101,22 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
     assert_equal('ruby -Ilib -e sleep \'120\'.to_i -- foo bar', @ptable2.cmdline)
   end
 
+  test "name struct member is defined and returns expected value" do
+    assert_respond_to(@ptable, :name)
+    assert_kind_of(String, @ptable2.name)
+    assert_equal("ruby", @ptable2.name)
+  end
+
   test "exe struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :exe)
     assert_kind_of(String, @ptable.exe)
     assert_equal(`which sleep`.chomp, @ptable.exe)
+  end
+
+  test "arguments struct member is defined and returns expected value" do
+    assert_respond_to(@ptable, :arguments)
+    assert_kind_of(Array, @ptable2.arguments)
+    assert_equal(["-Ilib", "-e", "sleep '120'.to_i", "--", "foo bar"], @ptable2.arguments)
   end
 
   test "environ struct member is defined and returns expected value" do
