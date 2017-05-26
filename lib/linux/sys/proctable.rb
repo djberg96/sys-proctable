@@ -67,6 +67,7 @@ module Sys
       'rt_priority', # Real time scheduling priority
       'policy',      # Scheduling policy
       'name',        # Process name
+      'arguments',   # Process arguments
       'uid',         # Real user ID
       'euid',        # Effective user ID
       'gid',         # Real group ID
@@ -117,10 +118,12 @@ module Sys
 
         struct = ProcTableStruct.new
 
-        # Get /proc/<pid>/cmdline information. Strip out embedded nulls.
+        # Get /proc/<pid>/cmdline information. Split on null byte
         begin
-          data = IO.read("/proc/#{file}/cmdline").tr("\000", ' ').strip
-          struct.cmdline = data
+          data = IO.read("/proc/#{file}/cmdline").split(?\x00)
+          struct.name = data.shift
+          struct.arguments = data
+          struct.cmdline = struct.name + ' ' + data.join(' ')
         rescue
           next # Process terminated, on to the next process
         end

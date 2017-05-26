@@ -12,7 +12,7 @@ include Sys
 class TC_ProcTable_Linux < Test::Unit::TestCase
   def self.startup
     @@fields = %w/
-      cmdline cwd exe pid name uid euid gid egid comm state ppid pgrp
+      cmdline cwd exe pid name arguments uid euid gid egid comm state ppid pgrp
       session tty_num tpgid flags minflt cminflt majflt cmajflt utime
       stime cutime cstime priority nice itrealvalue starttime vsize
       rss rlim startcode endcode startstack kstkesp kstkeip signal blocked
@@ -258,6 +258,11 @@ class TC_ProcTable_Linux < Test::Unit::TestCase
   def test_name
     assert_respond_to(@ptable, :name)
     assert_kind_of(String, @ptable.name)
+  end
+
+  def test_arguments
+    assert_respond_to(@ptable, :arguments)
+    assert_kind_of(Array, @ptable.arguments)
   end
 
   def test_uid
