@@ -112,7 +112,7 @@ module Sys
       virtual_size resident_size total_user total_system threads_user
       threads_system policy faults pageins cow_faults messages_sent
       messages_received syscalls_mach syscalls_unix csw threadnum numrunning
-      priority cmdline exe arguments environ threadinfo
+      priority cmdline exe pname arguments environ threadinfo
     ]
 
     # Add a couple aliases to make it similar to Linux
@@ -327,15 +327,19 @@ module Sys
           # Everything else is an argument
           if struct[:exe].nil?
             struct[:exe] = str
-          elsif struct[:name].nil?
-            struct[:name] = str
+          elsif struct[:pname].nil?
+            struct[:pname] = str
           else
             struct[:arguments] << str
           end
         end
       end
 
-      struct[:cmdline] = struct[:name] + ' ' + struct[:arguments].join(' ')
+      if struct[:arguments].empty?
+        struct[:cmdline] = struct[:pname]
+      else
+        struct[:cmdline] = struct[:pname] + ' ' + struct[:arguments].join(' ')
+      end
       struct[:environ] = environment
     end
   end

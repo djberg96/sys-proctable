@@ -66,8 +66,9 @@ module Sys
       'processor',   # CPU number last executed on
       'rt_priority', # Real time scheduling priority
       'policy',      # Scheduling policy
-      'name',        # Process name
-      'arguments',   # Process arguments
+      'name',        # Process name according to /proc/x/status
+      'pname',       # Process name as parsed from /proc/x/cmdline
+      'arguments',   # Process arguments parsed from /proc/x/cmdline
       'uid',         # Real user ID
       'euid',        # Effective user ID
       'gid',         # Real group ID
@@ -121,9 +122,13 @@ module Sys
         # Get /proc/<pid>/cmdline information. Split on null byte
         begin
           data = IO.read("/proc/#{file}/cmdline").split(?\x00)
-          struct.name = data.shift
+          struct.pname = data.shift
           struct.arguments = data
-          struct.cmdline = struct.name + ' ' + data.join(' ')
+          if data.empty?
+            struct.cmdline = struct.pname
+          else
+            struct.cmdline = struct.pname + ' ' + data.join(' ')
+          end
         rescue
           next # Process terminated, on to the next process
         end
@@ -250,7 +255,9 @@ module Sys
         end
 
         # If cmdline is empty use comm instead
-        struct.cmdline = struct.comm if struct.cmdline.empty?
+        if struct.cmdline.nil? || struct.cmdline.empty?
+          struct.cmdline = struct.comm
+        end
 
         # Manually calculate CPU and memory usage
         struct.pctcpu = get_pctcpu(struct.utime, struct.starttime)
