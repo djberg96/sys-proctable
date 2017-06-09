@@ -93,8 +93,10 @@ module Sys
     # returned, or nil if no process information is found for that +pid+.
     #
     def self.ps(pid=nil, host=Socket.gethostname)
+      proc_is_name = pid && pid.kind_of?(String)
+
       if pid
-        raise TypeError unless pid.kind_of?(Fixnum)
+        raise TypeError unless pid.kind_of?(Fixnum) or proc_is_name
       end
 
       array  = block_given? ? nil : []
@@ -107,7 +109,11 @@ module Sys
       else
         wmi.InstancesOf("Win32_Process").each{ |wproc|
           if pid
-            next unless wproc.ProcessId == pid
+            if proc_is_name
+              next unless wproc.Name.downcase == pid.downcase
+            else              
+              next unless wproc.ProcessId == pid
+            end
           end
 
           # Some fields are added later, and so are nil initially
