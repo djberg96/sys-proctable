@@ -1,3 +1,7 @@
+== 1.1.5 - 10-Aug-2017
+* Fixed a warning that cropped up in Ruby 2.4.x because I was type checking
+  against Fixnum. Those have been replaced with Numeric.
+
 == 1.1.4 - 30-Mar-2017
 * Fixed a potential issue where OSX could return a struct with invalid data.
 * Set the default field to :pid for OSX when using Sys::Top.

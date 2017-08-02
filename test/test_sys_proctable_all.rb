@@ -19,7 +19,7 @@ class TC_ProcTable_All < Test::Unit::TestCase
   end
 
   test "version is set to expected value" do
-    assert_equal('1.1.4', ProcTable::VERSION)
+    assert_equal('1.1.5', ProcTable::VERSION)
   end
 
   test "fields basic functionality" do

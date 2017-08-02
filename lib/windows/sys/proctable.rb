@@ -93,9 +93,7 @@ module Sys
     # returned, or nil if no process information is found for that +pid+.
     #
     def self.ps(pid=nil, host=Socket.gethostname)
-      if pid
-        raise TypeError unless pid.kind_of?(Fixnum)
-      end
+      raise TypeError unless pid.kind_of?(Numeric) if pid
 
       array  = block_given? ? nil : []
       struct = nil

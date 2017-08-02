@@ -109,7 +109,7 @@ module Sys
       array  = block_given? ? nil : []
       struct = nil
 
-      raise TypeError unless pid.is_a?(Fixnum) if pid
+      raise TypeError unless pid.is_a?(Numeric) if pid
 
       Dir.foreach("/proc"){ |file|
         next if file =~ /\D/ # Skip non-numeric directories
