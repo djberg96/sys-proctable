@@ -43,43 +43,43 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
 
   test "pid struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :pid)
-    assert_kind_of(Fixnum, @ptable.pid)
+    assert_kind_of(Numeric, @ptable.pid)
     assert_equal(@ptable.pid, @@pid)
   end
 
   test "ppid struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :ppid)
-    assert_kind_of(Fixnum, @ptable.ppid)
+    assert_kind_of(Numeric, @ptable.ppid)
     assert_equal(Process.pid, @ptable.ppid)
   end
 
   test "pgid struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :pgid)
-    assert_kind_of(Fixnum, @ptable.pgid)
+    assert_kind_of(Numeric, @ptable.pgid)
     assert_equal(Process.getpgrp, @ptable.pgid)
   end
 
   test "ruid struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :ruid)
-    assert_kind_of(Fixnum, @ptable.ruid)
+    assert_kind_of(Numeric, @ptable.ruid)
     assert_equal(Process.uid, @ptable.ruid)
   end
 
   test "rgid struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :rgid)
-    assert_kind_of(Fixnum, @ptable.rgid)
+    assert_kind_of(Numeric, @ptable.rgid)
     assert_equal(Process.gid, @ptable.rgid)
   end
 
   test "svuid struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :svuid)
-    assert_kind_of(Fixnum, @ptable.svuid)
+    assert_kind_of(Numeric, @ptable.svuid)
     assert_equal(Process.uid, @ptable.svuid) # not valid for all processes
   end
 
   test "svgid struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :svgid)
-    assert_kind_of(Fixnum, @ptable.svgid)
+    assert_kind_of(Numeric, @ptable.svgid)
     assert_equal(Process.gid, @ptable.svgid) # not valid for all processes
   end
 
@@ -110,7 +110,8 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
   test "environ struct member is defined and returns expected value" do
     assert_respond_to(@ptable, :environ)
     assert_kind_of(Hash, @ptable.environ)
-    assert_equal({'A' => 'B', 'Z' => nil}, @ptable.environ)
+    assert_equal(@ptable.environ['A'], 'B')
+    assert_nil(@ptable.environ['Z'])
   end
 
   def teardown

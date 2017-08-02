@@ -160,7 +160,7 @@ module Sys
     #   p ProcTable.ps(1001)
     #
     def self.ps(pid = nil)
-      raise TypeError unless pid.is_a?(Fixnum) if pid
+      raise TypeError unless pid.is_a?(Numeric) if pid
 
       num = proc_listallpids(nil, 0)
       ptr = FFI::MemoryPointer.new(:pid_t, num)
@@ -328,7 +328,7 @@ module Sys
 
       cmdline = ''
 
-      # Extract the full command line and it's arguments from the array
+      # Extract the full command line and its arguments from the array
       argc.times do
         cmdline << ' ' + array.shift
       end
