@@ -92,6 +92,16 @@ module Sys
       )
     end
 
+    # Map the fields from the FFI::Structs to the Sys::ProcTable struct on
+    # class load to reduce the amount of objects needing to be generated for
+    # each invocation of Sys::ProcTable.ps
+    all_members           = ProcBsdInfo.members + ProcTaskInfo.members + ProcThreadInfo.members
+    PROC_STRUCT_FIELD_MAP = all_members.map { |member|
+                              temp = member.to_s.split('_')
+                              sproperty = temp.size > 1 ? temp[1..-1].join('_') : temp.first
+                              [member, sproperty.to_sym]
+                            }.to_h
+
     class ProcTaskAllInfo < FFI::Struct
       layout(:pbsd, ProcBsdInfo, :ptinfo, ProcTaskInfo)
     end
@@ -197,12 +207,10 @@ module Sys
         # Chop the leading xx_ from the FFI struct members for our ruby struct.
         info.members.each do |nested|
           info[nested].members.each do |member|
-            temp = member.to_s.split('_')
-            sproperty = temp.size > 1 ? temp[1..-1].join('_') : temp.first
             if info[nested][member].is_a?(FFI::StructLayout::CharArray)
-              struct[sproperty.to_sym] = info[nested][member].to_s
+              struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member].to_s
             else
-              struct[sproperty.to_sym] = info[nested][member]
+              struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member]
             end
           end
         end
