@@ -169,9 +169,30 @@ module Sys
     #   # Print process table information for only pid 1001
     #   p ProcTable.ps(1001)
     #
-    def self.ps(pid = nil)
+    def self.ps(pid = nil &block)
       raise TypeError unless pid.is_a?(Numeric) if pid
+      pid ? get_info_for_pid(pid, &block) : get_info_for_all_pids(&block)
+    end
 
+    private
+
+    def self.get_info_for_pid(pid)
+      info = get_proc_task_info(pid)
+      return if info.nil?
+
+      struct = ProcTableStruct.new
+
+      # Pass by reference
+      get_cmd_args_and_env(pid, struct)
+      get_thread_info(pid, struct, info[:ptinfo])
+      apply_info_to_struct(info, struct)
+
+      struct.freeze
+      yield struct if block_given?
+      struct
+    end
+
+    def self.get_info_for_all_pids
       num = proc_listallpids(nil, 0)
       ptr = FFI::MemoryPointer.new(:pid_t, num)
       num = proc_listallpids(ptr, ptr.size)
@@ -182,31 +203,8 @@ module Sys
       array = block_given? ? nil : []
 
       pids.each do |lpid|
-        next unless pid == lpid if pid
-        info = ProcTaskAllInfo.new
-
-        nb = proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size)
-
-        if nb <= 0
-          if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
-            next # Either we don't have permission, or the pid no longer exists
-          else
-            raise SystemCallError.new('proc_pidinfo', FFI.errno)
-          end
-        end
-
-        # Avoid potentially invalid data
-        next if nb != info.size
-
-        struct = ProcTableStruct.new
-
-        # Pass by reference
-        get_cmd_args_and_env(lpid, struct)
-        get_thread_info(lpid, struct, info[:ptinfo])
-        apply_info_to_struct(info, struct)
-
-
-        struct.freeze
+        struct = get_info_for_pid(lpid)
+        next if struct.nil?
 
         if block_given?
           yield struct
@@ -216,10 +214,27 @@ module Sys
       end
 
       return nil if array.nil?
-      pid ? array.first : array
+      array
     end
 
-    private
+    def self.get_proc_task_info(pid)
+      raise TypeError unless pid.is_a?(Numeric)
+
+      info = ProcTaskAllInfo.new
+
+      nb = proc_pidinfo(pid, PROC_PIDTASKALLINFO, 0, info, info.size)
+
+      if nb <= 0
+        if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
+          return # Either we don't have permission, or the pid no longer exists
+        else
+          raise SystemCallError.new('proc_pidinfo', FFI.errno)
+        end
+      end
+
+      # Avoid potentially invalid data
+      nb != info.size ? nil : info
+    end
 
     def self.apply_info_to_struct(info, struct)
       # Chop the leading xx_ from the FFI struct members for our ruby struct.
