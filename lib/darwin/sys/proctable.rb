@@ -152,6 +152,16 @@ module Sys
       @fields
     end
 
+    def self.rss(pid)
+      info = get_proc_task_info(pid)
+      info[:ptinfo][:pti_resident_size] unless info.nil?
+    end
+
+    def self.vsize(pid)
+      info = get_proc_task_info(pid)
+      info[:ptinfo][:pti_virtual_size] unless info.nil?
+    end
+
     # In block form, yields a ProcTableStruct for each process entry that you
     # have rights to. This method returns an array of ProcTableStruct's in
     # non-block form.
