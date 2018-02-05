@@ -129,6 +129,21 @@ module Sys
     ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
       alias vsize virtual_size
       alias rss resident_size
+
+      def exe
+        Sys::ProcTableStruct.get_cmd_args_and_env(self[:pid], self) if self[:exe].nil? && !frozen?
+        self[:exe]
+      end
+
+      def cmdline
+        Sys::ProcTableStruct.get_cmd_args_and_env(self[:pid], self) if self[:cmdline].nil? && !frozen?
+        self[:cmdline]
+      end
+
+      def environ
+        Sys::ProcTableStruct.get_cmd_args_and_env(self[:pid], self) if self[:environ].nil? && !frozen?
+        self[:environ]
+      end
     end
 
     ThreadInfoStruct = Struct.new("ThreadInfo", :user_time, :system_time,
@@ -179,30 +194,30 @@ module Sys
     #   # Print process table information for only pid 1001
     #   p ProcTable.ps(1001)
     #
-    def self.ps(pid = nil &block)
+    def self.ps(pid = nil, opts = {:lazy => false}, &block)
       raise TypeError unless pid.is_a?(Numeric) if pid
-      pid ? get_info_for_pid(pid, &block) : get_info_for_all_pids(&block)
+      pid ? get_info_for_pid(pid, opts, &block) : get_info_for_all_pids(opts, &block)
     end
 
     private
 
-    def self.get_info_for_pid(pid)
+    def self.get_info_for_pid(pid, opts = {})
       info = get_proc_task_info(pid)
       return if info.nil?
 
       struct = ProcTableStruct.new
 
       # Pass by reference
-      get_cmd_args_and_env(pid, struct)
+      get_cmd_args_and_env(pid, struct) unless opts[:lazy]
       get_thread_info(pid, struct, info[:ptinfo])
       apply_info_to_struct(info, struct)
 
-      struct.freeze
+      struct.freeze unless opts[:lazy]
       yield struct if block_given?
       struct
     end
 
-    def self.get_info_for_all_pids
+    def self.get_info_for_all_pids(opts = {})
       num = proc_listallpids(nil, 0)
       ptr = FFI::MemoryPointer.new(:pid_t, num)
       num = proc_listallpids(ptr, ptr.size)
@@ -213,7 +228,7 @@ module Sys
       array = block_given? ? nil : []
 
       pids.each do |lpid|
-        struct = get_info_for_pid(lpid)
+        struct = get_info_for_pid(lpid, opts)
         next if struct.nil?
 
         if block_given?
