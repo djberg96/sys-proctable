@@ -1,9 +1,6 @@
 sudo: false
 language: ruby
 rvm:
-  - '1.9.3-p551'
-  - '2.0.0-p648'
-  - '2.1.10'
   - '2.2.6'
   - '2.3.3'
   - '2.4.0'
@@ -14,8 +11,6 @@ install: gem install test-unit ffi
 script: rake
 matrix:
   include:
-    - os: osx
-      rvm: '1.9.3-p551'
     - os: osx
       rvm: '2.3.3'
     - os: osx
