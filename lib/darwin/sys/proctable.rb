@@ -187,20 +187,8 @@ module Sys
 
       pids.each do |lpid|
         next unless pid == lpid if pid
-        info = ProcTaskAllInfo.new
-
-        nb = proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size)
-
-        if nb <= 0
-          if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
-            next # Either we don't have permission, or the pid no longer exists
-          else
-            raise SystemCallError.new('proc_pidinfo', FFI.errno)
-          end
-        end
-
-        # Avoid potentially invalid data
-        next if nb != info.size
+        info = get_proc_task_info(pid)
+        next if info.nil?
 
         struct = ProcTableStruct.new
 
@@ -224,6 +212,25 @@ module Sys
     end
 
     private
+
+    def self.get_proc_task_info(pid)
+      raise TypeError unless pid.is_a?(Numeric)
+
+      info = ProcTaskAllInfo.new
+
+      nb = proc_pidinfo(pid, PROC_PIDTASKALLINFO, 0, info, info.size)
+
+      if nb <= 0
+        if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
+          return # Either we don't have permission, or the pid no longer exists
+        else
+          raise SystemCallError.new('proc_pidinfo', FFI.errno)
+        end
+      end
+
+      # Avoid potentially invalid data
+      nb != info.size ? nil : info
+    end
 
     def self.apply_info_to_struct(info, struct)
       # Chop the leading xx_ from the FFI struct members for our ruby struct.
