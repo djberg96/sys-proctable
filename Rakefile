@@ -4,45 +4,8 @@ require 'rake/testtask'
 require 'rbconfig'
 include RbConfig
 
-CLEAN.include(
-  '**/*.core',              # Core dump files
-  '**/*.gem',               # Gem files
-  '**/*.rbc',               # Rubinius
-  '**/*.rbx',               # Rubinius
-  '**/*.o',                 # C object file
-  '**/*.log',               # Ruby extension build log
-  '**/Makefile',            # C Makefile
-  '**/conftest.dSYM',       # OS X build directory
-  "**/*.#{CONFIG['DLEXT']}" # C shared object
-)
-
-desc 'Build the sys-proctable library for C versions of sys-proctable'
-task :build => [:clean] do
-  if RUBY_PLATFORM == 'java'
-    if ENV['JRUBY_OPTS']
-      ENV['JRUBY_OPTS'] += ' -Xcext.enabled=true'
-    else
-      ENV['JRUBY_OPTS'] = '-Xcext.enabled=true'
-    end
-  end
-
-  case CONFIG['host_os']
-    when /hpux/i
-      dir = 'ext/hpux'
-      ext = '.sl'
-  end
-
-  if CONFIG['host_os'] =~ /hpux/i
-    Dir.chdir(dir) do
-      ruby 'extconf.rb'
-      sh 'make'
-      cp 'proctable' + ext, 'sys'
-    end
-  end
-end
-
 desc 'Install the sys-proctable library'
-task :install => [:build] do
+task :install do
   file = nil
   dir  = File.join(CONFIG['sitelibdir'], 'sys')
 
@@ -61,8 +24,6 @@ task :install => [:build] do
       file = 'lib/freebsd/sys/proctable.rb'
     when /darwin/i
       file = 'lib/darwin/sys/proctable.rb'
-    when /hpux/i
-      Dir.chdir('ext/hpux'){ sh 'make install' }
   end
 
   cp(file, dir, :verbose => true) if file
@@ -70,15 +31,8 @@ end
 
 desc 'Uninstall the sys-proctable library'
 task :uninstall do
-  case CONFIG['host_os']
-    when /hpux/i
-      dir  = File.join(CONFIG['sitearchdir'], 'sys')
-      file = File.join(dir, 'proctable.' + CONFIG['DLEXT'])
-    else
-      dir  = File.join(CONFIG['sitelibdir'], 'sys')
-      file = File.join(dir, 'proctable.rb')
-  end
-
+  dir  = File.join(CONFIG['sitelibdir'], 'sys')
+  file = File.join(dir, 'proctable.rb')
   rm(file) 
 end
 
@@ -116,9 +70,6 @@ Rake::TestTask.new do |t|
     when /darwin/i
       t.libs << 'lib/darwin'
       t.test_files = FileList['test/test_sys_proctable_darwin.rb']
-    when /hpux/i
-      t.libs << 'ext/hpux'
-      t.test_files = FileList['test/test_sys_proctable_hpux.rb']  
   end
 end
 
@@ -154,12 +105,6 @@ namespace :gem do
          spec.files += ['lib/darwin/sys/proctable.rb']
          spec.test_files << 'test/test_sys_proctable_darwin.rb'
          spec.add_dependency('ffi')
-      when /hpux/i
-         spec.platform = Gem::Platform.new(['universal', 'hpux'])
-         spec.files << 'ext/hpux/sys/proctable.c'
-         spec.extra_rdoc_files << 'ext/hpux/sys/proctable.c'
-         spec.test_files << 'test/test_sys_proctable_hpux.rb'
-         spec.extensions = ['ext/hpux/extconf.rb']
       when /linux/i
          spec.platform = Gem::Platform.new(['universal', 'linux'])
          spec.require_paths = ['lib', 'lib/linux']
@@ -196,7 +141,7 @@ namespace :gem do
 
   desc 'Create a gem for each supported OS'
   task :create_all => [:clean] do
-    platforms = %w[aix darwin freebsd hpux linux solaris windows]
+    platforms = %w[aix darwin freebsd linux solaris windows]
     Rake::Task["clean"].execute
     platforms.each{ |os|
       FileUtils.mkdir_p("pkg/#{os}")
