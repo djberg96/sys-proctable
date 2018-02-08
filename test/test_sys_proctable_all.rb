@@ -19,7 +19,7 @@ class TC_ProcTable_All < Test::Unit::TestCase
   end
 
   test "version is set to expected value" do
-    assert_equal('1.1.5', ProcTable::VERSION)
+    assert_equal('1.2.0', ProcTable::VERSION)
   end
 
   test "fields basic functionality" do
@@ -39,22 +39,22 @@ class TC_ProcTable_All < Test::Unit::TestCase
   end
 
   test "ps accepts an optional pid" do
-    assert_nothing_raised{ ProcTable.ps(0) }
+    assert_nothing_raised{ ProcTable.ps(pid: 0) }
   end
 
   test "ps with explicit nil works as expected" do
-    assert_nothing_raised{ ProcTable.ps(nil) }
-    assert_kind_of(Array, ProcTable.ps(nil))
+    assert_nothing_raised{ ProcTable.ps(pid: nil) }
+    assert_kind_of(Array, ProcTable.ps(pid: nil))
   end
 
   test "ps returns expected results" do
     assert_kind_of(Array, ProcTable.ps)
-    assert_kind_of(Struct::ProcTableStruct, ProcTable.ps(@pid))
+    assert_kind_of(Struct::ProcTableStruct, ProcTable.ps(pid: @pid))
   end
 
   test "ps returns nil if process does not exist" do
-    assert_nil(ProcTable.ps(999999999))
-    assert_nil(ProcTable.ps(999999999){})
+    assert_nil(ProcTable.ps(pid: 999999999))
+    assert_nil(ProcTable.ps(pid: 999999999){})
     assert_nil(ProcTable.ps{})
   end
 
@@ -62,12 +62,11 @@ class TC_ProcTable_All < Test::Unit::TestCase
     assert_true(ProcTable.ps.first.frozen?)
   end
 
-  test "ps accepts numeric arguments only" do
-    assert_raises(TypeError){ ProcTable.ps('vim') }
+  test "ps pid must be numeric" do
+    assert_raises(TypeError){ ProcTable.ps(pid: 'vim') }
   end
 
-  test "ps accepts a maximum of one argument on Unix platforms" do
-    omit_if(@@windows, 'ArgumentError check skipped on MS Windows')
+  test "ps accepts keyword arguments only" do
     assert_raises(ArgumentError){ ProcTable.ps(0, 'localhost') }
   end
 

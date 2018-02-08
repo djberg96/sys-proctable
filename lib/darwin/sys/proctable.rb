@@ -167,9 +167,13 @@ module Sys
     #   end
     #
     #   # Print process table information for only pid 1001
-    #   p ProcTable.ps(1001)
+    #   p ProcTable.ps(pid: 1001)
     #
-    def self.ps(pid = nil)
+    #   # Same as above, but do not include thread information
+    #   p ProcTable.ps(pid: 1001, thread_info: false)
+    #
+    def self.ps(**kwargs)
+      pid = kwargs[:pid]
       raise TypeError unless pid.is_a?(Numeric) if pid
 
       num = proc_listallpids(nil, 0)
@@ -202,7 +206,7 @@ module Sys
 
         # Pass by reference
         get_cmd_args_and_env(lpid, struct)
-        get_thread_info(lpid, struct, info[:ptinfo])
+        get_thread_info(lpid, struct, info[:ptinfo]) unless kwargs[:thread_info] == false
 
         # Chop the leading xx_ from the FFI struct members for our ruby struct.
         info.members.each do |nested|

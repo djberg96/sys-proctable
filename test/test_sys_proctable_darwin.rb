@@ -31,8 +31,8 @@ class TC_ProcTable_Darwin < Test::Unit::TestCase
   end
 
   def setup
-    @ptable = Sys::ProcTable.ps(@@pid)
-    @ptable2 = Sys::ProcTable.ps(@@pid2)
+    @ptable = Sys::ProcTable.ps(pid: @@pid)
+    @ptable2 = Sys::ProcTable.ps(pid: @@pid2)
   end
 
   test "fields basic functionality" do
