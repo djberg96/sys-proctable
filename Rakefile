@@ -93,38 +93,38 @@ namespace :gem do
     # of some bugginess in Rubygems' platform.rb.
     #
     case os
-      when /freebsd/i
-         spec.platform = Gem::Platform.new(['universal', 'freebsd'])
-         spec.require_paths = ['lib', 'lib/freebsd']
-         spec.files += ['lib/freebsd/sys/proctable.rb']
-         spec.test_files << 'test/test_sys_proctable_freebsd.rb'
-         spec.add_dependency('ffi')
+      when /aix/i
+         spec.platform = Gem::Platform.new(['universal', 'aix5'])
+         spec.require_paths = ['lib', 'lib/aix']
+         spec.files += ['lib/aix/sys/proctable.rb']
+         spec.test_files << 'spec/sys_proctable_aix_spec.rb'
       when /darwin/i
          spec.platform = Gem::Platform.new(['universal', 'darwin'])
          spec.require_paths = ['lib', 'lib/darwin']
          spec.files += ['lib/darwin/sys/proctable.rb']
-         spec.test_files << 'test/test_sys_proctable_darwin.rb'
+         spec.test_files << 'spec/sys_proctable_darwin_spec.rb'
+         spec.add_dependency('ffi')
+      when /freebsd/i
+         spec.platform = Gem::Platform.new(['universal', 'freebsd'])
+         spec.require_paths = ['lib', 'lib/freebsd']
+         spec.files += ['lib/freebsd/sys/proctable.rb']
+         spec.test_files << 'spec/sys_proctable_freebsd_spec.rb'
          spec.add_dependency('ffi')
       when /linux/i
          spec.platform = Gem::Platform.new(['universal', 'linux'])
          spec.require_paths = ['lib', 'lib/linux']
          spec.files += ['lib/linux/sys/proctable.rb', 'lib/linux/sys/proctable/cgroup_entry.rb', 'lib/linux/sys/proctable/smaps.rb']
-         spec.test_files << 'test/test_sys_proctable_linux.rb'
+         spec.test_files << 'spec/sys_proctable_linux_spec.rb'
       when /sunos|solaris/i
          spec.platform = Gem::Platform.new(['universal', 'solaris'])
          spec.require_paths = ['lib', 'lib/sunos']
          spec.files += ['lib/sunos/sys/proctable.rb']
-         spec.test_files << 'test/test_sys_proctable_sunos.rb'
-      when /aix/i
-         spec.platform = Gem::Platform.new(['universal', 'aix5'])
-         spec.require_paths = ['lib', 'lib/aix']
-         spec.files += ['lib/aix/sys/proctable.rb']
-         spec.test_files << 'test/test_sys_proctable_aix.rb'
+         spec.test_files << 'spec/sys_proctable_sunos_spec.rb'
       when /mswin|win32|dos|cygwin|mingw|windows/i
          spec.platform = Gem::Platform.new(['universal', 'mingw32'])
          spec.require_paths = ['lib', 'lib/windows']
          spec.files += ['lib/windows/sys/proctable.rb']
-         spec.test_files << 'test/test_sys_proctable_windows.rb'
+         spec.test_files << 'spec/sys_proctable_windows_spec.rb'
       else
          raise "Unsupported platform: #{os}"
     end
