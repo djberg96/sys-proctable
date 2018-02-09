@@ -2,6 +2,7 @@ require 'rake'
 require 'rake/clean'
 require 'rake/testtask'
 require 'rbconfig'
+require 'rspec/core/rake_task'
 include RbConfig
 
 desc 'Install the sys-proctable library'
@@ -46,29 +47,29 @@ task :example do
   sh 'ruby -Ilib -Iext examples/example_ps.rb'
 end
 
-desc 'Run the test suite'
-Rake::TestTask.new do |t|
-  t.libs << 'test' << '.'
-   
+desc 'Run the test suite for the sys-proctable library'
+RSpec::Core::RakeTask.new(:spec) do |t|
+  t.pattern = ['spec/sys_proctable_all_spec.rb']
+
   case CONFIG['host_os']
-    when /mswin|msdos|cygwin|mingw|windows/i
-      t.test_files = FileList['test/test_sys_proctable_windows.rb']
-      t.libs << 'lib/windows'
-    when /linux/i
-      t.test_files = FileList['test/test_sys_proctable_linux.rb']
-      t.libs << 'lib/linux'
-    when /sunos|solaris/i
-      t.test_files = FileList['test/test_sys_proctable_sunos.rb']
-      t.libs << 'lib/sunos'
     when /aix/i
-      t.test_files = FileList['test/test_sys_proctable_aix.rb']
-      t.libs << 'lib/aix'
-    when /freebsd/i
-      t.test_files = FileList['test/test_sys_proctable_freebsd.rb']  
-      t.libs << 'lib/freebsd'
+      t.rspec_opts = '-Ilib/aix'
+      t.pattern << 'spec/sys_proctable_aix.rb'
     when /darwin/i
-      t.libs << 'lib/darwin'
-      t.test_files = FileList['test/test_sys_proctable_darwin.rb']
+      t.rspec_opts = '-Ilib/darwin'
+      t.pattern << 'spec/sys_proctable_darwin_spec.rb'
+    when /freebsd/i
+      t.rspec_opts = '-Ilib/freebsd'
+      t.pattern << 'spec/sys_proctable_freebsd_spec.rb'
+    when /linux/i
+      t.rspec_opts = '-Ilib/linux'
+      t.pattern << 'spec/sys_proctable_linux_spec.rb'
+    when /sunos|solaris/i
+      t.rspec_opts = '-Ilib/sunos'
+      t.pattern << 'spec/sys_proctable_sunos_spec.rb'
+    when /mswin|msdos|cygwin|mingw|windows/i
+      t.rspec_opts = '-Ilib/windows'
+      t.pattern << 'spec/sys_proctable_windows_spec.rb'
   end
 end
 
