@@ -37,18 +37,17 @@ task :uninstall do
 end
 
 desc 'Run the benchmark suite'
-task :bench => [:build] do
+task :bench do
   sh "ruby -Ilib benchmarks/bench_ps.rb"
 end
 
 desc 'Run the example program'
-task :example => [:build] do
+task :example do
   sh 'ruby -Ilib -Iext examples/example_ps.rb'
 end
 
 desc 'Run the test suite'
 Rake::TestTask.new do |t|
-  task :test => :build
   t.libs << 'test' << '.'
    
   case CONFIG['host_os']
