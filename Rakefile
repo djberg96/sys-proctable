@@ -164,4 +164,4 @@ namespace :gem do
   end
 end
 
-task :default => :test
+task :default => :spec
