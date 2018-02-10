@@ -97,7 +97,10 @@ module Sys
     #   end
     #
     #   # Print process table information for only pid 1001
-    #   p ProcTable.ps(1001)
+    #   p ProcTable.ps(pid: 1001)
+    #
+    #   # Skip smaps collection
+    #   p ProcTable.ps(smaps: false)
     #
     #--
     #  It's possible that a process could terminate while gathering
@@ -105,7 +108,10 @@ module Sys
     #  will simply skip to the next record. In short, this library will
     #  either return all information for a process, or none at all.
     #
-    def self.ps(pid=nil)
+    def self.ps(**kwargs)
+      pid   = kwargs[:pid]
+      smaps = kwargs[:smaps]
+
       array  = block_given? ? nil : []
       struct = nil
 
@@ -173,10 +179,12 @@ module Sys
 
         # Read smaps, returning a parsable string if we don't have permissions.
         # Note: We're blindly rescuing because File.readable?/readable_real?
-        # are true for a file in the /proc fileystem but raises a ErrNo:EACCESS
+        # are true for a file in the /proc fileystem but raises a Errno:EACCESS
         # when your try to read it without permissions.
-        smaps_contents = IO.read("/proc/#{file}/smaps") rescue ""
-        struct.smaps = Smaps.new(file, smaps_contents)
+        unless smaps == false
+          smaps_contents = IO.read("/proc/#{file}/smaps") rescue ""
+          struct.smaps = Smaps.new(file, smaps_contents)
+        end
 
         # Deal with spaces in comm name. Courtesy of Ara Howard.
         re = %r/\([^\)]+\)/
