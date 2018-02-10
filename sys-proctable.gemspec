@@ -2,14 +2,14 @@ require 'rubygems'
 
 Gem::Specification.new do |spec|
   spec.name       = 'sys-proctable'
-  spec.version    = '1.1.5'
+  spec.version    = '1.2.0'
   spec.author     = 'Daniel J. Berger'
   spec.license    = 'Apache 2.0'
   spec.email      = 'djberg96@gmail.com'
   spec.homepage   = 'http://github.com/djberg96/sys-proctable'
   spec.platform   = Gem::Platform::CURRENT # Probably altered by Rake task
   spec.summary    = 'An interface for providing process table information'
-  spec.test_files = ['test/test_sys_proctable_all.rb']
+  spec.test_files = ['spec/sys_proctable_all_spec.rb']
   spec.cert_chain = ['certs/djberg96_pub.pem']
    
   # Additional files for your platform are added by the 'rake gem' task.
@@ -27,7 +27,7 @@ Gem::Specification.new do |spec|
 
   spec.extra_rdoc_files  = ['CHANGES', 'README', 'MANIFEST', 'doc/top.txt']
 
-  spec.add_development_dependency('test-unit')
+  spec.add_development_dependency('rspec')
   spec.add_development_dependency('rake')
 
   spec.description = <<-EOF
