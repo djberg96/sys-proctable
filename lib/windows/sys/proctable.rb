@@ -92,7 +92,10 @@ module Sys
     # If a +pid+ is provided, then only a single ProcTableStruct is yielded or
     # returned, or nil if no process information is found for that +pid+.
     #
-    def self.ps(pid=nil, host=Socket.gethostname)
+    def self.ps(**kwargs)
+      pid  = kwargs[:pid]
+      host = kwargs[:host] || Socket.gethostname
+
       raise TypeError unless pid.kind_of?(Numeric) if pid
 
       array  = block_given? ? nil : []
