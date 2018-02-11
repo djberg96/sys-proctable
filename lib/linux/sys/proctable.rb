@@ -99,8 +99,8 @@ module Sys
     #   # Print process table information for only pid 1001
     #   p ProcTable.ps(pid: 1001)
     #
-    #   # Skip smaps collection
-    #   p ProcTable.ps(smaps: false)
+    #   # Skip smaps collection and/or cgroup collection
+    #   p ProcTable.ps(smaps: false, cgroup: false)
     #
     #--
     #  It's possible that a process could terminate while gathering
@@ -109,8 +109,9 @@ module Sys
     #  either return all information for a process, or none at all.
     #
     def self.ps(**kwargs)
-      pid   = kwargs[:pid]
-      smaps = kwargs[:smaps]
+      pid    = kwargs[:pid]
+      smaps  = kwargs[:smaps]
+      cgroup = kwargs[:cgroup]
 
       array  = block_given? ? nil : []
       struct = nil
@@ -175,7 +176,9 @@ module Sys
         struct.nlwp = Dir.glob("/proc/#{file}/task/*").length rescue struct.nlwp = 1
 
         # Get control groups to which the process belongs
-        struct.cgroup = IO.readlines("/proc/#{file}/cgroup").map { |l| CgroupEntry.new(l) } rescue []
+        unless cgroup == false
+          struct.cgroup = IO.readlines("/proc/#{file}/cgroup").map { |l| CgroupEntry.new(l) } rescue []
+        end
 
         # Read smaps, returning a parsable string if we don't have permissions.
         # Note: We're blindly rescuing because File.readable?/readable_real?
