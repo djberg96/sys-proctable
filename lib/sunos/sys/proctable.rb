@@ -233,8 +233,13 @@ module Sys
     #   # Print process table information for only pid 1001
     #   p ProcTable.ps(pid: 1001)
     #
+    #   # Skip prusage information
+    #   p ProcTable.ps(prusage: false)
+    #
     def self.ps(**kwargs)
       pid = kwargs[:pid]
+      prusage_info = kwargs[:prusage]
+
       raise TypeError unless pid.is_a?(Numeric) if pid
 
       array  = block_given? ? nil : []
@@ -347,41 +352,43 @@ module Sys
 
         ### struct prusage
 
-        begin
-          data = IO.read("/proc/#{file}/usage")
-          prusage = PRUsage.new(FFI::MemoryPointer.from_string(data))
+        if prusage_info != false
+          begin
+            data = IO.read("/proc/#{file}/usage")
+            prusage = PRUsage.new(FFI::MemoryPointer.from_string(data))
 
-          struct.count    = prusage[:pr_count]
-          struct.tstamp   = prusage[:pr_tstamp][:tv_sec]
-          struct.create   = prusage[:pr_create][:tv_sec]
-          struct.term     = prusage[:pr_term][:tv_sec]
-          struct.rtime    = prusage[:pr_rtime][:tv_sec]
-          struct.utime    = prusage[:pr_utime][:tv_sec]
-          struct.stime    = prusage[:pr_stime][:tv_sec]
-          struct.ttime    = prusage[:pr_ttime][:tv_sec]
-          struct.tftime   = prusage[:pr_tftime][:tv_sec]
-          struct.dftime   = prusage[:pr_dftime][:tv_sec]
-          struct.kftime   = prusage[:pr_kftime][:tv_sec]
-          struct.ltime    = prusage[:pr_ltime][:tv_sec]
-          struct.slptime  = prusage[:pr_slptime][:tv_sec]
-          struct.wtime    = prusage[:pr_wtime][:tv_sec]
-          struct.stoptime = prusage[:pr_stoptime][:tv_sec]
-          struct.minf     = prusage[:pr_minf]
-          struct.majf     = prusage[:pr_majf]
-          struct.nswap    = prusage[:pr_nswap]
-          struct.inblk    = prusage[:pr_inblk]
-          struct.oublk    = prusage[:pr_oublk]
-          struct.msnd     = prusage[:pr_msnd]
-          struct.mrcv     = prusage[:pr_mrcv]
-          struct.sigs     = prusage[:pr_sigs]
-          struct.vctx     = prusage[:pr_vctx]
-          struct.ictx     = prusage[:pr_ictx]
-          struct.sysc     = prusage[:pr_sysc]
-          struct.ioch     = prusage[:pr_ioch]
-        rescue Errno::EACCES
-          # Do nothing if we lack permissions. Just move on.
-        rescue Errno::ENOENT
-          next # The process has terminated. Bail out!
+            struct.count    = prusage[:pr_count]
+            struct.tstamp   = prusage[:pr_tstamp][:tv_sec]
+            struct.create   = prusage[:pr_create][:tv_sec]
+            struct.term     = prusage[:pr_term][:tv_sec]
+            struct.rtime    = prusage[:pr_rtime][:tv_sec]
+            struct.utime    = prusage[:pr_utime][:tv_sec]
+            struct.stime    = prusage[:pr_stime][:tv_sec]
+            struct.ttime    = prusage[:pr_ttime][:tv_sec]
+            struct.tftime   = prusage[:pr_tftime][:tv_sec]
+            struct.dftime   = prusage[:pr_dftime][:tv_sec]
+            struct.kftime   = prusage[:pr_kftime][:tv_sec]
+            struct.ltime    = prusage[:pr_ltime][:tv_sec]
+            struct.slptime  = prusage[:pr_slptime][:tv_sec]
+            struct.wtime    = prusage[:pr_wtime][:tv_sec]
+            struct.stoptime = prusage[:pr_stoptime][:tv_sec]
+            struct.minf     = prusage[:pr_minf]
+            struct.majf     = prusage[:pr_majf]
+            struct.nswap    = prusage[:pr_nswap]
+            struct.inblk    = prusage[:pr_inblk]
+            struct.oublk    = prusage[:pr_oublk]
+            struct.msnd     = prusage[:pr_msnd]
+            struct.mrcv     = prusage[:pr_mrcv]
+            struct.sigs     = prusage[:pr_sigs]
+            struct.vctx     = prusage[:pr_vctx]
+            struct.ictx     = prusage[:pr_ictx]
+            struct.sysc     = prusage[:pr_sysc]
+            struct.ioch     = prusage[:pr_ioch]
+          rescue Errno::EACCES
+            # Do nothing if we lack permissions. Just move on.
+          rescue Errno::ENOENT
+            next # The process has terminated. Bail out!
+          end
         end
 
         # Information from /proc/<pid>/path. This is represented as a hash,
