@@ -196,7 +196,9 @@ module Sys
     #   # Print process table information for only pid 1001
     #   p ProcTable.ps(1001)
     #
-    def self.ps(pid = nil)
+    def self.ps(**kwargs)
+      pid = kwargs[:pid]
+
       begin
         kd = kvm_open(nil, nil, nil, 0, nil)
 
