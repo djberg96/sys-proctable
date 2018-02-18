@@ -129,7 +129,7 @@ namespace :gem do
          raise "Unsupported platform: #{os}"
     end
 
-    spec.test_files << 'test/test_sys_top.rb'
+    spec.test_files << 'spec/sys_top_spec.rb'
  
     # https://github.com/rubygems/rubygems/issues/147
     spec.original_platform = spec.platform
