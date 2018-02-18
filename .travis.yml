@@ -7,7 +7,7 @@ rvm:
   - 'jruby-1.7.26'
   - 'jruby-9.0.5.0'
   - 'jruby-9.1.5.0'
-install: gem install test-unit ffi
+install: gem install rspec ffi
 script: rake
 matrix:
   include:
