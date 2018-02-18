@@ -202,9 +202,11 @@ module Sys
     #   end
     #
     #   # Print process table information for only pid 1001
-    #   p ProcTable.ps(1001)
+    #   p ProcTable.ps(pid: 1001)
     #
-    def self.ps(pid = nil)
+    def self.ps(**kwargs)
+      pid = kwargs[:pid]
+
       raise TypeError unless pid.is_a?(Numeric) if pid
 
       array  = block_given? ? nil : []
