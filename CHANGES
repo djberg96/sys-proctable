@@ -1,3 +1,14 @@
+== 1.2.0 - 20-Feb-2018
+* There has been an API change. The ProcTable.ps method now uses keyword
+  arguments. The 'pid' option is universal, the rest depend on the platform.
+* Support for HP-UX has been dropped, both because it was the last remaining
+  platform that still used C code, and because it's basically a dead platform.
+* There are no more platform-specific gems. There is now a single gem that
+  will load the appropriate code based on your host's operating system.
+* The tests were switched from test-unit to rspec.
+* Lots of Rakefile updates based on the above changes.
+* The cert was updated.
+
 == 1.1.5 - 10-Aug-2017
 * Fixed a warning that cropped up in Ruby 2.4.x because I was type checking
   against Fixnum. Those have been replaced with Numeric.
