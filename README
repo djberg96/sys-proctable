@@ -15,7 +15,7 @@
 == Installation
   gem install sys-proctable
 
-  You may need to specify a platform in some cases. For example:
+  For version 1.1.5 or earlier, you may need to specify a platform in some cases. For example:
 
   gem install sys-proctable --platform mswin32 # Windows
   gem install sys-proctable --platform sunos   # Solaris
@@ -35,7 +35,7 @@
   }
 
   # Just one process
-  s = ProcTable.ps(2123)
+  s = ProcTable.ps(pid: 2123)
   puts s.pid.to_s
   puts s.comm
   # ...
@@ -48,8 +48,17 @@
   end
 
 == Notes 
-  Windows users may pass a host name as a second argument to get process
-  information from a different host. This relies on the WMI service running.
+  Various platforms support different options. Mostly this is to let you
+  skip the collection of certain bits of information in order to improve
+  speed and/or reduce memory. For example on Linux you can do this to
+  skip the collection of smaps information:
+
+    Sys::ProcTable.ps(smaps: false)
+
+  Windows users may send a host name to get process information from a
+  different host. This relies on the WMI service running.
+
+    Sys::ProcTable.ps(host: some_host)
 
 == Known Issues
 === FreeBSD
@@ -57,14 +66,13 @@
   sys-proctable library needs to be a member of the kvm group (or root).
 
 === Bundler
-  Bundler seems to have trouble installing the proper gem because of the
-  platform specific gem names. To deal with that, run this command first:
+  For version 1.1.5 or earlier, Bundler seems to have trouble installing the
+  proper gem because of the platform specific gem names. To deal with that,
+  run this command first:
 
     bundle config specific_platform true
 
-  You can follow the issue at:
-
-    https://github.com/bundler/bundler/issues/5536  
+  You should not have to do this for version 1.2.0 or later.
 
 === Solaris
   The cmdline member on Solaris is limited to 80 characters unless you (or
@@ -75,7 +83,7 @@
   processes that you have access to. To get a full listing, run as root.
 
 == Future Plans
-  Add support for NetBSD and OpenBSD.
+  Support for Solaris will probably be dropped in the next major release.
 
 == Acknowledgements
   This library was originally based on the Perl module Proc::ProcessTable
@@ -111,7 +119,7 @@
   Apache 2.0
     
 == Copyright
-  (C) 2003-2016 Daniel J. Berger
+  (C) 2003-2018 Daniel J. Berger
   All Rights Reserved.
 
 == Author
