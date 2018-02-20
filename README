@@ -9,7 +9,6 @@
 * Linux 2.6+
 * FreeBSD
 * Solaris 8+
-* HP-UX 10+
 * OS X 10.7+
 * AIX 5.3+
 
@@ -77,7 +76,6 @@
 
 == Future Plans
   Add support for NetBSD and OpenBSD.
-  Convert remaining C code (just HP-UX at this point) to FFI.
 
 == Acknowledgements
   This library was originally based on the Perl module Proc::ProcessTable
