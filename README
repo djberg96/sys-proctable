@@ -2,7 +2,7 @@
   A Ruby interface for gathering process information.
 
 == Prerequisites
-* Test::Unit 2.x (development only)
+* RSpec 3.x (development only)
 
 == Supported Platforms
 * Windows 2000 or later
