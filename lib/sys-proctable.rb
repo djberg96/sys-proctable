@@ -1,1 +1,1 @@
-require 'sys/proctable'
+require_relative 'sys/proctable'
