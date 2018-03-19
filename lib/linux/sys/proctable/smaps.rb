@@ -99,18 +99,28 @@ module Sys
 
       private
 
+      PSS_MATCH  = "Pss:"
+      RSS_MATCH  = "Rss:"
+      VSS_MATCH  = "Size:"
+      USS_MATCH  = "Private_"
+      SWAP_MATCH = "Swap:"
+
+      PSS_RSS_LINE_RANGE  = 4..-1
+      VSS_SWAP_LINE_RANGE = 5..-1
+      USS_LINE_RANGE      = 14..-1
+
       def parse_smaps_line(line)
         case line
-        when /^Pss:\s+?(\d+)/
-          @pss += Regexp.last_match[1].to_i * 1000
-        when /^Rss:\s+?(\d+)/
-          @rss += Regexp.last_match[1].to_i * 1000
-        when /^Size:\s+?(\d+)/
-          @vss += Regexp.last_match[1].to_i * 1000
-        when /^Swap:\s+?(\d+)/
-          @swap += Regexp.last_match[1].to_i * 1000
-        when /^Private_(Clean|Dirty):\s+?(\d+)/
-          @uss += Regexp.last_match[2].to_i * 1000
+        when line.start_with?(PSS_MATCH)
+          @pss  += line[PSS_RSS_LINE_RANGE].to_i * 1000
+        when line.start_with?(RSS_MATCH)
+          @rss  += line[PSS_RSS_LINE_RANGE].to_i * 1000
+        when line.start_with?(VSS_MATCH)
+          @vss  += line[VSS_SWAP_LINE_RANGE].to_i * 1000
+        when line.start_with?(SWAP_MATCH)
+          @swap += line[VSS_SWAP_LINE_RANGE].to_i * 1000
+        when line.start_with?(USS_MATCH)
+          @uss  += line[USS_LINE_RANGE].to_i * 1000
         end
       end
     end
