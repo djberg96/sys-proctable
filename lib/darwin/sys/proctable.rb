@@ -152,6 +152,16 @@ module Sys
       @fields
     end
 
+    def self.rss(pid)
+      info = get_proc_task_info(pid)
+      info[:ptinfo][:pti_resident_size] unless info.nil?
+    end
+
+    def self.vsize(pid)
+      info = get_proc_task_info(pid)
+      info[:ptinfo][:pti_virtual_size] unless info.nil?
+    end
+
     # In block form, yields a ProcTableStruct for each process entry that you
     # have rights to. This method returns an array of ProcTableStruct's in
     # non-block form.
@@ -172,10 +182,36 @@ module Sys
     #   # Same as above, but do not include thread information
     #   p ProcTable.ps(pid: 1001, thread_info: false)
     #
-    def self.ps(**kwargs)
-      pid = kwargs[:pid]
+    def self.ps(**kwargs, &block)
+      pid              = kwargs[:pid]
+      skip_thread_info = !kwargs[:thread_info]
       raise TypeError unless pid.is_a?(Numeric) if pid
+      if pid
+        get_info_for_pid(pid, skip_thread_info, &block)
+      else
+        get_info_for_all_pids(pid, skip_thread_info, &block)
+      end
+    end
 
+    private
+
+    def self.get_info_for_pid(pid, skip_thread_info = false)
+      info = get_proc_task_info(pid)
+      return if info.nil?
+
+      struct = ProcTableStruct.new
+
+      # Pass by reference
+      get_cmd_args_and_env(lpid, struct)
+      get_thread_info(lpid, struct, info[:ptinfo]) if skip_thread_info == true
+      apply_info_to_struct(info, struct)
+
+      struct.freeze
+      yield struct if block_given?
+      struct
+    end
+
+    def self.get_info_for_all_pids(pid, skip_thread_info = false)
       num = proc_listallpids(nil, 0)
       ptr = FFI::MemoryPointer.new(:pid_t, num)
       num = proc_listallpids(ptr, ptr.size)
@@ -186,40 +222,8 @@ module Sys
       array = block_given? ? nil : []
 
       pids.each do |lpid|
-        next unless pid == lpid if pid
-        info = ProcTaskAllInfo.new
-
-        nb = proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size)
-
-        if nb <= 0
-          if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
-            next # Either we don't have permission, or the pid no longer exists
-          else
-            raise SystemCallError.new('proc_pidinfo', FFI.errno)
-          end
-        end
-
-        # Avoid potentially invalid data
-        next if nb != info.size
-
-        struct = ProcTableStruct.new
-
-        # Pass by reference
-        get_cmd_args_and_env(lpid, struct)
-        get_thread_info(lpid, struct, info[:ptinfo]) unless kwargs[:thread_info] == false
-
-        # Chop the leading xx_ from the FFI struct members for our ruby struct.
-        info.members.each do |nested|
-          info[nested].members.each do |member|
-            if info[nested][member].is_a?(FFI::StructLayout::CharArray)
-              struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member].to_s
-            else
-              struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member]
-            end
-          end
-        end
-
-        struct.freeze
+        struct = get_info_for_pid(lpid, skip_thread_info)
+        next if struct.nil?
 
         if block_given?
           yield struct
@@ -229,10 +233,40 @@ module Sys
       end
 
       return nil if array.nil?
-      pid ? array.first : array
+      array
     end
 
-    private
+    def self.get_proc_task_info(pid)
+      raise TypeError unless pid.is_a?(Numeric)
+
+      info = ProcTaskAllInfo.new
+
+      nb = proc_pidinfo(pid, PROC_PIDTASKALLINFO, 0, info, info.size)
+
+      if nb <= 0
+        if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
+          return # Either we don't have permission, or the pid no longer exists
+        else
+          raise SystemCallError.new('proc_pidinfo', FFI.errno)
+        end
+      end
+
+      # Avoid potentially invalid data
+      nb != info.size ? nil : info
+    end
+
+    def self.apply_info_to_struct(info, struct)
+      # Chop the leading xx_ from the FFI struct members for our ruby struct.
+      info.members.each do |nested|
+        info[nested].members.each do |member|
+          if info[nested][member].is_a?(FFI::StructLayout::CharArray)
+            struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member].to_s
+          else
+            struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member]
+          end
+        end
+      end
+    end
 
     # Returns an array of ThreadInfo objects for the given pid.
     #
