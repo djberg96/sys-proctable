@@ -1,3 +1,11 @@
+== 1.2.1 - 8-Jun-2018
+* The code for OSX is now more efficient when a pid argument is provided.
+  Thanks go to Nick LaMuro for his efforts.
+* Added metadata to the gemspec.
+* Switched the README (now README.md) to markdown format. Thanks go to
+  Tim Meusel for the update.
+* Updated the cert. Should be good for ten years now.
+
 == 1.2.0 - 20-Feb-2018
 * There has been an API change. The ProcTable.ps method now uses keyword
   arguments. The 'pid' option is universal, the rest depend on the platform.
