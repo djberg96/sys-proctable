@@ -174,6 +174,7 @@ module Sys
     #
     def self.ps(**kwargs)
       pid = kwargs[:pid]
+      thread_info = kwargs[:thread_info]
 
       if pid
         raise TypeError unless pid.is_a?(Numeric)
@@ -195,7 +196,7 @@ module Sys
 
         # Pass by reference
         get_cmd_args_and_env(pid, struct)
-        get_thread_info(pid, struct, info[:ptinfo])
+        get_thread_info(pid, struct, info[:ptinfo]) unless thread_info == false
         apply_info_to_struct(info, struct)
 
         struct.freeze
@@ -232,7 +233,7 @@ module Sys
 
           # Pass by reference
           get_cmd_args_and_env(lpid, struct)
-          get_thread_info(lpid, struct, info[:ptinfo]) unless kwargs[:thread_info] == false
+          get_thread_info(lpid, struct, info[:ptinfo]) unless thread_info == false
           apply_info_to_struct(info, struct)
 
           struct.freeze
