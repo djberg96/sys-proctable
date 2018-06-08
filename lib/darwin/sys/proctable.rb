@@ -174,39 +174,28 @@ module Sys
     #
     def self.ps(**kwargs)
       pid = kwargs[:pid]
-      raise TypeError unless pid.is_a?(Numeric) if pid
 
-      num = proc_listallpids(nil, 0)
-      ptr = FFI::MemoryPointer.new(:pid_t, num)
-      num = proc_listallpids(ptr, ptr.size)
-
-      raise SystemCallError.new('proc_listallpids', FFI.errno) if num == 0
-
-      pids  = ptr.get_array_of_int32(0, num).sort
-      array = block_given? ? nil : []
-
-      pids.each do |lpid|
-        next unless pid == lpid if pid
+      if pid
+        raise TypeError unless pid.is_a?(Numeric)
         info = ProcTaskAllInfo.new
 
-        nb = proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size)
+        nb = proc_pidinfo(pid, PROC_PIDTASKALLINFO, 0, info, info.size)
 
         if nb <= 0
           if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
-            next # Either we don't have permission, or the pid no longer exists
+            return # Either we don't have permission, or the pid no longer exists
           else
             raise SystemCallError.new('proc_pidinfo', FFI.errno)
           end
         end
 
-        # Avoid potentially invalid data
-        next if nb != info.size
+        return nil if nb != info.size # Invalid data
 
         struct = ProcTableStruct.new
 
         # Pass by reference
-        get_cmd_args_and_env(lpid, struct)
-        get_thread_info(lpid, struct, info[:ptinfo]) unless kwargs[:thread_info] == false
+        get_cmd_args_and_env(pid, struct)
+        get_thread_info(pid, struct, info[:ptinfo])
 
         # Chop the leading xx_ from the FFI struct members for our ruby struct.
         info.members.each do |nested|
@@ -220,16 +209,63 @@ module Sys
         end
 
         struct.freeze
+        yield struct if block_given?
+        struct
+      else
+        num = proc_listallpids(nil, 0)
+        ptr = FFI::MemoryPointer.new(:pid_t, num)
+        num = proc_listallpids(ptr, ptr.size)
 
-        if block_given?
-          yield struct
-        else
-          array << struct
+        raise SystemCallError.new('proc_listallpids', FFI.errno) if num == 0
+
+        pids  = ptr.get_array_of_int32(0, num).sort
+        array = block_given? ? nil : []
+
+        pids.each do |lpid|
+          next unless pid == lpid if pid
+          info = ProcTaskAllInfo.new
+
+          nb = proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size)
+
+          if nb <= 0
+            if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
+              next # Either we don't have permission, or the pid no longer exists
+            else
+              raise SystemCallError.new('proc_pidinfo', FFI.errno)
+            end
+          end
+
+          # Avoid potentially invalid data
+          next if nb != info.size
+
+          struct = ProcTableStruct.new
+
+          # Pass by reference
+          get_cmd_args_and_env(lpid, struct)
+          get_thread_info(lpid, struct, info[:ptinfo]) unless kwargs[:thread_info] == false
+
+          # Chop the leading xx_ from the FFI struct members for our ruby struct.
+          info.members.each do |nested|
+            info[nested].members.each do |member|
+              if info[nested][member].is_a?(FFI::StructLayout::CharArray)
+                struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member].to_s
+              else
+                struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member]
+              end
+            end
+          end
+
+          struct.freeze
+
+          if block_given?
+            yield struct
+          else
+            array << struct
+          end
         end
-      end
 
-      return nil if array.nil?
-      pid ? array.first : array
+        array
+      end
     end
 
     private
