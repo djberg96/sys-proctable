@@ -196,17 +196,7 @@ module Sys
         # Pass by reference
         get_cmd_args_and_env(pid, struct)
         get_thread_info(pid, struct, info[:ptinfo])
-
-        # Chop the leading xx_ from the FFI struct members for our ruby struct.
-        info.members.each do |nested|
-          info[nested].members.each do |member|
-            if info[nested][member].is_a?(FFI::StructLayout::CharArray)
-              struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member].to_s
-            else
-              struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member]
-            end
-          end
-        end
+        apply_info_to_struct(info, struct)
 
         struct.freeze
         yield struct if block_given?
@@ -243,17 +233,7 @@ module Sys
           # Pass by reference
           get_cmd_args_and_env(lpid, struct)
           get_thread_info(lpid, struct, info[:ptinfo]) unless kwargs[:thread_info] == false
-
-          # Chop the leading xx_ from the FFI struct members for our ruby struct.
-          info.members.each do |nested|
-            info[nested].members.each do |member|
-              if info[nested][member].is_a?(FFI::StructLayout::CharArray)
-                struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member].to_s
-              else
-                struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member]
-              end
-            end
-          end
+          apply_info_to_struct(info, struct)
 
           struct.freeze
 
@@ -269,6 +249,21 @@ module Sys
     end
 
     private
+
+    # Pass by reference method that updates the Ruby struct based on the FFI struct.
+    #
+    def self.apply_info_to_struct(info, struct)
+      # Chop the leading xx_ from the FFI struct members for our ruby struct.
+      info.members.each do |nested|
+        info[nested].members.each do |member|
+          if info[nested][member].is_a?(FFI::StructLayout::CharArray)
+            struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member].to_s
+          else
+            struct[PROC_STRUCT_FIELD_MAP[member]] = info[nested][member]
+          end
+        end
+      end
+    end
 
     # Returns an array of ThreadInfo objects for the given pid.
     #
