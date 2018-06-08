@@ -28,6 +28,15 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('rspec')
   spec.add_development_dependency('rake')
 
+  spec.metadata = {
+    'homepage_uri'      => 'https://github.com/djberg96/sys-proctable',
+    'bug_tracker_uri'   => 'https://github.com/djberg96/sys-proctable/issues',
+    'changelog_uri'     => 'https://github.com/djberg96/sys-proctable/blob/master/CHANGES',
+    'documentation_uri' => 'https://github.com/djberg96/sys-proctable/wiki',
+    'source_code_uri'   => 'https://github.com/djberg96/sys-proctable',
+    'wiki_uri'          => 'https://github.com/djberg96/sys-proctable/wiki'
+  }
+
   spec.description = <<-EOF
     The sys-proctable library provides an interface for gathering information
     about processes on your system, i.e. the process table. Most major
