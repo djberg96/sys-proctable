@@ -18,11 +18,11 @@ Gem::Specification.new do |spec|
     'CHANGES',
     'MANIFEST',
     'Rakefile',
-    'README',
+    'README.md',
     'sys-proctable.gemspec'
   ]
 
-  spec.extra_rdoc_files  = ['CHANGES', 'README', 'MANIFEST', 'doc/top.txt']
+  spec.extra_rdoc_files  = ['CHANGES', 'README.md', 'MANIFEST', 'doc/top.txt']
 
   spec.add_dependency('ffi')
   spec.add_development_dependency('rspec')
