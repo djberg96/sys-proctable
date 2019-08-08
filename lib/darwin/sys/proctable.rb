@@ -26,6 +26,11 @@ module Sys
     MAXTHREADNAMESIZE = 64
     PROC_PIDPATHINFO_MAXSIZE = MAXPATHLEN * 4
 
+    # JRuby on Mac
+    unless defined? FFI::StructLayout::CharArray
+      FFI::StructLayout::CharArray = FFI::StructLayout::CharArrayProxy
+    end
+
     class ProcBsdInfo < FFI::Struct
       layout(
         :pbi_flags, :uint32_t,
@@ -285,7 +290,13 @@ module Sys
 
       0.upto(max-1) do |index|
         tinfo = ProcThreadInfo.new
-        nb = proc_pidinfo(pid, PROC_PIDTHREADINFO, buf[index].read_uint64, tinfo, tinfo.size)
+
+        # Use read_array_of_uint64 for compatibility with JRuby if necessary.
+        if buf[index].respond_to?(:read_uint64)
+          nb = proc_pidinfo(pid, PROC_PIDTHREADINFO, buf[index].read_uint64, tinfo, tinfo.size)
+        else
+          nb = proc_pidinfo(pid, PROC_PIDTHREADINFO, buf[index].read_array_of_uint64(1).first, tinfo, tinfo.size)
+        end
 
         if nb <= 0
           if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
