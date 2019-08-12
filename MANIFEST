@@ -3,6 +3,8 @@
 * Rakefile
 * README
 * sys-proctable.gemspec
+* benchmarks/bench_ps.rb
+* benchmarks/bench_ips_ps.rb
 * example/example_ps.rb
 * lib/sys-proctable.rb
 * lib/sys/top.rb
