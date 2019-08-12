@@ -5,6 +5,10 @@
 * Refactored the specs a bit, adding a spec_helper.rb. This was mainly
   for JRuby compatibility.
 * Updates to the travis.yml file for both Ruby and JRuby versions.
+* Removed the doc directory and all the files it contained. It was
+  redundant, and some of the information was wrong. All of the
+  documentation you need is on the wiki.
+* Cleaned up the MANIFEST file.
 
 == 1.2.1 - 8-Jun-2018
 * The code for OSX is now more efficient when a pid argument is provided.
