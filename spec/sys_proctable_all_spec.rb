@@ -16,7 +16,7 @@ describe Sys::ProcTable do
   end
 
   it "has a VERSION constant set to the expected value" do
-    expect(Sys::ProcTable::VERSION).to eql('1.2.1')
+    expect(Sys::ProcTable::VERSION).to eql('1.2.2')
   end
 
   it "defines a custom error class" do

@@ -1,3 +1,11 @@
+== 1.2.2 - 12-Aug-2019
+* Added compatibility for JRuby on Mac which apparently doesn't define a
+  read_uint64 method, nor a CharArray. Thanks go to Adithya Pentela for
+  the spot.
+* Refactored the specs a bit, adding a spec_helper.rb. This was mainly
+  for JRuby compatibility.
+* Updates to the travis.yml file for both Ruby and JRuby versions.
+
 == 1.2.1 - 8-Jun-2018
 * The code for OSX is now more efficient when a pid argument is provided.
   Thanks go to Nick LaMuro for his efforts.
