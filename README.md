@@ -150,7 +150,7 @@ Apache 2.0
 
 ## Copyright
 
-(C) 2003-2018 Daniel J. Berger
+(C) 2003-2019 Daniel J. Berger
 All Rights Reserved.
 
 ## Author
