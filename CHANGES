@@ -8,7 +8,8 @@
 * Removed the doc directory and all the files it contained. It was
   redundant, and some of the information was wrong. All of the
   documentation you need is on the wiki.
-* Cleaned up the MANIFEST file.
+* Cleaned up the MANIFEST file, updated the gemspec, and fixed the
+  license name, which was missing a hyphen.
 
 == 1.2.1 - 8-Jun-2018
 * The code for OSX is now more efficient when a pid argument is provided.
