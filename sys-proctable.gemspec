@@ -15,14 +15,14 @@ Gem::Specification.new do |spec|
     "benchmarks/**/*.rb",
     "examples/**/*.rb",
     "lib/**/*.rb",
-    'CHANGES',
-    'MANIFEST',
+    'CHANGES.rdoc',
+    'MANIFEST.rdoc',
     'Rakefile',
     'README.md',
     'sys-proctable.gemspec'
   ]
 
-  spec.extra_rdoc_files = ['CHANGES', 'README.md', 'MANIFEST']
+  spec.extra_rdoc_files = ['CHANGES.rdoc', 'README.md', 'MANIFEST.rdoc']
 
   spec.add_dependency('ffi')
   spec.add_development_dependency('rspec')
