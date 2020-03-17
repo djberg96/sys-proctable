@@ -16,6 +16,7 @@ Gem::Specification.new do |spec|
     "examples/**/*.rb",
     "lib/**/*.rb",
     'CHANGES.rdoc',
+    'LICENSE',
     'MANIFEST.rdoc',
     'Rakefile',
     'README.md',
