@@ -1,3 +1,6 @@
+== 1.2.3 - 17-Mar-2020
+* Properly include a copy of Apache-2.0 in LICENSE file as part of library.
+
 == 1.2.2 - 12-Aug-2019
 * Added compatibility for JRuby on Mac which apparently doesn't define a
   read_uint64 method, nor a CharArray. Thanks go to Adithya Pentela for
