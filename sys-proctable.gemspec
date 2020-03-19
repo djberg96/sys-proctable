@@ -32,7 +32,7 @@ Gem::Specification.new do |spec|
   spec.metadata = {
     'homepage_uri'      => 'https://github.com/djberg96/sys-proctable',
     'bug_tracker_uri'   => 'https://github.com/djberg96/sys-proctable/issues',
-    'changelog_uri'     => 'https://github.com/djberg96/sys-proctable/blob/master/CHANGES',
+    'changelog_uri'     => 'https://github.com/djberg96/sys-proctable/blob/master/CHANGES.rdoc',
     'documentation_uri' => 'https://github.com/djberg96/sys-proctable/wiki',
     'source_code_uri'   => 'https://github.com/djberg96/sys-proctable',
     'wiki_uri'          => 'https://github.com/djberg96/sys-proctable/wiki'
