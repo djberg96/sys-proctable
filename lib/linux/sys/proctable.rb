@@ -45,6 +45,7 @@ module Sys
       'cstime',      # Number of children's kernel mode jiffies
       'priority',    # Nice value plus 15
       'nice',        # Nice value
+      'num_threads', # Number of threads in this process
       'itrealvalue', # Time in jiffies before next SIGALRM
       'starttime',   # Time in jiffies since system boot
       'vsize',       # Virtual memory size in bytes
@@ -216,7 +217,7 @@ module Sys
         struct.cstime      = stat[16].to_i
         struct.priority    = stat[17].to_i
         struct.nice        = stat[18].to_i
-        # Skip 19
+        struct.num_threads = stat[19].to_i
         struct.itrealvalue = stat[20].to_i
         struct.starttime   = stat[21].to_i
         struct.vsize       = stat[22].to_i

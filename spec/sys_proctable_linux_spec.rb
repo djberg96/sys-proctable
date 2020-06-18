@@ -10,12 +10,12 @@ require_relative 'sys_proctable_all_spec'
 
 describe Sys::ProcTable do
   let(:fields){ %w[
-      cmdline cwd exe pid name uid euid gid egid comm state ppid pgrp
-      session tty_num tpgid flags minflt cminflt majflt cmajflt utime
-      stime cutime cstime priority nice itrealvalue starttime vsize
+      cmdline cwd environ exe fd root pid name uid euid gid egid comm state ppid pgrp
+      session tty_nr tpgid flags minflt cminflt majflt cmajflt utime
+      stime cutime cstime priority nice num_threads itrealvalue starttime vsize
       rss rlim startcode endcode startstack kstkesp kstkeip signal blocked
-      sigignore sigcatch wchan nswap cnswap exit_signal processor environ
-      pctcpu pctmem nlwp cgroup smaps
+      sigignore sigcatch wchan nswap cnswap exit_signal processor rt_priority
+      policy pctcpu pctmem nlwp cgroup smaps
     ]
   }
 
@@ -145,6 +145,11 @@ describe Sys::ProcTable do
     it "contains a nice member and returns the expected value" do
       expect(subject).to respond_to(:nice)
       expect(subject.nice).to be_kind_of(Numeric)
+    end
+
+    it "contains a num_threads member and returns the expected value" do
+      expect(subject).to respond_to(:num_threads)
+      expect(subject.num_threads).to be_kind_of(Numeric)
     end
 
     it "contains a itrealvalue member and returns the expected value" do
@@ -305,6 +310,14 @@ describe Sys::ProcTable do
     it "contains a smaps member and returns the expected value" do
       expect(subject).to respond_to(:cgroup)
       expect(subject.smaps).to be_kind_of(Sys::ProcTable::Smaps)
+    end
+  end
+
+  context "fields" do
+    it "has a fields method that returns the expected results" do
+      expect(described_class).to respond_to(:fields)
+      expect(described_class.fields).to be_kind_of(Array)
+      expect(described_class.fields).to match_array(fields)
     end
   end
 end
