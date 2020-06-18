@@ -15,7 +15,7 @@ describe Sys::ProcTable do
       stime cutime cstime priority nice num_threads itrealvalue starttime vsize
       rss rlim rsslim startcode endcode startstack kstkesp kstkeip signal blocked
       sigignore sigcatch wchan nswap cnswap exit_signal processor rt_priority
-      policy pctcpu pctmem nlwp cgroup smaps
+      policy delayacct_blkio_ticks guest_time cguest_time pctcpu pctmem nlwp cgroup smaps
     ]
   }
 
@@ -256,6 +256,21 @@ describe Sys::ProcTable do
     it "contains a policy member and returns the expected value" do
       expect(subject).to respond_to(:policy)
       expect(subject.policy).to be_kind_of(Integer)
+    end
+
+    it "contains a delayacct_blkio_ticks member and returns the expected value" do
+      expect(subject).to respond_to(:delayacct_blkio_ticks)
+      expect(subject.delayacct_blkio_ticks).to be_kind_of(Integer)
+    end
+
+    it "contains a guest_time member and returns the expected value" do
+      expect(subject).to respond_to(:guest_time)
+      expect(subject.guest_time).to be_kind_of(Integer)
+    end
+
+    it "contains a cguest_time member and returns the expected value" do
+      expect(subject).to respond_to(:cguest_time)
+      expect(subject.cguest_time).to be_kind_of(Integer)
     end
 
     it "contains a name member and returns the expected value" do
