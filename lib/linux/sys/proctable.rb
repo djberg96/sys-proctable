@@ -50,7 +50,8 @@ module Sys
       'starttime',   # Time in jiffies since system boot
       'vsize',       # Virtual memory size in bytes
       'rss',         # Resident set size
-      'rlim',        # Current limit on the rss in bytes
+      'rlim',        # Current limit on the rss in bytes (old)
+      'rsslim',      # Current limit on the rss in bytes (current)
       'startcode',   # Address above which program text can run
       'endcode',     # Address below which program text can run
       'startstack',  # Address of the startstack
@@ -222,7 +223,8 @@ module Sys
         struct.starttime   = stat[21].to_i
         struct.vsize       = stat[22].to_i
         struct.rss         = stat[23].to_i
-        struct.rlim        = stat[24].to_i
+        struct.rlim        = stat[24].to_i # Old name for backwards compatibility
+        struct.rsslim      = stat[24].to_i
         struct.startcode   = stat[25].to_i
         struct.endcode     = stat[26].to_i
         struct.startstack  = stat[27].to_i
