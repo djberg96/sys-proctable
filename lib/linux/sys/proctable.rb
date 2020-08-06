@@ -144,14 +144,20 @@ module Sys
         # is represented as a Hash, with the environment variable as the
         # key and its value as the hash value.
         struct.environ = {}
-
+        retry_cnt = 2
         begin
-          IO.read("/proc/#{file}/environ").split("\0").each{ |str|
+          pslist = IO.read("/proc/#{file}/environ")
+          # Here could crash when some of the processes have name not in ASCII
+          pslist.split("\0").each{ |str|
             key, value = str.split('=')
             struct.environ[key] = value
           }
         rescue Errno::EACCES, Errno::ESRCH, Errno::ENOENT
           # Ignore and move on.
+        rescue ArgumentError
+          # Invalid byte sequence
+          pslist.force_encoding('UTF-8')
+          retry if ( retry_cnt -= 1 ) > 0
         end
 
         # Get /proc/<pid>/exe information

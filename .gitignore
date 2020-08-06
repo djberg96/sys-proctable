@@ -1,0 +1,7 @@
+/tmp
+*~
+/vendor
+.env.*
+/logs/
+/bin
+/.bundle
