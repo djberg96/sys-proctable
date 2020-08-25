@@ -21,8 +21,8 @@ describe Sys::ProcTable do
   }
 
   before(:all) do
-    @pid1 = fork { exec('env', '-i', 'A=B', 'Z=', 'sleep', '60') }
-    @pid2 = fork { exec('ruby', '-Ilib', '-e', 'sleep \'120\'.to_i', '--', 'foo bar') }
+    @pid1 = Process.spawn({'A' => 'B', 'Z' => nil}, "sleep 60")
+    @pid2 = Process.spawn("ruby", "-Ilib", "-e", "sleep \'120\'.to_i", "--", "foo bar")
     sleep 1 # wait to make sure env is replaced by sleep
   end
 
@@ -87,30 +87,30 @@ describe Sys::ProcTable do
       expect(subject.svgid).to eql(Process.gid)
     end
 
-    it "contains a comm member and returns the expected value", :skip_jruby do
+    it "contains a comm member and returns the expected value" do
       expect(subject).to respond_to(:comm)
       expect(subject.comm).to be_kind_of(String)
       expect(subject.comm).to eql('sleep')
     end
 
-    it "contains a cmdline member and returns the expected value", :skip_jruby do
+    it "contains a cmdline member and returns the expected value" do
       expect(subject).to respond_to(:cmdline)
       expect(subject.cmdline).to be_kind_of(String)
       expect(subject.cmdline).to eql('sleep 60')
     end
 
-    it "returns a string with the expected arguments for the cmdline member", :skip_jruby do
+    it "returns a string with the expected arguments for the cmdline member" do
       ptable = Sys::ProcTable.ps(pid: @pid2)
       expect(ptable.cmdline).to eql('ruby -Ilib -e sleep \'120\'.to_i -- foo bar')
     end
 
-    it "contains an exe member and returns the expected value", :skip_jruby do
+    it "contains an exe member and returns the expected value" do
       expect(subject).to respond_to(:exe)
       expect(subject.exe).to be_kind_of(String)
       expect(subject.exe).to eql(`which sleep`.chomp)
     end
 
-    it "contains an environ member and returns the expected value", :skip_jruby do
+    it "contains an environ member and returns the expected value" do
       expect(subject).to respond_to(:environ)
       expect(subject.environ).to be_kind_of(Hash)
       expect(subject.environ['A']).to eql('B')
