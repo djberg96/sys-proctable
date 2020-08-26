@@ -146,7 +146,7 @@ module Sys
         struct.environ = {}
 
         begin
-          IO.read("/proc/#{file}/environ").split("\0").each{ |str|
+          IO.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each{ |str|
             key, value = str.split('=')
             struct.environ[key] = value
           }
