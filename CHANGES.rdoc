@@ -1,3 +1,12 @@
+== 1.2.6 - 25-Aug-2020
+* Made some updates so that it worked properly with TruffleRuby on Mac.
+* Fixed an issue on Linux where non-ascii environ strings could cause failure.
+  Thanks go to deemytch for the spot and original patch.
+* Removed the spec_helper.rb file, just use Process.spawn instead of messing
+  around with custom fork implementations. This also helps with implementations
+  that don't support fork.
+* Updated the MANIFEST.
+
 == 1.2.5 - 19-Jun-2020
 * Added the delayacct_blkio_ticks, guest_time, and cguest_time fields on Linux.
   These require 2.6.18 or later, but will simply be nil on earlier versions.
