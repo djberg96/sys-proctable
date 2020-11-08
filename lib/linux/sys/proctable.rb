@@ -174,7 +174,7 @@ module Sys
         struct.root = File.readlink("/proc/#{file}/root") rescue nil
 
         # Get /proc/<pid>/stat information
-        stat = IO.read("/proc/#{file}/stat") rescue next
+        stat = read_nonblock("/proc/#{file}/stat") rescue next
 
         # Get number of LWP, one directory for each in /proc/<pid>/task/
         # Every process has at least one thread, so if we fail to read the task directory, set nlwp to 1.
@@ -318,6 +318,21 @@ module Sys
       utime = (utime * 10000).to_f
       stime = (start_time.to_f / hertz) + @boot_time
       sprintf("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
+    end
+
+    def self.read_nonblock(file, size = 10000)
+      data = nil
+
+      File.open(file) do |fh|
+        data = fh.read_nonblock(size)
+      rescue Errno::EAGAIN, Errno::EINTR, IO::WaitReadable
+        IO.select([fh])
+        retry
+      rescue EOFError
+        # Do nothing
+      end
+
+      data
     end
   end
 end
