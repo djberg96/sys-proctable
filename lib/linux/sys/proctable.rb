@@ -190,7 +190,7 @@ module Sys
         # are true for a file in the /proc fileystem but raises a Errno:EACCESS
         # when your try to read it without permissions.
         unless smaps == false
-          smaps_contents = IO.read("/proc/#{file}/smaps") rescue ""
+          smaps_contents = read_nonblock("/proc/#{file}/smaps") rescue ""
           struct.smaps = Smaps.new(file, smaps_contents)
         end
 
