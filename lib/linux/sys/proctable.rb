@@ -191,7 +191,7 @@ module Sys
         # when your try to read it without permissions.
         unless smaps == false
           smaps_contents = read_nonblock("/proc/#{file}/smaps") rescue ""
-          struct.smaps = Smaps.new(file, smaps_contents)
+          struct.smaps = Smaps.new(file, smaps_contents) if smaps_contents
         end
 
         # Deal with spaces in comm name. Courtesy of Ara Howard.
