@@ -23,8 +23,6 @@ Gem::Specification.new do |spec|
     'sys-proctable.gemspec'
   ]
 
-  spec.extra_rdoc_files = ['CHANGES.rdoc', 'README.md', 'MANIFEST.rdoc']
-
   spec.add_dependency('ffi', '~> 1.1')
   spec.add_development_dependency('rspec', '~> 3.9')
   spec.add_development_dependency('rake')
@@ -32,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.metadata = {
     'homepage_uri'      => 'https://github.com/djberg96/sys-proctable',
     'bug_tracker_uri'   => 'https://github.com/djberg96/sys-proctable/issues',
-    'changelog_uri'     => 'https://github.com/djberg96/sys-proctable/blob/master/CHANGES.rdoc',
+    'changelog_uri'     => 'https://github.com/djberg96/sys-proctable/blob/master/CHANGES.md',
     'documentation_uri' => 'https://github.com/djberg96/sys-proctable/wiki',
     'source_code_uri'   => 'https://github.com/djberg96/sys-proctable',
     'wiki_uri'          => 'https://github.com/djberg96/sys-proctable/wiki'
