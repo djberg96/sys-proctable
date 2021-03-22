@@ -1,3 +1,5 @@
+[![Ruby](https://github.com/djberg96/sys-proctable/actions/workflows/ruby.yml/badge.svg)](https://github.com/djberg96/sys-proctable/actions/workflows/ruby.yml)
+
 # sys-proctable
 
 ## Description
