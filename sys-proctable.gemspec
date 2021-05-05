@@ -15,9 +15,9 @@ Gem::Specification.new do |spec|
     "benchmarks/**/*.rb",
     "examples/**/*.rb",
     "lib/**/*.rb",
-    'CHANGES.rdoc',
+    'CHANGES.md',
     'LICENSE',
-    'MANIFEST.rdoc',
+    'MANIFEST.md',
     'Rakefile',
     'README.md',
     'sys-proctable.gemspec'
@@ -30,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.metadata = {
     'homepage_uri'      => 'https://github.com/djberg96/sys-proctable',
     'bug_tracker_uri'   => 'https://github.com/djberg96/sys-proctable/issues',
-    'changelog_uri'     => 'https://github.com/djberg96/sys-proctable/blob/master/CHANGES.md',
+    'changelog_uri'     => 'https://github.com/djberg96/sys-proctable/blob/main/CHANGES.md',
     'documentation_uri' => 'https://github.com/djberg96/sys-proctable/wiki',
     'source_code_uri'   => 'https://github.com/djberg96/sys-proctable',
     'wiki_uri'          => 'https://github.com/djberg96/sys-proctable/wiki'
