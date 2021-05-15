@@ -79,9 +79,9 @@ namespace :gem do
   desc 'Create a gem for the specified OS, or your current OS by default'
   task :create => [:clean] do
     require 'rubygems/package'
-    spec = eval(IO.read('sys-proctable.gemspec'))
+    spec = Gem::Specification.load('sys-proctable.gemspec')
     spec.signing_key = File.join(Dir.home, '.ssh', 'gem-private_key.pem')
-    Gem::Package.build(spec, true)
+    Gem::Package.build(spec)
   end
 
   desc 'Install the sys-proctable library as a gem'
