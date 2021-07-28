@@ -4,7 +4,7 @@
 # Test suite for the Darwin version of the sys-proctable library. You
 # should run these tests via the 'rake test' task.
 ########################################################################
-require 'rspec'
+require 'spec_helper'
 require 'sys/proctable'
 require_relative 'sys_proctable_all_spec'
 
@@ -110,7 +110,7 @@ describe Sys::ProcTable do
       expect(subject.exe).to eq(`which sleep`.chomp)
     end
 
-    it "contains an environ member and returns the expected value" do
+    it "contains an environ member and returns the expected value", :skip_big_sur => true do
       expect(subject).to respond_to(:environ)
       expect(subject.environ).to be_kind_of(Hash)
       expect(subject.environ['A']).to eq('B')

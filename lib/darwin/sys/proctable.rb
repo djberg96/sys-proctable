@@ -330,6 +330,10 @@ module Sys
 
     # Get the command line arguments, as well as the environment settings,
     # for the given PID.
+    #--
+    # Note that on Big Sur and later it seems that you cannot get environment
+    # variable information on spawned processes except in certain circumstances,
+    # e.g. SIP has been disabled, the kernel is in debug mode, etc.
     #
     def self.get_cmd_args_and_env(pid, struct)
       len = FFI::MemoryPointer.new(:size_t)
