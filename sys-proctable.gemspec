@@ -8,21 +8,10 @@ Gem::Specification.new do |spec|
   spec.email      = 'djberg96@gmail.com'
   spec.homepage   = 'http://github.com/djberg96/sys-proctable'
   spec.summary    = 'An interface for providing process table information'
-  spec.test_files = FileList['spec/**/*.rb']
+  spec.files      = Dir['**/*'].reject{ |f| f.include?('git') }
+  spec.test_files = Dir['spec/*.rb']
   spec.cert_chain = ['certs/djberg96_pub.pem']
    
-  spec.files = FileList[
-    "benchmarks/**/*.rb",
-    "examples/**/*.rb",
-    "lib/**/*.rb",
-    'CHANGES.md',
-    'LICENSE',
-    'MANIFEST.md',
-    'Rakefile',
-    'README.md',
-    'sys-proctable.gemspec'
-  ]
-
   spec.add_dependency('ffi', '~> 1.1')
   spec.add_development_dependency('rspec', '~> 3.9')
   spec.add_development_dependency('rake')
