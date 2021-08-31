@@ -9,13 +9,13 @@ name: Ruby
 
 on:
   push:
-    branches: [ master ]
+    branches: [ main ]
     paths-ignore:
       - '**/README.md'
       - '**/CHANGES.md'
       - '**/MANIFEST.md'
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
     paths-ignore:
       - '**/README.md'
       - '**/CHANGES.md'
