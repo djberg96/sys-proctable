@@ -400,12 +400,11 @@ module Sys
 
       # Anything remaining at this point is a collection of key=value
       # pairs which we convert into a hash.
-      environ = array.inject({}) do |hash, string|
+      environ = array.each_with_object({}) do |string, hash|
         if string && string.include?('=')
           key, value = string.split('=')
           hash[key] = value
         end
-        hash
       end
 
       struct[:environ] = environ
