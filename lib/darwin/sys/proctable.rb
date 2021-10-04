@@ -117,12 +117,12 @@ module Sys
 
     ffi_lib 'proc'
 
-    attach_function :proc_listallpids, [:pointer, :int], :int
-    attach_function :proc_pidinfo, [:int, :int, :uint64_t, :pointer, :int], :int
+    attach_function :proc_listallpids, %i[pointer int], :int
+    attach_function :proc_pidinfo, %i[int int uint64_t pointer int], :int
 
     ffi_lib FFI::Library::LIBC
 
-    attach_function :sysctl, [:pointer, :uint, :pointer, :pointer, :pointer, :size_t], :int
+    attach_function :sysctl, %i[pointer uint pointer pointer pointer size_t], :int
 
     # These mostly mimic the struct members, but we've added a few custom ones as well.
     @fields = %w[
