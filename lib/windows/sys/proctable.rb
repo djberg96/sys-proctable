@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'win32ole'
 require 'socket'
 require 'date'
@@ -107,7 +109,7 @@ module Sys
         raise Error, err # Re-raise as ProcTable::Error
       else
         wmi.InstancesOf("Win32_Process").each do |wproc|
-          if pid && !(wproc.ProcessId == pid)
+          if pid && wproc.ProcessId != pid
             next
           end
 
