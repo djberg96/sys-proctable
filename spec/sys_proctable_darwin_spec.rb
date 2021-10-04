@@ -8,7 +8,7 @@ require 'spec_helper'
 require 'sys/proctable'
 require_relative 'sys_proctable_all_spec'
 
-describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable do
   let(:fields){
     %w[
       flags status xstatus pid ppid uid gid ruid rgid svuid svgid rfu1 comm
@@ -115,6 +115,27 @@ describe Sys::ProcTable do
       expect(subject.environ).to be_kind_of(Hash)
       expect(subject.environ['A']).to eq('B')
       expect(subject.environ['Z']).to be_nil
+    end
+  end
+
+  context "private constants" do
+    it "makes FFI structs private" do
+      expect(described_class.constants).not_to include(:ProcBsdInfo)
+      expect(described_class.constants).not_to include(:ProcThreadInfo)
+      expect(described_class.constants).not_to include(:ProcTaskInfo)
+    end
+
+    it "makes internal constants private" do
+      expect(described_class.constants).not_to include(:PROC_PIDTASKALLINFO)
+      expect(described_class.constants).not_to include(:PROC_PIDTHREADINFO)
+      expect(described_class.constants).not_to include(:PROC_PIDLISTTHREADS)
+      expect(described_class.constants).not_to include(:CTL_KERN)
+      expect(described_class.constants).not_to include(:KERN_PROCARGS)
+      expect(described_class.constants).not_to include(:KERN_PROCARGS2)
+      expect(described_class.constants).not_to include(:MAX_COMLEN)
+      expect(described_class.constants).not_to include(:MAX_PATHLEN)
+      expect(described_class.constants).not_to include(:MAXTHREADNAMESIZE)
+      expect(described_class.constants).not_to include(:PROC_PIDPATHINFO_MAXSIZE)
     end
   end
 end
