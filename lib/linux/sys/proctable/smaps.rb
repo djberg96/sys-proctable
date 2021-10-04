@@ -33,7 +33,6 @@ module Sys
     #   smaps.vss  # => 140034048
     #
     class Smaps
-
       # Process ID for this smaps
       attr_reader :pid
 
@@ -51,19 +50,19 @@ module Sys
       # 4k + (4k / 2) + (3k / 3) = 7k
       #
       attr_reader :pss
-      alias_method :proportional_set_size, :pss
+      alias proportional_set_size pss
 
       # Resident set size
       #
       # RSS is the total size of all pages, shared or not, mapped to a process.
       attr_reader :rss
-      alias_method :resident_set_size, :rss
+      alias resident_set_size rss
 
       # Unique set size
       #
       # USS is the total size of all private pages mapped to a process.
       attr_reader :uss
-      alias_method :unique_set_size, :uss
+      alias unique_set_size uss
 
       # Swap
       #
@@ -76,7 +75,7 @@ module Sys
       # lazily loaded, this value represents the total size of all mapped files
       # if they were all loaded.
       attr_reader :vss
-      alias_method :virtual_set_size, :vss
+      alias virtual_set_size vss
 
       # Create a new smaps object
       #
@@ -95,22 +94,22 @@ module Sys
         smaps_contents.each_line { |line| parse_smaps_line(line) }
       end
 
-      alias_method :to_s, :inspect
+      alias to_s inspect
 
       private
 
       def parse_smaps_line(line)
         case line
-        when /^Pss:\s+?(\d+)/
-          @pss += Regexp.last_match[1].to_i * 1000
-        when /^Rss:\s+?(\d+)/
-          @rss += Regexp.last_match[1].to_i * 1000
-        when /^Size:\s+?(\d+)/
-          @vss += Regexp.last_match[1].to_i * 1000
-        when /^Swap:\s+?(\d+)/
-          @swap += Regexp.last_match[1].to_i * 1000
-        when /^Private_(Clean|Dirty):\s+?(\d+)/
-          @uss += Regexp.last_match[2].to_i * 1000
+          when /^Pss:\s+?(\d+)/
+            @pss += Regexp.last_match[1].to_i * 1000
+          when /^Rss:\s+?(\d+)/
+            @rss += Regexp.last_match[1].to_i * 1000
+          when /^Size:\s+?(\d+)/
+            @vss += Regexp.last_match[1].to_i * 1000
+          when /^Swap:\s+?(\d+)/
+            @swap += Regexp.last_match[1].to_i * 1000
+          when /^Private_(Clean|Dirty):\s+?(\d+)/
+            @uss += Regexp.last_match[2].to_i * 1000
         end
       end
     end
