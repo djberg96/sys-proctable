@@ -122,11 +122,11 @@ module Sys
       array  = block_given? ? nil : []
       struct = nil
 
-      raise TypeError unless pid.is_a?(Numeric) if pid
+      raise TypeError if pid && !pid.is_a?(Numeric)
 
       Dir.foreach("/proc"){ |file|
         next if file =~ /\D/ # Skip non-numeric directories
-        next unless file.to_i == pid if pid
+        next if pid && file.to_i != pid
 
         struct = ProcTableStruct.new
 
