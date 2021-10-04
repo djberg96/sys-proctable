@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'win32ole'
 require 'socket'
 require 'date'
@@ -5,10 +7,8 @@ require 'sys/proctable/version'
 
 # The Sys module serves as a namespace only
 module Sys
-
   # The ProcTable class encapsulates process table information
   class ProcTable
-
     # There is no constructor
     private_class_method :new
 
@@ -77,8 +77,8 @@ module Sys
     # may be useful if you want to know in advance what fields are available
     # without having to perform at least one read of the /proc table.
     #
-    def self.fields
-       @fields
+    class << self
+      attr_reader :fields
     end
 
     # call-seq:
@@ -96,19 +96,21 @@ module Sys
       pid  = kwargs[:pid]
       host = kwargs[:host] || Socket.gethostname
 
-      raise TypeError unless pid.kind_of?(Numeric) if pid
+      if pid && !pid.is_a?(Numeric)
+        raise TypeError
+      end
 
       array  = block_given? ? nil : []
       struct = nil
 
       begin
         wmi = WIN32OLE.connect("winmgmts://#{host}/root/cimv2")
-      rescue WIN32OLERuntimeError => e
-        raise Error, e # Re-raise as ProcTable::Error
+      rescue WIN32OLERuntimeError => err
+        raise Error, err # Re-raise as ProcTable::Error
       else
-        wmi.InstancesOf("Win32_Process").each{ |wproc|
-          if pid
-            next unless wproc.ProcessId == pid
+        wmi.InstancesOf("Win32_Process").each do |wproc|
+          if pid && wproc.ProcessId != pid
+            next
           end
 
           # Some fields are added later, and so are nil initially
@@ -117,7 +119,7 @@ module Sys
             nil, # Added later, based on OS version
             wproc.Name,
             wproc.CreationClassName,
-            self.parse_ms_date(wproc.CreationDate),
+            parse_ms_date(wproc.CreationDate),
             wproc.CSCreationClassName,
             wproc.CSName,
             wproc.Description,
@@ -125,40 +127,40 @@ module Sys
             wproc.ExecutionState,
             wproc.Handle,
             wproc.HandleCount,
-            self.parse_ms_date(wproc.InstallDate),
-            self.convert(wproc.KernelModeTime),
+            parse_ms_date(wproc.InstallDate),
+            convert(wproc.KernelModeTime),
             wproc.MaximumWorkingSetSize,
             wproc.MinimumWorkingSetSize,
             wproc.Name,
             wproc.OSCreationClassName,
             wproc.OSName,
-            self.convert(wproc.OtherOperationCount),
-            self.convert(wproc.OtherTransferCount),
+            convert(wproc.OtherOperationCount),
+            convert(wproc.OtherTransferCount),
             wproc.PageFaults,
             wproc.PageFileUsage,
             wproc.ParentProcessId,
-            self.convert(wproc.PeakPageFileUsage),
-            self.convert(wproc.PeakVirtualSize),
-            self.convert(wproc.PeakWorkingSetSize),
+            convert(wproc.PeakPageFileUsage),
+            convert(wproc.PeakVirtualSize),
+            convert(wproc.PeakWorkingSetSize),
             wproc.Priority,
-            self.convert(wproc.PrivatePageCount),
+            convert(wproc.PrivatePageCount),
             wproc.ProcessId,
             wproc.QuotaNonPagedPoolUsage,
             wproc.QuotaPagedPoolUsage,
             wproc.QuotaPeakNonPagedPoolUsage,
             wproc.QuotaPeakPagedPoolUsage,
-            self.convert(wproc.ReadOperationCount),
-            self.convert(wproc.ReadTransferCount),
+            convert(wproc.ReadOperationCount),
+            convert(wproc.ReadTransferCount),
             wproc.SessionId,
             wproc.Status,
-            self.parse_ms_date(wproc.TerminationDate),
+            parse_ms_date(wproc.TerminationDate),
             wproc.ThreadCount,
-            self.convert(wproc.UserModeTime),
-            self.convert(wproc.VirtualSize),
+            convert(wproc.UserModeTime),
+            convert(wproc.VirtualSize),
             wproc.WindowsVersion,
-            self.convert(wproc.WorkingSetSize),
-            self.convert(wproc.WriteOperationCount),
-            self.convert(wproc.WriteTransferCount)
+            convert(wproc.WorkingSetSize),
+            convert(wproc.WriteOperationCount),
+            convert(wproc.WriteTransferCount)
           )
 
           ###############################################################
@@ -179,13 +181,11 @@ module Sys
           else
             array << struct
           end
-        }
+        end
       end
 
       pid ? struct : array
     end
-
-    private
 
     #######################################################################
     # Converts a string in the format '20040703074625.015625-360' into a
@@ -193,8 +193,10 @@ module Sys
     #######################################################################
     def self.parse_ms_date(str)
       return if str.nil?
-      return DateTime.parse(str)
+      DateTime.parse(str)
     end
+
+    private_class_method :parse_ms_date
 
     #####################################################################
     # There is a bug in win32ole where uint64 types are returned as a
@@ -202,7 +204,9 @@ module Sys
     #####################################################################
     def self.convert(str)
       return nil if str.nil? # Return nil, not 0
-      return str.to_i
+      str.to_i
     end
+
+    private_class_method :convert
   end
 end
