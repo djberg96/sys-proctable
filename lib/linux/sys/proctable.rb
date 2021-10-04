@@ -300,8 +300,6 @@ module Sys
       @fields
     end
 
-    private
-
     # Calculate the percentage of memory usage for the given process.
     #
     def self.get_pctmem(rss)
@@ -310,6 +308,8 @@ module Sys
       rss_total = rss * page_size
       sprintf("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
     end
+
+    private_class_method :get_pctmem
 
     # Calculate the percentage of CPU usage for the given process.
     #
@@ -320,5 +320,7 @@ module Sys
       stime = (start_time.to_f / hertz) + @boot_time
       sprintf("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
     end
+
+    private_class_method :get_pctcpu
   end
 end
