@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Sys
   class ProcTable
     # This represents a cgroup entry

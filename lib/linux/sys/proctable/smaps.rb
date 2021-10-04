@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 module Sys
   class ProcTable
     # Smaps represents a process' memory size for all mapped files

@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'sys/proctable/version'
 require_relative 'proctable/cgroup_entry'
 require_relative 'proctable/smaps'
