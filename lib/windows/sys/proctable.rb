@@ -194,6 +194,8 @@ module Sys
       DateTime.parse(str)
     end
 
+    private_class_method :parse_ms_date
+
     #####################################################################
     # There is a bug in win32ole where uint64 types are returned as a
     # String instead of a Fixnum.  This method deals with that for now.
@@ -202,5 +204,7 @@ module Sys
       return nil if str.nil? # Return nil, not 0
       str.to_i
     end
+
+    private_class_method :convert
   end
 end
