@@ -421,7 +421,7 @@ module Sys
 
       # Extract the full command line and its arguments from the array
       argc.times do
-        cmdline << ' ' + array.shift
+        cmdline << ' ' << array.shift
       end
 
       struct[:cmdline] = cmdline.strip
