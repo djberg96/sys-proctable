@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'sys/proctable/version'
 require_relative 'proctable/cgroup_entry'
 require_relative 'proctable/smaps'
@@ -16,8 +18,8 @@ module Sys
 
     private
 
-    @mem_total = IO.read("/proc/meminfo")[/MemTotal.*/].split[1].to_i * 1024 rescue nil
-    @boot_time = IO.read("/proc/stat")[/btime.*/].split.last.to_i rescue nil
+    @mem_total = File.read("/proc/meminfo")[/MemTotal.*/].split[1].to_i * 1024 rescue nil
+    @boot_time = File.read("/proc/stat")[/btime.*/].split.last.to_i rescue nil
 
     @fields = [
       'cmdline',               # Complete command line
@@ -121,17 +123,17 @@ module Sys
       array  = block_given? ? nil : []
       struct = nil
 
-      raise TypeError unless pid.is_a?(Numeric) if pid
+      raise TypeError if pid && !pid.is_a?(Numeric)
 
       Dir.foreach("/proc"){ |file|
         next if file =~ /\D/ # Skip non-numeric directories
-        next unless file.to_i == pid if pid
+        next if pid && file.to_i != pid
 
         struct = ProcTableStruct.new
 
         # Get /proc/<pid>/cmdline information. Strip out embedded nulls.
         begin
-          data = IO.read("/proc/#{file}/cmdline").tr("\000", ' ').strip
+          data = File.read("/proc/#{file}/cmdline").tr("\000", ' ').strip
           struct.cmdline = data
         rescue
           next # Process terminated, on to the next process
@@ -146,7 +148,7 @@ module Sys
         struct.environ = {}
 
         begin
-          IO.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each{ |str|
+          File.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each{ |str|
             key, value = str.split('=')
             struct.environ[key] = value
           }
@@ -174,7 +176,7 @@ module Sys
         struct.root = File.readlink("/proc/#{file}/root") rescue nil
 
         # Get /proc/<pid>/stat information
-        stat = IO.read("/proc/#{file}/stat") rescue next
+        stat = File.read("/proc/#{file}/stat") rescue next
 
         # Get number of LWP, one directory for each in /proc/<pid>/task/
         # Every process has at least one thread, so if we fail to read the task directory, set nlwp to 1.
@@ -182,7 +184,7 @@ module Sys
 
         # Get control groups to which the process belongs
         unless cgroup == false
-          struct.cgroup = IO.readlines("/proc/#{file}/cgroup").map { |l| CgroupEntry.new(l) } rescue []
+          struct.cgroup = File.readlines("/proc/#{file}/cgroup").map { |l| CgroupEntry.new(l) } rescue []
         end
 
         # Read smaps, returning a parsable string if we don't have permissions.
@@ -190,7 +192,7 @@ module Sys
         # are true for a file in the /proc fileystem but raises a Errno:EACCESS
         # when your try to read it without permissions.
         unless smaps == false
-          smaps_contents = IO.read("/proc/#{file}/smaps") rescue ""
+          smaps_contents = File.read("/proc/#{file}/smaps") rescue ""
           struct.smaps = Smaps.new(file, smaps_contents)
         end
 
@@ -203,7 +205,7 @@ module Sys
         stat = stat.split
 
         struct.pid                   = stat[0].to_i
-        struct.comm                  = stat[1].tr('()','') # Remove parens
+        struct.comm                  = stat[1].tr('()', '') # Remove parens
         struct.state                 = stat[2]
         struct.ppid                  = stat[3].to_i
         struct.pgrp                  = stat[4].to_i
@@ -250,7 +252,7 @@ module Sys
 
         # Get /proc/<pid>/status information (name, uid, euid, gid, egid)
         begin
-          IO.foreach("/proc/#{file}/status") do |line|
+          File.foreach("/proc/#{file}/status") do |line|
             case line
               when /Name:\s*?(\w+)/
                 struct.name = $1
@@ -299,8 +301,6 @@ module Sys
       @fields
     end
 
-    private
-
     # Calculate the percentage of memory usage for the given process.
     #
     def self.get_pctmem(rss)
@@ -309,6 +309,8 @@ module Sys
       rss_total = rss * page_size
       sprintf("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
     end
+
+    private_class_method :get_pctmem
 
     # Calculate the percentage of CPU usage for the given process.
     #
@@ -319,5 +321,7 @@ module Sys
       stime = (start_time.to_f / hertz) + @boot_time
       sprintf("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
     end
+
+    private_class_method :get_pctcpu
   end
 end

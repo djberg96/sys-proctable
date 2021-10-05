@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Sys
   class ProcTable
     # This represents a cgroup entry
@@ -20,7 +22,7 @@ module Sys
       def initialize(string)
         @string = string.chomp
         @fields = @string.split(/:/)
-      rescue
+      rescue StandardError
         @fields = []
       end
 
@@ -32,7 +34,7 @@ module Sys
       # Return sets of subsystems bound to the hierarchy
       def subsystems
         @fields[1].split(/,/)
-      rescue
+      rescue StandardError
         []
       end
 

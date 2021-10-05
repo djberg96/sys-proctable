@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Sys
   class ProcTable
     # Smaps represents a process' memory size for all mapped files
@@ -25,7 +27,18 @@ module Sys
     # Example:
     #
     #   smaps = Smaps.new(123, IO.read("/proc/1234/smaps")
-    #     => #<Sys::ProcTable::Smaps:0x007f8ac5930768 @pid=123, @pss=107000, @rss=368000, @uss=96000, @swap=192000, @vss=136752000>
+    #
+    #   # result
+    #
+    #   #<Sys::ProcTable::Smaps:0x007f8ac5930768
+    #     @pid=123,
+    #     @pss=107000,
+    #     @rss=368000,
+    #     @uss=96000,
+    #     @swap=192000,
+    #     @vss=136752000
+    #   >
+    #
     #   smaps.pss  # => 109568
     #   smaps.rss  # => 376832
     #   smaps.uss  # => 98304
