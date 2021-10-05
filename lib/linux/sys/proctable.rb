@@ -197,7 +197,7 @@ module Sys
         end
 
         # Deal with spaces in comm name. Courtesy of Ara Howard.
-        re = %r/\([^\)]+\)/
+        re = %r/\([^)]+\)/
         comm = stat[re]
         comm.tr!(' ', '-')
         stat[re] = comm
