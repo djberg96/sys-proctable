@@ -330,7 +330,7 @@ module Sys
 
         if nb <= 0
           if [Errno::EPERM::Errno, Errno::ESRCH::Errno].include?(FFI.errno)
-            return # Either we don't have permission, or the pid no longer exists
+            next # Either we don't have permission, or the pid no longer exists
           else
             raise SystemCallError.new('proc_pidinfo', FFI.errno)
           end
