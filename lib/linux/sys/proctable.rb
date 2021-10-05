@@ -16,8 +16,6 @@ module Sys
     # There is no constructor
     private_class_method :new
 
-    private
-
     @mem_total = File.read("/proc/meminfo")[/MemTotal.*/].split[1].to_i * 1024 rescue nil
     @boot_time = File.read("/proc/stat")[/btime.*/].split.last.to_i rescue nil
 
@@ -85,9 +83,9 @@ module Sys
       'smaps'                  # Process memory size for all mapped files
     ]
 
-    public
-
     ProcTableStruct = Struct.new('ProcTableStruct', *@fields)
+
+    private_constant :ProcTableStruct
 
     # In block form, yields a ProcTableStruct for each process entry that you
     # have rights to. This method returns an array of ProcTableStruct's in
