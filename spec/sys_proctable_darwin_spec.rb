@@ -119,10 +119,17 @@ RSpec.describe Sys::ProcTable do
   end
 
   context "private constants" do
+    it "makes FFI methods private" do
+      expect(described_class).not_to respond_to(:sysctl)
+      expect(described_class).not_to respond_to(:proc_listallpids)
+      expect(described_class).not_to respond_to(:proc_pidinfo)
+    end
+
     it "makes FFI structs private" do
       expect(described_class.constants).not_to include(:ProcBsdInfo)
       expect(described_class.constants).not_to include(:ProcThreadInfo)
       expect(described_class.constants).not_to include(:ProcTaskInfo)
+      expect(described_class.constants).not_to include(:ProcTaskAllInfo)
     end
 
     it "makes internal constants private" do

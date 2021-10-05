@@ -11,11 +11,13 @@ module Sys
     # There is no constructor
     private_class_method :new
 
-    private
-
     PROC_PIDTASKALLINFO = 2
     PROC_PIDTHREADINFO  = 5
     PROC_PIDLISTTHREADS = 6
+
+    private_constant :PROC_PIDTASKALLINFO
+    private_constant :PROC_PIDTHREADINFO
+    private_constant :PROC_PIDLISTTHREADS
 
     CTL_KERN       = 1
     KERN_PROCARGS  = 38
@@ -23,8 +25,17 @@ module Sys
     MAXCOMLEN      = 16
     MAXPATHLEN     = 256
 
+    private_constant :CTL_KERN
+    private_constant :KERN_PROCARGS
+    private_constant :KERN_PROCARGS2
+    private_constant :MAXCOMLEN
+    private_constant :MAXPATHLEN
+
     MAXTHREADNAMESIZE = 64
     PROC_PIDPATHINFO_MAXSIZE = MAXPATHLEN * 4
+
+    private_constant :MAXTHREADNAMESIZE
+    private_constant :PROC_PIDPATHINFO_MAXSIZE
 
     # JRuby/Truffleruby on Mac
     unless defined? FFI::StructLayout::CharArray
@@ -62,6 +73,8 @@ module Sys
       )
     end
 
+    private_constant :ProcBsdInfo
+
     class ProcTaskInfo < FFI::Struct
       layout(
         :pti_virtual_size, :uint64_t,
@@ -85,6 +98,8 @@ module Sys
       )
     end
 
+    private_constant :ProcTaskInfo
+
     class ProcThreadInfo < FFI::Struct
       layout(
         :pth_user_time, :uint64_t,
@@ -101,6 +116,8 @@ module Sys
       )
     end
 
+    private_constant :ProcThreadInfo
+
     # Map the fields from the FFI::Structs to the Sys::ProcTable struct on
     # class load to reduce the amount of objects needing to be generated for
     # each invocation of Sys::ProcTable.ps
@@ -115,6 +132,8 @@ module Sys
       layout(:pbsd, ProcBsdInfo, :ptinfo, ProcTaskInfo)
     end
 
+    private_constant :ProcTaskAllInfo
+
     ffi_lib 'proc'
 
     attach_function :proc_listallpids, %i[pointer int], :int
@@ -123,6 +142,10 @@ module Sys
     ffi_lib FFI::Library::LIBC
 
     attach_function :sysctl, %i[pointer uint pointer pointer pointer size_t], :int
+
+    private_class_method :proc_listallpids
+    private_class_method :proc_pidinfo
+    private_class_method :sysctl
 
     # These mostly mimic the struct members, but we've added a few custom ones as well.
     @fields = %w[
@@ -140,12 +163,14 @@ module Sys
       alias rss resident_size
     end
 
+    private_constant :ProcTableStruct
+
     ThreadInfoStruct = Struct.new("ThreadInfo", :user_time, :system_time,
       :cpu_usage, :policy, :run_state, :flags, :sleep_time, :curpri,
       :priority, :maxpriority, :name
     )
 
-    public
+    private_constant :ThreadInfoStruct
 
     # Returns an array of fields that each ProcTableStruct will contain. This
     # may be useful if you want to know in advance what fields are available
