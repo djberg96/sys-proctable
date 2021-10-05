@@ -121,12 +121,13 @@ module Sys
     # Map the fields from the FFI::Structs to the Sys::ProcTable struct on
     # class load to reduce the amount of objects needing to be generated for
     # each invocation of Sys::ProcTable.ps
-    all_members           = ProcBsdInfo.members + ProcTaskInfo.members + ProcThreadInfo.members
-    PROC_STRUCT_FIELD_MAP = all_members.map { |member|
+    all_members = ProcBsdInfo.members + ProcTaskInfo.members + ProcThreadInfo.members
+
+    PROC_STRUCT_FIELD_MAP = all_members.map do |member|
                               temp = member.to_s.split('_')
                               sproperty = temp.size > 1 ? temp[1..-1].join('_') : temp.first
                               [member, sproperty.to_sym]
-                            }.to_h
+                            end.to_h
 
     class ProcTaskAllInfo < FFI::Struct
       layout(:pbsd, ProcBsdInfo, :ptinfo, ProcTaskInfo)
@@ -159,8 +160,8 @@ module Sys
 
     # Add a couple aliases to make it similar to Linux
     ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
-      alias vsize virtual_size
-      alias rss resident_size
+      alias_method :vsize, :virtual_size
+      alias_method :rss, :resident_size
     end
 
     private_constant :ProcTableStruct
@@ -247,7 +248,7 @@ module Sys
         array = block_given? ? nil : []
 
         pids.each do |lpid|
-          next unless pid == lpid if pid
+          next if pid && pid != lpid
           info = ProcTaskAllInfo.new
 
           nb = proc_pidinfo(lpid, PROC_PIDTASKALLINFO, 0, info, info.size)
@@ -283,8 +284,6 @@ module Sys
       end
     end
 
-    private
-
     # Pass by reference method that updates the Ruby struct based on the FFI struct.
     #
     def self.apply_info_to_struct(info, struct)
@@ -299,6 +298,8 @@ module Sys
         end
       end
     end
+
+    private_class_method :apply_info_to_struct
 
     # Returns an array of ThreadInfo objects for the given pid.
     #
@@ -352,6 +353,8 @@ module Sys
         struct[:threadinfo] << tinfo_struct
       end
     end
+
+    private_class_method :get_thread_info
 
     # Get the command line arguments, as well as the environment settings,
     # for the given PID.
@@ -434,5 +437,7 @@ module Sys
 
       struct[:environ] = environ
     end
+
+    private_class_method :get_cmd_args_and_env
   end
 end
