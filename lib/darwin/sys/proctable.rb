@@ -317,7 +317,7 @@ module Sys
       max = ptinfo[:pti_threadnum]
       struct[:threadinfo] = []
 
-      0.upto(max-1) do |index|
+      0.upto(max - 1) do |index|
         tinfo = ProcThreadInfo.new
 
         # Use read_array_of_uint64 for compatibility with JRuby if necessary.
@@ -346,7 +346,7 @@ module Sys
           tinfo[:pth_curpri],
           tinfo[:pth_priority],
           tinfo[:pth_maxpriority],
-          tinfo[:pth_name].to_s,
+          tinfo[:pth_name].to_s
         )
 
         struct[:threadinfo] << tinfo_struct
