@@ -305,7 +305,7 @@ module Sys
       return nil unless @mem_total
       page_size = 4096
       rss_total = rss * page_size
-      sprintf("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
+      format("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
     end
 
     private_class_method :get_pctmem
@@ -317,7 +317,7 @@ module Sys
       hertz = 100.0
       utime = (utime * 10000).to_f
       stime = (start_time.to_f / hertz) + @boot_time
-      sprintf("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
+      format("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
     end
 
     private_class_method :get_pctcpu
