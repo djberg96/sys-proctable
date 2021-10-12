@@ -133,7 +133,7 @@ module Sys
         begin
           data = File.read("/proc/#{file}/cmdline").tr("\000", ' ').strip
           struct.cmdline = data
-        rescue
+        rescue StandardError
           next # Process terminated, on to the next process
         end
 
@@ -166,7 +166,7 @@ module Sys
           Dir["/proc/#{file}/fd/*"].each do |fd|
             struct.fd[File.basename(fd)] = File.readlink(fd) rescue nil
           end
-        rescue
+        rescue StandardError
           # Ignore and move on
         end
 
