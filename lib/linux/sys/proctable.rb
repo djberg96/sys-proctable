@@ -194,8 +194,14 @@ module Sys
           struct.smaps = Smaps.new(file, smaps_contents)
         end
 
-        # Deal with spaces in comm name. Courtesy of Ara Howard.
-        re = %r/\([^)]+\)/
+        # Deal with spaces in comm name. This isn't supposed to happen, but in
+        # rare cases - the original offending case was "(xzen thread)" - it can
+        # occur. So we parse it out, replace the spaces with hyphens, and
+        # re-insert it into the stat string so that it splits properly later on.
+        #
+        # Courtesy of Ara Howard.
+        #
+        re = /\([^)]+\)/
         comm = stat[re]
         comm.tr!(' ', '-')
         stat[re] = comm
