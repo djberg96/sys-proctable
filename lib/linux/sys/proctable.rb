@@ -123,7 +123,7 @@ module Sys
 
       raise TypeError if pid && !pid.is_a?(Numeric)
 
-      Dir.foreach("/proc"){ |file|
+      Dir.foreach("/proc") do |file|
         next if file =~ /\D/ # Skip non-numeric directories
         next if pid && file.to_i != pid
 
@@ -146,10 +146,10 @@ module Sys
         struct.environ = {}
 
         begin
-          File.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each{ |str|
+          File.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each do |str|
             key, value = str.split('=')
             struct.environ[key] = value
-          }
+          end
         rescue Errno::EACCES, Errno::ESRCH, Errno::ENOENT
           # Ignore and move on.
         end
@@ -280,7 +280,7 @@ module Sys
         else
           array << struct
         end
-      }
+      end
 
       pid ? struct : array
     end
