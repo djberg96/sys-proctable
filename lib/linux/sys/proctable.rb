@@ -259,13 +259,13 @@ module Sys
           File.foreach("/proc/#{file}/status") do |line|
             case line
               when /Name:\s*?(\w+)/
-                struct.name = $1
+                struct.name = Regexp.last_match(1)
               when /Uid:\s*?(\d+)\s*?(\d+)/
-                struct.uid  = $1.to_i
-                struct.euid = $2.to_i
+                struct.uid  = Regexp.last_match(1).to_i
+                struct.euid = Regexp.last_match(2).to_i
               when /Gid:\s*?(\d+)\s*?(\d+)/
-                struct.gid  = $1.to_i
-                struct.egid = $2.to_i
+                struct.gid  = Regexp.last_match(1).to_i
+                struct.egid = Regexp.last_match(2).to_i
             end
           end
         rescue Errno::ESRCH, Errno::ENOENT
