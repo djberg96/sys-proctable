@@ -6,10 +6,8 @@ require_relative 'proctable/smaps'
 
 # The Sys module serves as a namespace only.
 module Sys
-
   # The ProcTable class encapsulates process table information.
   class ProcTable
-
     # Error typically raised if the ProcTable.ps method fails.
     class Error < StandardError; end
 
@@ -123,7 +121,7 @@ module Sys
 
       raise TypeError if pid && !pid.is_a?(Numeric)
 
-      Dir.foreach("/proc"){ |file|
+      Dir.foreach("/proc") do |file|
         next if file =~ /\D/ # Skip non-numeric directories
         next if pid && file.to_i != pid
 
@@ -133,7 +131,7 @@ module Sys
         begin
           data = File.read("/proc/#{file}/cmdline").tr("\000", ' ').strip
           struct.cmdline = data
-        rescue
+        rescue StandardError
           next # Process terminated, on to the next process
         end
 
@@ -146,10 +144,10 @@ module Sys
         struct.environ = {}
 
         begin
-          File.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each{ |str|
+          File.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each do |str|
             key, value = str.split('=')
             struct.environ[key] = value
-          }
+          end
         rescue Errno::EACCES, Errno::ESRCH, Errno::ENOENT
           # Ignore and move on.
         end
@@ -166,7 +164,7 @@ module Sys
           Dir["/proc/#{file}/fd/*"].each do |fd|
             struct.fd[File.basename(fd)] = File.readlink(fd) rescue nil
           end
-        rescue
+        rescue StandardError
           # Ignore and move on
         end
 
@@ -194,8 +192,14 @@ module Sys
           struct.smaps = Smaps.new(file, smaps_contents)
         end
 
-        # Deal with spaces in comm name. Courtesy of Ara Howard.
-        re = %r/\([^)]+\)/
+        # Deal with spaces in comm name. This isn't supposed to happen, but in
+        # rare cases - the original offending case was "(xzen thread)" - it can
+        # occur. So we parse it out, replace the spaces with hyphens, and
+        # re-insert it into the stat string so that it splits properly later on.
+        #
+        # Courtesy of Ara Howard.
+        #
+        re = /\([^)]+\)/
         comm = stat[re]
         comm.tr!(' ', '-')
         stat[re] = comm
@@ -253,13 +257,13 @@ module Sys
           File.foreach("/proc/#{file}/status") do |line|
             case line
               when /Name:\s*?(\w+)/
-                struct.name = $1
+                struct.name = Regexp.last_match(1)
               when /Uid:\s*?(\d+)\s*?(\d+)/
-                struct.uid  = $1.to_i
-                struct.euid = $2.to_i
+                struct.uid  = Regexp.last_match(1).to_i
+                struct.euid = Regexp.last_match(2).to_i
               when /Gid:\s*?(\d+)\s*?(\d+)/
-                struct.gid  = $1.to_i
-                struct.egid = $2.to_i
+                struct.gid  = Regexp.last_match(1).to_i
+                struct.egid = Regexp.last_match(2).to_i
             end
           end
         rescue Errno::ESRCH, Errno::ENOENT
@@ -280,7 +284,7 @@ module Sys
         else
           array << struct
         end
-      }
+      end
 
       pid ? struct : array
     end
@@ -295,8 +299,8 @@ module Sys
     #      puts "Field: #{field}"
     #   }
     #
-    def self.fields
-      @fields
+    class << self
+      attr_reader :fields
     end
 
     # Calculate the percentage of memory usage for the given process.
@@ -305,7 +309,7 @@ module Sys
       return nil unless @mem_total
       page_size = 4096
       rss_total = rss * page_size
-      sprintf("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
+      format("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
     end
 
     private_class_method :get_pctmem
@@ -317,7 +321,7 @@ module Sys
       hertz = 100.0
       utime = (utime * 10000).to_f
       stime = (start_time.to_f / hertz) + @boot_time
-      sprintf("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
+      format("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
     end
 
     private_class_method :get_pctcpu
