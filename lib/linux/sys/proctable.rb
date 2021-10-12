@@ -6,10 +6,8 @@ require_relative 'proctable/smaps'
 
 # The Sys module serves as a namespace only.
 module Sys
-
   # The ProcTable class encapsulates process table information.
   class ProcTable
-
     # Error typically raised if the ProcTable.ps method fails.
     class Error < StandardError; end
 
@@ -301,8 +299,8 @@ module Sys
     #      puts "Field: #{field}"
     #   }
     #
-    def self.fields
-      @fields
+    class << self
+      attr_reader :fields
     end
 
     # Calculate the percentage of memory usage for the given process.
