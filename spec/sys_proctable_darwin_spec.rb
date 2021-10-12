@@ -113,7 +113,7 @@ RSpec.describe Sys::ProcTable do
     it "contains an environ member and returns the expected value", :skip_big_sur => true do
       expect(subject).to respond_to(:environ)
       expect(subject.environ).to be_kind_of(Hash)
-      expect(subject.environ['A']).to eq('B')
+      expect(subject.environ['A']).to eq('X'), "environ test failed on #{RUBY_PLATFORM}"
       expect(subject.environ['Z']).to be_nil
     end
   end
