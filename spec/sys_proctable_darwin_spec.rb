@@ -110,7 +110,7 @@ RSpec.describe Sys::ProcTable do
       expect(subject.exe).to eq(`which sleep`.chomp)
     end
 
-    it "contains an environ member and returns the expected value", :skip_big_sur => true do
+    it "contains an environ member and returns the expected value", :skip_catalina_or_later => true do
       expect(subject).to respond_to(:environ)
       expect(subject.environ).to be_kind_of(Hash)
       expect(subject.environ['A']).to eq('B')
