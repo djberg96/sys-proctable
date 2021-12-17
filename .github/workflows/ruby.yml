@@ -33,6 +33,9 @@ jobs:
             platform: windows-latest
           - ruby-version: jruby
             platform: windows-latest
+          - ruby-version: 3.0
+            platform: windows-latest
+    runs-on: ${{ matrix.platform }}
     runs-on: ${{ matrix.platform }}
 
     steps:
