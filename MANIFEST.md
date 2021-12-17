@@ -18,6 +18,7 @@
 * lib/linux/sys/proctable.rb
 * lib/sunos/sys/proctable.rb
 * lib/windows/sys/proctable.rb
+* spec/spec_helper.rb
 * spec/sys_proctable_aix_spec.rb
 * spec/sys_proctable_all_spec.rb
 * spec/sys_proctable_darwin_spec.rb
