@@ -4,7 +4,7 @@
 # Test suite for the Darwin version of the sys-proctable library. You
 # should run these tests via the 'rake test' task.
 ########################################################################
-require 'sys/proctable'
+require 'spec_helper'
 require_relative 'sys_proctable_all_spec'
 
 RSpec.describe Sys::ProcTable do
@@ -98,7 +98,7 @@ RSpec.describe Sys::ProcTable do
       expect(subject.cmdline).to eq('sleep 60')
     end
 
-    it "returns a string with the expected arguments for the cmdline member" do
+    it "returns a string with the expected arguments for the cmdline member", :skip => :jruby do
       ptable = Sys::ProcTable.ps(pid: @pid2)
       expect(ptable.cmdline).to eq('ruby -Ilib -e sleep \'120\'.to_i -- foo bar')
     end
