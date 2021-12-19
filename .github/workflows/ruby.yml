@@ -36,8 +36,6 @@ jobs:
           - ruby-version: 3.0
             platform: windows-latest
     runs-on: ${{ matrix.platform }}
-    runs-on: ${{ matrix.platform }}
-
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
