@@ -2,12 +2,10 @@
 # sys_proctable_windows_spec.rb
 #
 # Test suite for the sys-proctable library for MS Windows. This should be
-# run via the 'rake test' task.
+# run via the 'rake spec' task.
 ############################################################################
-require 'rspec'
-require 'sys-proctable'
+require 'spec_helper'
 require 'socket'
-require_relative 'sys_proctable_all_spec'
 
 describe Sys::ProcTable do
   let(:hostname) { Socket.gethostname }

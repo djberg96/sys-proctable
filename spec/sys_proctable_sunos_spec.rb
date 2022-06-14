@@ -2,13 +2,11 @@
 # sys_proctable_sunos_spec.rb
 #
 # Test suite for sys-proctable for SunOS/Solaris. This should be run
-# run via the 'rake test' task.
+# run via the 'rake spec' task.
 #######################################################################
-require 'rspec'
-require 'sys/proctable'
-require_relative 'sys_proctable_all_spec'
+require 'spec_helper'
 
-describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable do
   let(:fields){
     %w[
         flag nlwp pid ppid pgid sid uid euid gid egid addr size

@@ -3,10 +3,9 @@
 #
 # Test suite for the sys-top library that is included with this distribution.
 ##############################################################################
-require 'rspec'
-require 'sys/top'
+require 'spec_helper'
 
-describe Sys::Top do
+RSpec.describe Sys::Top do
   context "constants" do
     it "sets the version to the expected value" do
       expect(Sys::Top::VERSION).to eql('1.0.5')
@@ -15,7 +14,7 @@ describe Sys::Top do
 
   context "top" do
     it "defines a top method" do
-      expect(described_class).to respond_to(:top) 
+      expect(described_class).to respond_to(:top)
     end
 
     it "returns an array" do

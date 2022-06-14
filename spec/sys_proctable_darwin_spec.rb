@@ -5,9 +5,8 @@
 # should run these tests via the 'rake test' task.
 ########################################################################
 require 'spec_helper'
-require_relative 'sys_proctable_all_spec'
 
-RSpec.describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable, :darwin do
   let(:fields){
     %w[
       flags status xstatus pid ppid uid gid ruid rgid svuid svgid rfu1 comm
