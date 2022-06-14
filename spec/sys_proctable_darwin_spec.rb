@@ -6,7 +6,7 @@
 ########################################################################
 require 'spec_helper'
 
-RSpec.describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable, :darwin do
   let(:fields){
     %w[
       flags status xstatus pid ppid uid gid ruid rgid svuid svgid rfu1 comm
