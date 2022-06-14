@@ -1,26 +1,28 @@
 #######################################################################
-# sys_proctable_all_spec.rb
+# sys_proctable_common.rb
 #
 # Test suite for methods common to all platforms. Generally speaking
-# you should run these specs using the 'rake test' task.
+# you should run these specs using the 'rake spec' task.
 #######################################################################
-require 'spec_helper'
-
-RSpec.describe 'common' do
+RSpec.shared_context 'common' do
   let(:windows) { File::ALT_SEPARATOR }
 
   before(:all) do
     @pid = Process.pid
   end
 
-  it "has a VERSION constant set to the expected value" do
-    expect(Sys::ProcTable::VERSION).to eql('1.2.6')
-    expect(Sys::ProcTable::VERSION).to be_frozen
+  context "version" do
+    it "has a VERSION constant set to the expected value" do
+      expect(Sys::ProcTable::VERSION).to eql('1.2.6')
+      expect(Sys::ProcTable::VERSION).to be_frozen
+    end
   end
 
-  it "defines a custom error class" do
-    expect{ Sys::ProcTable::Error }.to_not raise_error
-    expect(Sys::ProcTable::Error.new).to be_kind_of(StandardError)
+  context "error" do
+    it "defines a custom error class" do
+      expect{ Sys::ProcTable::Error }.to_not raise_error
+      expect(Sys::ProcTable::Error.new).to be_kind_of(StandardError)
+    end
   end
 
   context "fields" do
