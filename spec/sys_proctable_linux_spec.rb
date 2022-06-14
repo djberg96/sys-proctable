@@ -6,7 +6,7 @@
 #######################################################################
 require 'spec_helper'
 
-RSpec.describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable, :linux do
   let(:fields){ %w[
       cmdline cwd environ exe fd root pid name uid euid gid egid comm state ppid pgrp
       session tty_nr tpgid flags minflt cminflt majflt cmajflt utime
