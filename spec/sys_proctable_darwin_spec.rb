@@ -5,7 +5,6 @@
 # should run these tests via the 'rake test' task.
 ########################################################################
 require 'spec_helper'
-require_relative 'sys_proctable_all_spec'
 
 RSpec.describe Sys::ProcTable do
   let(:fields){

@@ -2,13 +2,11 @@
 # sys_proctable_freebsd_rspec.rb
 #
 # Test suite for FreeBSD for the sys-proctable library.
-# You should run these tests via 'rake test'.
+# You should run these tests via the 'rake spec' task.
 ################################################################
-require 'rspec'
-require 'sys/proctable'
-require_relative 'sys_proctable_all_spec'
+require 'spec_helper'
 
-describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable do
   let(:fields){
     %w[
       pid ppid pgid tpgid sid tsid jobc uid ruid rgid

@@ -2,13 +2,11 @@
 # sys_proctable_aix_spec.rb
 #
 # Test suite for the AIX version of the sys-proctable library. You
-# should run these tests via the 'rake test' task.
+# should run these tests via the 'rake spec' task.
 #######################################################################
-require 'rspec'
-require 'sys/proctable'
-require_relative 'sys_proctable_all_spec'
+require 'spec_helper'
 
-describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable do
   let(:fields){
     %w[
         addr argc argv bindpro cid clname cmd_args cmdline cwd egid environ

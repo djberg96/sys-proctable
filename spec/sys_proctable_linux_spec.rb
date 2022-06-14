@@ -2,13 +2,11 @@
 # sys_proctable_linux_spec.rb
 #
 # Test suite for the Linux version of the sys-proctable library. You
-# should run these tests via the 'rake test' task.
+# should run these tests via the 'rake spec' task.
 #######################################################################
-require 'rspec'
-require 'sys/proctable'
-require_relative 'sys_proctable_all_spec'
+require 'spec_helper'
 
-describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable do
   let(:fields){ %w[
       cmdline cwd environ exe fd root pid name uid euid gid egid comm state ppid pgrp
       session tty_nr tpgid flags minflt cminflt majflt cmajflt utime

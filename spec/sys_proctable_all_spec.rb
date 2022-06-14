@@ -4,11 +4,9 @@
 # Test suite for methods common to all platforms. Generally speaking
 # you should run these specs using the 'rake test' task.
 #######################################################################
-require 'rspec'
-require 'sys/proctable'
-require_relative 'sys_top_spec'
+require 'spec_helper'
 
-describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable do
   let(:windows) { File::ALT_SEPARATOR }
 
   before(:all) do
