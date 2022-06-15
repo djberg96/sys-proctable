@@ -8,7 +8,9 @@
 
 ## Prerequisites
 
-* RSpec 3.x (development only)
+* ffi
+* rspec (development only)
+* rake (development only)
 
 ## Supported Platforms
 
