@@ -6,7 +6,7 @@
 #######################################################################
 require 'spec_helper'
 
-RSpec.describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable, :sunos do
   let(:fields){
     %w[
         flag nlwp pid ppid pgid sid uid euid gid egid addr size

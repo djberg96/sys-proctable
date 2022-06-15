@@ -7,7 +7,7 @@
 require 'spec_helper'
 require 'socket'
 
-describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable, :windows do
   let(:hostname) { Socket.gethostname }
   let(:fields) {
     %w[

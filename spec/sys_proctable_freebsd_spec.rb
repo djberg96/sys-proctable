@@ -6,7 +6,7 @@
 ################################################################
 require 'spec_helper'
 
-RSpec.describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable, :freebsd do
   let(:fields){
     %w[
       pid ppid pgid tpgid sid tsid jobc uid ruid rgid
