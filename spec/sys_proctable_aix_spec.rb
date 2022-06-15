@@ -6,7 +6,7 @@
 #######################################################################
 require 'spec_helper'
 
-RSpec.describe Sys::ProcTable do
+RSpec.describe Sys::ProcTable, :aix do
   let(:fields){
     %w[
         addr argc argv bindpro cid clname cmd_args cmdline cwd egid environ
