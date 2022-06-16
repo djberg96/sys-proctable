@@ -119,7 +119,7 @@ RSpec.describe Sys::ProcTable, :windows do
 
     it 'has a termination_date struct member with the expected data type' do
       expect(process).to respond_to(:termination_date)
-      expect(process.termination_date).to be_kind_of(Date) if subject.termination_date
+      expect(process.termination_date).to be_kind_of(Date) if process.termination_date
     end
 
     it 'has a status struct member with the expected data type' do
@@ -234,12 +234,12 @@ RSpec.describe Sys::ProcTable, :windows do
 
     it 'has a minimum_working_set_size struct member with the expected data type' do
       expect(process).to respond_to(:minimum_working_set_size)
-      expect(process.minimum_working_set_size).to be_kind_of(Integer) if subject.minimum_working_set_size
+      expect(process.minimum_working_set_size).to be_kind_of(Integer) if process.minimum_working_set_size
     end
 
     it 'has a maximum_working_set_size struct member with the expected data type' do
       expect(process).to respond_to(:maximum_working_set_size)
-      expect(process.maximum_working_set_size).to be_kind_of(Integer) if subject.maximum_working_set_size
+      expect(process.maximum_working_set_size).to be_kind_of(Integer) if process.maximum_working_set_size
     end
 
     it 'has a kernel_mode_time struct member with the expected data type' do
@@ -249,7 +249,7 @@ RSpec.describe Sys::ProcTable, :windows do
 
     it 'has a install_date struct member with the expected data type' do
       expect(process).to respond_to(:install_date)
-      expect(process.install_date).to be_kind_of(Date) if subject.install_date
+      expect(process.install_date).to be_kind_of(Date) if process.install_date
     end
 
     it 'has a handle_count struct member with the expected data type' do
@@ -269,7 +269,7 @@ RSpec.describe Sys::ProcTable, :windows do
 
     it 'has a executable_path struct member with the expected data type' do
       expect(process).to respond_to(:executable_path)
-      expect(process.executable_path).to be_kind_of(String) if subject.executable_path
+      expect(process.executable_path).to be_kind_of(String) if process.executable_path
     end
 
     it 'has a description struct member with the expected data type' do
@@ -289,7 +289,7 @@ RSpec.describe Sys::ProcTable, :windows do
 
     it 'has a creation_date struct member with the expected data type' do
       expect(process).to respond_to(:creation_date)
-      expect(process.creation_date).to be_kind_of(Date) if subject.creation_date
+      expect(process.creation_date).to be_kind_of(Date) if process.creation_date
     end
 
     it 'has a creation_class_name struct member with the expected data type' do
@@ -304,7 +304,7 @@ RSpec.describe Sys::ProcTable, :windows do
 
     it 'has a cmdline struct member with the expected data type' do
       expect(process).to respond_to(:cmdline)
-      expect(process.cmdline).to be_kind_of(String) if subject.cmdline
+      expect(process.cmdline).to be_kind_of(String) if process.cmdline
     end
 
     it 'has a caption struct member with the expected data type' do
