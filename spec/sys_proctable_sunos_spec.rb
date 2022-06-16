@@ -253,7 +253,7 @@ RSpec.describe Sys::ProcTable, :sunos do
 
     it 'has a state member that returns the expected value' do
       expect(process).to respond_to(:state)
-      expect(process.state).to be_kind_of(Fixnum)
+      expect(process.state).to be_kind_of(Integer)
       expect(process.state).to be >= 0
     end
 
@@ -265,19 +265,19 @@ RSpec.describe Sys::ProcTable, :sunos do
 
     it 'has a nice member that returns the expected value' do
       expect(process).to respond_to(:nice)
-      expect(process.nice).to be_kind_of(Fixnum)
+      expect(process.nice).to be_kind_of(Integer)
       expect(process.nice).to be >= 0
     end
 
     it 'has a syscall member that returns the expected value' do
       expect(process).to respond_to(:syscall)
-      expect(process.syscall).to be_kind_of(Fixnum)
+      expect(process.syscall).to be_kind_of(Integer)
       expect(process.syscall).to be >= 0
     end
 
     it 'has a pri member that returns the expected value' do
       expect(process).to respond_to(:pri)
-      expect(process.pri).to be_kind_of(Fixnum)
+      expect(process.pri).to be_kind_of(Integer)
       expect(process.pri).to be >= 0
     end
 
@@ -295,19 +295,19 @@ RSpec.describe Sys::ProcTable, :sunos do
 
     it 'has an onpro member that returns the expected value' do
       expect(process).to respond_to(:onpro)
-      expect(process.onpro).to be_kind_of(Fixnum)
+      expect(process.onpro).to be_kind_of(Integer)
       expect(process.onpro).to be >= 0
     end
 
     it 'has a bindpro member that returns the expected value' do
       expect(process).to respond_to(:bindpro)
-      expect(process.bindpro).to be_kind_of(Fixnum)
+      expect(process.bindpro).to be_kind_of(Integer)
       expect(process.bindpro).to be >= -1
     end
 
     it 'has a bindpset member that returns the expected value' do
       expect(process).to respond_to(:bindpset)
-      expect(process.bindpset).to be_kind_of(Fixnum)
+      expect(process.bindpset).to be_kind_of(Integer)
       expect(process.bindpset).to be >= -1
     end
   end

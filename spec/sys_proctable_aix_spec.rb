@@ -73,17 +73,17 @@ RSpec.describe Sys::ProcTable, :aix do
   context 'ProcTable::Struct members' do
     it 'contains a flag member and returns the expected value' do
       expect(@p1info).to respond_to(:flag)
-      expect(@p1info.flag).to be_kind_of(Fixnum)
+      expect(@p1info.flag).to be_kind_of(Integer)
     end
 
     it 'contains a flag2 member and returns the expected value' do
       expect(@p1info).to respond_to(:flag2)
-      expect(@p1info.flag2).to be_kind_of(Fixnum)
+      expect(@p1info.flag2).to be_kind_of(Integer)
     end
 
     it 'contains a nlwp member and returns the expected value' do
       expect(@p1info).to respond_to(:nlwp)
-      expect(@p1info.nlwp).to be_kind_of(Fixnum)
+      expect(@p1info.nlwp).to be_kind_of(Integer)
     end
 
     it 'contains a uid member and returns the expected value' do
@@ -165,12 +165,12 @@ RSpec.describe Sys::ProcTable, :aix do
 
     it 'contains a cid member and returns the expected value' do
       expect(@p1info).to respond_to(:cid)
-      expect(@p1info.cid).to be_kind_of(Fixnum)
+      expect(@p1info.cid).to be_kind_of(Integer)
     end
 
     it 'contains an argc member and returns the expected value' do
       expect(@p1info).to respond_to(:argc)
-      expect(@p1info.argc).to be_kind_of(Fixnum)
+      expect(@p1info.argc).to be_kind_of(Integer)
       expect(@p1info.argc).to eql(@p1args.size + 1)
     end
 
@@ -206,12 +206,12 @@ RSpec.describe Sys::ProcTable, :aix do
 
     it 'contains a wtype member and returns the expected value' do
       expect(@p1info).to respond_to(:wtype)
-      expect(@p1info.wchan).to be_kind_of(Fixnum)
+      expect(@p1info.wchan).to be_kind_of(Integer)
     end
 
     it 'contains a state member and returns the expected value' do
       expect(@p1info).to respond_to(:state)
-      expect(@p1info.state).to be_kind_of(Fixnum)
+      expect(@p1info.state).to be_kind_of(Integer)
     end
 
     it 'contains an sname member and returns the expected value' do
@@ -221,17 +221,17 @@ RSpec.describe Sys::ProcTable, :aix do
 
     it 'contains a nice member and returns the expected value' do
       expect(@p1info).to respond_to(:nice)
-      expect(@p1info.nice).to be_kind_of(Fixnum)
+      expect(@p1info.nice).to be_kind_of(Integer)
     end
 
     it 'contains a pri member and returns the expected value' do
       expect(@p1info).to respond_to(:pri)
-      expect(@p1info.pri).to be_kind_of(Fixnum)
+      expect(@p1info.pri).to be_kind_of(Integer)
     end
 
     it 'contains a policy member and returns the expected value' do
       expect(@p1info).to respond_to(:policy)
-      expect(@p1info.policy).to be_kind_of(Fixnum)
+      expect(@p1info.policy).to be_kind_of(Integer)
     end
 
     it 'contains a clname member and returns the expected value' do
@@ -241,17 +241,17 @@ RSpec.describe Sys::ProcTable, :aix do
 
     it 'contains an onpro member and returns the expected value' do
       expect(@p1info).to respond_to(:onpro)
-      expect(@p1info.onpro).to be_kind_of(Fixnum)
+      expect(@p1info.onpro).to be_kind_of(Integer)
     end
 
     it 'contains a bindpro member and returns the expected value' do
       expect(@p1info).to respond_to(:bindpro)
-      expect(@p1info.bindpro).to be_kind_of(Fixnum)
+      expect(@p1info.bindpro).to be_kind_of(Integer)
     end
 
     it 'contains a ptid member and returns the expected value' do
       expect(@p1info).to respond_to(:ptid)
-      expect(@p1info.ptid).to be_kind_of(Fixnum)
+      expect(@p1info.ptid).to be_kind_of(Integer)
     end
 
     it 'contains a comm member and returns the expected value' do
