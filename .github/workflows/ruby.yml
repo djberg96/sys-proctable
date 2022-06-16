@@ -22,6 +22,24 @@ on:
       - '**/MANIFEST.md'
 
 jobs:
+  test-solaris:
+    strategy:
+      fail-fast: false
+      matrix:
+        ruby-version: [2.6, 2.7]
+    runs-on: macos-latest
+    name: Run the Ruby specs on Solaris
+    steps:
+      - uses: actions/checkout@v2
+      - name: Tests in Solaris
+        uses: vmactions/solaris-vm@v0.0.5
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby-version }}
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+      - name: Run tests
+        run: bundle exec rake
   test:
     strategy:
       fail-fast: false
@@ -37,12 +55,10 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run tests
       run: bundle exec rake
+
