@@ -1,0 +1,61 @@
+require: rubocop-rspec
+
+RSpec/MultipleExpectations:
+  Max: 4
+RSpec/ContextWording:
+  Enabled: false
+RSpec/FilePath:
+  SpecSuffixOnly: true
+RSpec/InstanceVariable:
+  Enabled: false
+
+AllCops:
+  NewCops: enable
+  Exclude:
+    - sys-proctable.gemspec
+    - Gemfile
+    - Rakefile
+Lint/AssignmentInCondition:
+  Enabled: false
+Lint/EmptyBlock:
+  Exclude:
+    - spec/*.rb
+Style/MethodCallWithoutArgsParentheses:
+  Enabled: false
+Style/NumericPredicate:
+  Enabled: false
+Style/ClassAndModuleChildren:
+  Enabled: false
+Style/ConditionalAssignment:
+  Enabled: false
+Style/HashSyntax:
+  EnforcedStyle: hash_rockets
+Style/IfUnlessModifier:
+  Enabled: false
+Style/RedundantBegin:
+  Enabled: false   
+Style/SafeNavigation:
+  Enabled: false
+Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+Layout/CaseIndentation:
+  IndentOneStep: true
+Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+Metrics/AbcSize:
+  Enabled: false
+Metrics/BlockLength:
+  IgnoredMethods: ['describe', 'context']
+Metrics/ClassLength:
+  Enabled: false
+Metrics/MethodLength:
+  Enabled: false
+Metrics/CyclomaticComplexity:
+  Enabled: false
+Metrics/PerceivedComplexity:
+  Enabled: false
+Naming/RescuedExceptionsVariableName:
+  PreferredName: 'err'
+Naming/FileName:
+  Exclude:
+    - 'lib/sys-proctable.rb'
