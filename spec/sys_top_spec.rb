@@ -22,7 +22,7 @@ RSpec.describe Sys::Top do
     end
 
     it 'works with no arguments' do
-      expect{ described_class.top }.to_not raise_error
+      expect{ described_class.top }.not_to raise_error
     end
 
     it 'accepts a maximum of two arguments' do
@@ -30,8 +30,8 @@ RSpec.describe Sys::Top do
     end
 
     it 'accepts optional arguments' do
-      expect{ described_class.top(5) }.to_not raise_error
-      expect{ described_class.top(5, 'cmdline') }.to_not raise_error
+      expect{ described_class.top(5) }.not_to raise_error
+      expect{ described_class.top(5, 'cmdline') }.not_to raise_error
     end
 
     it 'returns the expected results with no arguments' do

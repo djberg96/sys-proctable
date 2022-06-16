@@ -20,7 +20,7 @@ RSpec.describe 'common' do
     end
 
     it 'defines a custom error class' do
-      expect{ Sys::ProcTable::Error }.to_not raise_error
+      expect{ Sys::ProcTable::Error }.not_to raise_error
       expect(Sys::ProcTable::Error.new).to be_kind_of(StandardError)
     end
   end
@@ -42,11 +42,11 @@ RSpec.describe 'common' do
     end
 
     it 'allows a pid option as an argument' do
-      expect{ Sys::ProcTable.ps(pid: 0) }.to_not raise_error
+      expect{ Sys::ProcTable.ps(pid: 0) }.not_to raise_error
     end
 
     it 'allows the pid to be nil' do
-      expect{ Sys::ProcTable.ps(pid: nil) }.to_not raise_error
+      expect{ Sys::ProcTable.ps(pid: nil) }.not_to raise_error
       expect(Sys::ProcTable.ps(pid: nil)).to be_kind_of(Array)
     end
 
@@ -84,7 +84,7 @@ RSpec.describe 'common' do
     end
 
     it 'works within a thread' do
-      expect{ Thread.new{ Sys::ProcTable.ps }.value }.to_not raise_error
+      expect{ Thread.new{ Sys::ProcTable.ps }.value }.not_to raise_error
     end
   end
 end
