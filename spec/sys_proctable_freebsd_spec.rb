@@ -31,178 +31,178 @@ RSpec.describe Sys::ProcTable, :freebsd do
   end
 
   context 'ProcTable::Struct members' do
-    subject { described_class.ps(pid: Process.pid) }
+    subject(:process){ described_class.ps(pid: Process.pid) }
 
     it 'contains a pid member and returns the expected value' do
-      expect(subject).to respond_to(:pid)
-      expect(subject.pid).to be_kind_of(Numeric)
-      expect(subject.pid).to eql(Process.pid)
+      expect(process).to respond_to(:pid)
+      expect(process.pid).to be_kind_of(Numeric)
+      expect(process.pid).to eql(Process.pid)
     end
 
     it 'contains a ppid member and returns the expected value' do
-      expect(subject).to respond_to(:ppid)
-      expect(subject.ppid).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:ppid)
+      expect(process.ppid).to be_kind_of(Fixnum)
     end
 
     it 'contains a pgid member and returns the expected value' do
-      expect(subject).to respond_to(:pgid)
-      expect(subject.pgid).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:pgid)
+      expect(process.pgid).to be_kind_of(Fixnum)
     end
 
     it 'contains a ruid member and returns the expected value' do
-      expect(subject).to respond_to(:ruid)
-      expect(subject.ruid).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:ruid)
+      expect(process.ruid).to be_kind_of(Fixnum)
     end
 
     it 'contains a rgid member and returns the expected value' do
-      expect(subject).to respond_to(:rgid)
-      expect(subject.rgid).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:rgid)
+      expect(process.rgid).to be_kind_of(Fixnum)
     end
 
     it 'contains a comm member and returns the expected value' do
-      expect(subject).to respond_to(:comm)
-      expect(subject.comm).to be_kind_of(String)
+      expect(process).to respond_to(:comm)
+      expect(process.comm).to be_kind_of(String)
     end
 
     it 'contains a state member and returns the expected value' do
-      expect(subject).to respond_to(:state)
-      expect(subject.state).to be_kind_of(String)
+      expect(process).to respond_to(:state)
+      expect(process.state).to be_kind_of(String)
     end
 
     it 'contains a pctcpu member and returns the expected value' do
-      expect(subject).to respond_to(:pctcpu)
-      expect(subject.pctcpu).to be_kind_of(Float)
+      expect(process).to respond_to(:pctcpu)
+      expect(process.pctcpu).to be_kind_of(Float)
     end
 
     it 'contains a oncpu member and returns the expected value' do
-      expect(subject).to respond_to(:oncpu)
-      expect(subject.oncpu).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:oncpu)
+      expect(process.oncpu).to be_kind_of(Fixnum)
     end
 
     it 'contains a ttynum member and returns the expected value' do
-      expect(subject).to respond_to(:ttynum)
-      expect(subject.ttynum).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:ttynum)
+      expect(process.ttynum).to be_kind_of(Fixnum)
     end
 
     it 'contains a ttydev member and returns the expected value' do
-      expect(subject).to respond_to(:ttydev)
-      expect(subject.ttydev).to be_kind_of(String)
+      expect(process).to respond_to(:ttydev)
+      expect(process.ttydev).to be_kind_of(String)
     end
 
     it 'contains a wmesg member and returns the expected value' do
-      expect(subject).to respond_to(:wmesg)
-      expect(subject.wmesg).to be_kind_of(String)
+      expect(process).to respond_to(:wmesg)
+      expect(process.wmesg).to be_kind_of(String)
     end
 
     it 'contains a runtime member and returns the expected value' do
-      expect(subject).to respond_to(:runtime)
-      expect(subject.runtime).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:runtime)
+      expect(process.runtime).to be_kind_of(Fixnum)
     end
 
     it 'contains a priority member and returns the expected value' do
-      expect(subject).to respond_to(:priority)
-      expect(subject.priority).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:priority)
+      expect(process.priority).to be_kind_of(Fixnum)
     end
 
     it 'contains a usrpri member and returns the expected value' do
-      expect(subject).to respond_to(:usrpri)
-      expect(subject.usrpri).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:usrpri)
+      expect(process.usrpri).to be_kind_of(Fixnum)
     end
 
     it 'contains a nice member and returns the expected value' do
-      expect(subject).to respond_to(:nice)
-      expect(subject.nice).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:nice)
+      expect(process.nice).to be_kind_of(Fixnum)
     end
 
     it 'contains a cmdline member and returns the expected value' do
-      expect(subject).to respond_to(:cmdline)
-      expect(subject.cmdline).to be_kind_of(String)
+      expect(process).to respond_to(:cmdline)
+      expect(process.cmdline).to be_kind_of(String)
     end
 
     it 'contains a start member and returns the expected value' do
-      expect(subject).to respond_to(:start)
-      expect(subject.start).to be_kind_of(Time)
+      expect(process).to respond_to(:start)
+      expect(process.start).to be_kind_of(Time)
     end
 
     it 'contains a maxrss member and returns the expected value' do
-      expect(subject).to respond_to(:maxrss)
-      expect(subject.maxrss).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:maxrss)
+      expect(process.maxrss).to be_kind_of(Fixnum)
     end
 
     it 'contains a ixrss member and returns the expected value' do
-      expect(subject).to respond_to(:ixrss)
-      expect(subject.ixrss).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:ixrss)
+      expect(process.ixrss).to be_kind_of(Fixnum)
     end
 
     # TODO: The value returned on PC BSD 10 does not appear to be valid. Investigate.
     it 'contains a idrss member and returns the expected value' do
-      expect(subject).to respond_to(:idrss)
-      expect(subject.idrss).to be_kind_of(Numeric)
+      expect(process).to respond_to(:idrss)
+      expect(process.idrss).to be_kind_of(Numeric)
     end
 
     it 'contains a isrss member and returns the expected value' do
-      expect(subject).to respond_to(:isrss)
-      expect(subject.isrss).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:isrss)
+      expect(process.isrss).to be_kind_of(Fixnum)
     end
 
     it 'contains a minflt member and returns the expected value' do
-      expect(subject).to respond_to(:minflt)
-      expect(subject.minflt).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:minflt)
+      expect(process.minflt).to be_kind_of(Fixnum)
     end
 
     it 'contains a majflt member and returns the expected value' do
-      expect(subject).to respond_to(:majflt)
-      expect(subject.majflt).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:majflt)
+      expect(process.majflt).to be_kind_of(Fixnum)
     end
 
     it 'contains a nswap member and returns the expected value' do
-      expect(subject).to respond_to(:nswap)
-      expect(subject.nswap).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:nswap)
+      expect(process.nswap).to be_kind_of(Fixnum)
     end
 
     it 'contains a inblock member and returns the expected value' do
-      expect(subject).to respond_to(:inblock)
-      expect(subject.inblock).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:inblock)
+      expect(process.inblock).to be_kind_of(Fixnum)
     end
 
     it 'contains a oublock member and returns the expected value' do
-      expect(subject).to respond_to(:oublock)
-      expect(subject.oublock).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:oublock)
+      expect(process.oublock).to be_kind_of(Fixnum)
     end
 
     it 'contains a msgsnd member and returns the expected value' do
-      expect(subject).to respond_to(:msgsnd)
-      expect(subject.msgsnd).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:msgsnd)
+      expect(process.msgsnd).to be_kind_of(Fixnum)
     end
 
     it 'contains a msgrcv member and returns the expected value' do
-      expect(subject).to respond_to(:msgrcv)
-      expect(subject.msgrcv).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:msgrcv)
+      expect(process.msgrcv).to be_kind_of(Fixnum)
     end
 
     it 'contains a nsignals member and returns the expected value' do
-      expect(subject).to respond_to(:nsignals)
-      expect(subject.nsignals).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:nsignals)
+      expect(process.nsignals).to be_kind_of(Fixnum)
     end
 
     it 'contains a nvcsw member and returns the expected value' do
-      expect(subject).to respond_to(:nvcsw)
-      expect(subject.nvcsw).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:nvcsw)
+      expect(process.nvcsw).to be_kind_of(Fixnum)
     end
 
     it 'contains a nivcsw member and returns the expected value' do
-      expect(subject).to respond_to(:nivcsw)
-      expect(subject.nivcsw).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:nivcsw)
+      expect(process.nivcsw).to be_kind_of(Fixnum)
     end
 
     it 'contains a utime member and returns the expected value' do
-      expect(subject).to respond_to(:utime)
-      expect(subject.utime).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:utime)
+      expect(process.utime).to be_kind_of(Fixnum)
     end
 
     it 'contains a stime member and returns the expected value' do
-      expect(subject).to respond_to(:stime)
-      expect(subject.stime).to be_kind_of(Fixnum)
+      expect(process).to respond_to(:stime)
+      expect(process.stime).to be_kind_of(Fixnum)
     end
   end
 end
