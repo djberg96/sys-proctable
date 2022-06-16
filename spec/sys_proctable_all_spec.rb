@@ -68,7 +68,7 @@ RSpec.describe 'common' do
     end
 
     it "returns frozen structs" do
-      expect(Sys::ProcTable.ps.first.frozen?).to eql(true)
+      expect(Sys::ProcTable.ps.first.frozen?).to be(true)
     end
 
     it "expects a numeric pid argument if present" do

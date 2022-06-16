@@ -35,16 +35,16 @@ RSpec.describe Sys::Top do
     end
 
     it "returns the expected results with no arguments" do
-      expect(described_class.top.size).to eql(10)
+      expect(described_class.top.size).to be(10)
       expect(described_class.top.first).to be_kind_of(Struct::ProcTableStruct)
     end
 
     it "returns the expected result with a size argument" do
-      expect(described_class.top(5).size).to eql(5)
+      expect(described_class.top(5).size).to be(5)
     end
 
     it "returns the expected result with a size and sort_by argument" do
-      expect(described_class.top(5, :cmdline).size).to eql(5)
+      expect(described_class.top(5, :cmdline).size).to be(5)
     end
   end
 end
