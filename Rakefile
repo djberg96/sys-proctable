@@ -3,9 +3,12 @@ require 'rake/clean'
 require 'rake/testtask'
 require 'rbconfig'
 require 'rspec/core/rake_task'
+require 'rubocop/rake_task'
 include RbConfig
 
 CLEAN.include('**/*.gem', '**/*.rbc', '**/*.lock')
+
+RuboCop::RakeTask.new
 
 desc 'Install the sys-proctable library'
 task :install do
