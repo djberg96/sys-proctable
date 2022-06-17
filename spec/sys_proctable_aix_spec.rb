@@ -28,8 +28,8 @@ RSpec.describe Sys::ProcTable, :aix do
     end
 
     @myenv = ENV.to_hash
-    @p1args = %w/aix-child.rb testing how well this works 1/
-    @p2args = %w/aix-child.rb testing how well this works 2/
+    @p1args = %w[aix-child.rb testing how well this works 1]
+    @p2args = %w[aix-child.rb testing how well this works 2]
 
     @pid1 = fork do
       exec('ruby', *@p1args)
@@ -89,43 +89,43 @@ RSpec.describe Sys::ProcTable, :aix do
     it 'contains a uid member and returns the expected value' do
       expect(@p1info).to respond_to(:uid)
       expect(@p1info.uid).to be_kind_of(Integer)
-      expect(@p1info.uid).to eql(@p1info.uid)
+      expect(@p1info.uid).to eql(Process.uid)
     end
 
     it 'contains a euid member and returns the expected value' do
       expect(@p1info).to respond_to(:euid)
       expect(@p1info.euid).to be_kind_of(Integer)
-      expect(@p1info.euid).to eql(@p1info.euid)
+      expect(@p1info.euid).to eql(Process.euid)
     end
 
     it 'contains a gid member and returns the expected value' do
       expect(@p1info).to respond_to(:gid)
       expect(@p1info.gid).to be_kind_of(Integer)
-      expect(@p1info.gid).to eql(@p1info.gid)
+      expect(@p1info.gid).to eql(Process.gid)
     end
 
     it 'contains a egid member and returns the expected value' do
       expect(@p1info).to respond_to(:egid)
       expect(@p1info.egid).to be_kind_of(Integer)
-      expect(@p1info.egid).to eql(@p1info.egid)
+      expect(@p1info.egid).to eql(Process.egid)
     end
 
     it 'contains a pid member and returns the expected value' do
       expect(@p1info).to respond_to(:pid)
       expect(@p1info.pid).to be_kind_of(Integer)
-      expect(@p1info.pid).to eql(@p1info.pid)
+      expect(@p1info.pid).to eql(@pid1)
     end
 
     it 'contains a ppid member and returns the expected value' do
       expect(@p1info).to respond_to(:ppid)
       expect(@p1info.ppid).to be_kind_of(Integer)
-      expect(@p1info.ppid).to eql(@p1info.ppid)
+      expect(@p1info.ppid).to eql(Process.pid)
     end
 
     it 'contains a pgid member and returns the expected value' do
       expect(@p1info).to respond_to(:pgid)
       expect(@p1info.pgid).to be_kind_of(Integer)
-      expect(@p1info.pgid).to eql(@p1info.pgid)
+      expect(@p1info.pgid).to eql(Process.getpgrp)
     end
 
     it 'contains a sid member and returns the expected value' do
@@ -189,7 +189,7 @@ RSpec.describe Sys::ProcTable, :aix do
       expect(@p1info.fname).to be_kind_of(String)
     end
 
-    it 'contains an fname member and returns the expected value' do
+    it 'contains an psargs member and returns the expected value' do
       expect(@p1info).to respond_to(:psargs)
       expect(@p1info.psargs).to be_kind_of(String)
     end
