@@ -32,7 +32,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - name: Tests in Solaris
+        id: test
         uses: vmactions/solaris-vm@v0.0.5
+        with:
+          prepare: pkutil -y -i socat
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
         with:
