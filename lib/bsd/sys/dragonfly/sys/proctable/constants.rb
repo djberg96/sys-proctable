@@ -1,0 +1,8 @@
+module Sys
+  module ProcTable::Constants
+    WMESGLEN   = 8
+    MAXCOMLEN  = 16
+    NGROUPS    = 16
+    MAXLOGNAME = 33
+  end
+end
