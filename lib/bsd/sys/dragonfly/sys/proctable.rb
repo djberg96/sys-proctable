@@ -62,7 +62,7 @@ module Sys
         if pid
           procs = kvm_getprocs(kd, KERN_PROC_PID, pid, ptr)
         else
-          procs = kvm_getprocs(kd, KERN_PROC_PROC, 0, ptr)
+          procs = kvm_getprocs(kd, KERN_PROC_ALL, 0, ptr)
         end
 
         if procs.null?
