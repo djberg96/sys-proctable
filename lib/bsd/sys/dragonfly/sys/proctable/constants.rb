@@ -1,5 +1,5 @@
 module Sys
-  module ProcTable::Constants
+  module ProcTableConstants
     WMESGLEN   = 8
     MAXCOMLEN  = 16
     NGROUPS    = 16

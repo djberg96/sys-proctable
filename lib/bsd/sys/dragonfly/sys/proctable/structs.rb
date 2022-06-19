@@ -1,8 +1,11 @@
 require 'ffi'
 require 'mkmf-lite'
+require_relative 'constants'
 
 module Sys
-  module ProcTable::Structs
+  module ProcTableStructs
+    extend FFI::Library
+
     class Timeval < FFI::Struct
       layout(:tv_sec, :time_t, :tv_usec, :suseconds_t)
     end
@@ -40,6 +43,8 @@ module Sys
     end
 
     class KInfoLWP < FFI::Struct
+      include Sys::ProcTableConstants
+
       layout(
         :kl_pid, :pid_t,
         :kl_tid, :lwpid_t,
@@ -70,6 +75,8 @@ module Sys
     end
 
     class KInfoProc < FFI::Struct
+      include Sys::ProcTableConstants
+
       def self.roundup(x, y)
         ((x + y-1) / y) * y
       end

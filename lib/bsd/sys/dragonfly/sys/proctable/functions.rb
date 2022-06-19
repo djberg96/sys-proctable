@@ -1,7 +1,7 @@
 require 'ffi'
 
 module Sys
-  module ProcTable::Functions
+  module ProcTableFunctions
     extend FFI::Library
     ffi_lib :kvm
 
