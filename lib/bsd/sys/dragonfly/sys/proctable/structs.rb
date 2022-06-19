@@ -1,5 +1,4 @@
 require 'ffi'
-require 'mkmf-lite'
 require_relative 'constants'
 
 module Sys
