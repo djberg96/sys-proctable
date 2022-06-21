@@ -22,6 +22,8 @@ Lint/EmptyBlock:
     - spec/*.rb
 Style/MethodCallWithoutArgsParentheses:
   Enabled: false
+Style/NumericLiterals:
+  Enabled: false
 Style/NumericPredicate:
   Enabled: false
 Style/ClassAndModuleChildren:
