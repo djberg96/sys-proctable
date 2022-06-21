@@ -110,7 +110,7 @@ module Sys
         :pr_slptime, Timeval,
         :pr_wtime, Timeval,
         :pr_stoptime, Timeval,
-        :pr_filetime, [Timeval,6],
+        :pr_filetime, [Timeval, 6],
         :pr_minf, :ulong_t,
         :pr_majf, :ulong_t,
         :pr_nswap, :ulong_t,
