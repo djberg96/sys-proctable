@@ -40,6 +40,8 @@ Style/SafeNavigation:
   Enabled: false
 Layout/EmptyLineAfterGuardClause:
   Enabled: false
+Layout/FirstArrayElementIndentation:
+  Enabled: false
 Layout/CaseIndentation:
   IndentOneStep: true
 Layout/SpaceBeforeBlockBraces:
