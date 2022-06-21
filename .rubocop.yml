@@ -19,6 +19,9 @@ AllCops:
     - Rakefile
 Lint/AssignmentInCondition:
   Enabled: false
+Style/BlockDelimiters:
+  Exclude:
+    - spec/*.rb
 Lint/EmptyBlock:
   Exclude:
     - spec/*.rb
