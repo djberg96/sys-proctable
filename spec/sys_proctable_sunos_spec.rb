@@ -260,7 +260,7 @@ RSpec.describe Sys::ProcTable, :sunos do
     it 'has a sname member that returns the expected value' do
       expect(process).to respond_to(:sname)
       expect(process.sname).to be_kind_of(String)
-      expect(['S', 'R', 'Z', 'T', 'I', 'O']).to include(process.sname)
+      expect(%w[S R Z T I O]).to include(process.sname)
     end
 
     it 'has a nice member that returns the expected value' do
