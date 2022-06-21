@@ -18,11 +18,11 @@ RSpec.describe Sys::ProcTable, :linux do
     ]
   }
 
-  context 'struct members' do
-    before(:all) do
-      @subject = described_class.ps.last
-    end
+  before(:context) do
+    @subject ||= described_class.ps.last
+  end
 
+  context 'struct members' do
     it 'contains a cmdline member and returns the expected value' do
       expect(@subject).to respond_to(:cmdline)
       expect(@subject.cmdline).to be_kind_of(String)
@@ -316,10 +316,6 @@ RSpec.describe Sys::ProcTable, :linux do
   end
 
   context 'custom structs' do
-    before(:all) do
-      @subject = described_class.ps.last
-    end
-
     it 'contains a cgroup member and returns the expected value' do
       expect(@subject).to respond_to(:cgroup)
       expect(@subject.cgroup).to be_kind_of(Array)
