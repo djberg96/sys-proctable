@@ -41,7 +41,7 @@ RSpec.describe Sys::ProcTable, :darwin do
   end
 
   context 'ProcTable::Struct members' do
-    subject(:process){ described_class.ps(pid: @pid1) }
+    subject(:process){ described_class.ps(:pid => @pid1) }
 
     it 'contains a pid member and returns the expected value' do
       expect(process).to respond_to(:pid)
@@ -98,7 +98,7 @@ RSpec.describe Sys::ProcTable, :darwin do
     end
 
     it 'returns a string with the expected arguments for the cmdline member', :skip => :jruby do
-      ptable = Sys::ProcTable.ps(pid: @pid2)
+      ptable = Sys::ProcTable.ps(:pid => @pid2)
       expect(ptable.cmdline).to eq('ruby -Ilib -e sleep \'120\'.to_i -- foo bar')
     end
 
