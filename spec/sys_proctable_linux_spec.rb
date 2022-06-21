@@ -68,8 +68,8 @@ RSpec.describe Sys::ProcTable, :linux do
     end
 
     it 'contains a ppid member and returns the expected value' do
-      expect(@subject).to respond_to(:state)
-      expect(@subject.state).to be_kind_of(String)
+      expect(@subject).to respond_to(:ppid)
+      expect(@subject.ppid).to be_kind_of(Integer)
     end
 
     it 'contains a pgrp member and returns the expected value' do
