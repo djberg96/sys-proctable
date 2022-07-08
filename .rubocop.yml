@@ -17,6 +17,8 @@ AllCops:
     - sys-proctable.gemspec
     - Gemfile
     - Rakefile
+    - examples/*.rb
+    - benchmarks/*.rb
 Lint/AssignmentInCondition:
   Enabled: false
 Style/BlockDelimiters:
