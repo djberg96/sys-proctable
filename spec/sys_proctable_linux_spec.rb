@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #######################################################################
 # sys_proctable_linux_spec.rb
 #
@@ -7,7 +9,8 @@
 require 'spec_helper'
 
 RSpec.describe Sys::ProcTable, :linux do
-  let(:fields){ %w[
+  let(:fields){
+    %w[
       cmdline cwd environ exe fd root pid name uid euid gid egid comm state ppid pgrp
       session tty_nr tpgid flags minflt cminflt majflt cmajflt utime
       stime cutime cstime priority nice num_threads itrealvalue starttime vsize
@@ -17,11 +20,11 @@ RSpec.describe Sys::ProcTable, :linux do
     ]
   }
 
-  context 'struct members' do
-    before(:all) do
-      @subject = described_class.ps.last
-    end
+  before(:context) do
+    @subject ||= described_class.ps.last
+  end
 
+  context 'struct members' do
     it 'contains a cmdline member and returns the expected value' do
       expect(@subject).to respond_to(:cmdline)
       expect(@subject.cmdline).to be_kind_of(String)
@@ -68,8 +71,8 @@ RSpec.describe Sys::ProcTable, :linux do
     end
 
     it 'contains a ppid member and returns the expected value' do
-      expect(@subject).to respond_to(:state)
-      expect(@subject.state).to be_kind_of(String)
+      expect(@subject).to respond_to(:ppid)
+      expect(@subject.ppid).to be_kind_of(Integer)
     end
 
     it 'contains a pgrp member and returns the expected value' do
@@ -315,10 +318,6 @@ RSpec.describe Sys::ProcTable, :linux do
   end
 
   context 'custom structs' do
-    before(:all) do
-      @subject = described_class.ps.last
-    end
-
     it 'contains a cgroup member and returns the expected value' do
       expect(@subject).to respond_to(:cgroup)
       expect(@subject.cgroup).to be_kind_of(Array)

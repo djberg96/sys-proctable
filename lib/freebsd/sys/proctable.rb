@@ -77,7 +77,7 @@ module Sys
       layout(
         :ar_ref, :uint,
         :ar_length, :uint,
-        :ar_args, [:uchar,1]
+        :ar_args, [:uchar, 1]
       )
     end
 
