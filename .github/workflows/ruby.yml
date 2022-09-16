@@ -11,15 +11,12 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - '**/README.md'
-      - '**/CHANGES.md'
-      - '**/MANIFEST.md'
+      - '**/*.md'
   pull_request:
     branches: [ main ]
     paths-ignore:
-      - '**/README.md'
-      - '**/CHANGES.md'
-      - '**/MANIFEST.md'
+      - '**/*.md'
+  workflow_dispatch:
 
 jobs:
   test:
