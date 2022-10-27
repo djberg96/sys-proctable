@@ -254,11 +254,6 @@ module Sys
         # Skip over any entries we don't have permissions to read
         next unless File.readable?("/proc/#{file}/psinfo")
 
-        # Skip 0 byte as-files because these are no "real" processes
-        # These are things like sched or initrd
-        # These are some kind of pseudo processes from the kernel itself
-        next if File.size("/proc/#{file}/as") == 0
-
         data = IO.read("/proc/#{file}/psinfo") rescue next
         psinfo = PSInfo.new(FFI::MemoryPointer.from_string(data))
 
@@ -348,7 +343,7 @@ module Sys
               env_address += data.length + 1 # Add 1 for the space
             end
           end
-        rescue Errno::EACCES, Errno::EOVERFLOW, EOFError, RangeError
+        rescue Errno::EACCES, Errno::EBADF, Errno::EOVERFLOW, EOFError, RangeError
           # Skip this if we don't have proper permissions, if there's
           # no associated environment, or if there's a largefile issue.
         rescue Errno::ENOENT
