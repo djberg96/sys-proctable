@@ -46,13 +46,22 @@ jobs:
     name: A job to run test in Solaris
     steps:
     - uses: actions/checkout@v2
-    - name: Test in Solaris
+    - name: test Solaris
       id: test
       uses: vmactions/solaris-vm@v0
       with:
         usesh: true
         prepare: |
-          pkgutil -y -i ruby
+          # as far as i know latest possible version ist 2.6.x in Solaris 11.4
+          pkgutil -y -i runtime/ruby-26
+          ruby -v
+          gem install bundler
+          bundle install
+          #
+          # maybe use puppet to get new ruby (?)
+          # so we would get ruby 2.7.6p219
+          # curl -JLO 'https://pm.puppetlabs.com/puppet-agent/2021.7.1/7.20.0/repos/solaris/11/puppet7/puppet-agent@7.20.0,5.11-1.i386.p5p'
+          # pkg install -g file://$(pwd)/puppet-agent\@7.20.0\,5.11-1.i386.p5p pkg:/puppet-agent
 
         run: |
-          ruby -v
+          bundle exec rake
