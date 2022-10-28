@@ -11,6 +11,7 @@
 * ffi
 * rspec (development only)
 * rake (development only)
+* rubocop (development only)
 
 ## Supported Platforms
 
@@ -150,11 +151,11 @@ including platform specific notes and issues.
 
 ## License
 
-Apache 2.0
+Apache-2.0
 
 ## Copyright
 
-(C) 2003-2019 Daniel J. Berger
+(C) 2003-2022 Daniel J. Berger
 All Rights Reserved.
 
 ## Author
