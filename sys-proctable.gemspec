@@ -1,8 +1,9 @@
 require 'rubygems'
+require_relative 'lib/sys/proctable/version'
 
 Gem::Specification.new do |spec|
   spec.name       = 'sys-proctable'
-  spec.version    = '1.2.6'
+  spec.version    = Sys::ProcTable::VERSION
   spec.author     = 'Daniel J. Berger'
   spec.license    = 'Apache-2.0'
   spec.email      = 'djberg96@gmail.com'
