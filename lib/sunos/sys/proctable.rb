@@ -18,11 +18,11 @@ module Sys
     # There is no constructor
     private_class_method :new
 
-    private
-
     class Timeval < FFI::Struct
       layout(:tv_sec, :time_t, :tv_usec, :time_t)
     end
+
+    private_constant :Timeval
 
     class LWPSInfo < FFI::Struct
       layout(
@@ -50,6 +50,8 @@ module Sys
         :pr_filler, [:int, 5]
       )
     end
+
+    private_constant :LWPSInfo
 
     class PSInfo < FFI::Struct
       layout(
@@ -92,6 +94,8 @@ module Sys
       )
     end
 
+    private_constant :PSInfo
+
     class PRUsage < FFI::Struct
       layout(
         :pr_lwpid, :id_t,
@@ -127,7 +131,11 @@ module Sys
       )
     end
 
+    private_constant :PRUsage
+
     PRNODEV = (1<<FFI::Platform::ADDRESS_SIZE)-1
+
+    private_constant :PRNODEV
 
     @fields = [
       :flag,      # process flags (deprecated)
@@ -210,11 +218,11 @@ module Sys
       :cmdline    # joined cmd_args if present, otherwise psargs
     ]
 
-    public
-
     ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
       alias comm fname
     end
+
+    private_constant :ProcTableStruct
 
     # In block form, yields a ProcTableStruct for each process entry that you
     # have rights to. This method returns an array of ProcTableStruct's in
@@ -319,12 +327,12 @@ module Sys
 
             struct.cmd_args = []
 
-            0.upto(struct.argc - 1){ |i|
+            0.upto(struct.argc - 1) do
               fd.sysseek(address, IO::SEEK_SET)
               data = fd.sysread(128)[/^[^\0]*/] # Null strip
               struct.cmd_args << data
               address += data.length + 1 # Add 1 for the space
-            }
+            end
 
             # Get the environment hash associated with the process.
             struct.environ = {}
