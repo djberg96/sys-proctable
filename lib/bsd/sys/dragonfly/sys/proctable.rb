@@ -14,12 +14,6 @@ module Sys
     # There is no constructor
     private_class_method :new
 
-=begin
-      pid tid flags stat lock tdflags mpcount prio tdprio rtprio
-      uticks sticks iticks cpticks pctcpu slptime origcpu estcpu
-      cpuid ru siglist sigmask wchan wmesg comm
-=end
-
     @fields = %w[
       paddr flags stat lock acflag traceflag fd siglist sigignore
       sigcatch sigflag start comm uid ngroups groups ruid svuid
@@ -94,7 +88,52 @@ module Sys
           end
 
           struct = ProcTableStruct.new(
-            kinfo[:kp_paddr]
+            kinfo[:kp_paddr],
+            kinfo[:kp_flags],
+            kinfo[:kp_stat],
+            kinfo[:kp_lock],
+            kinfo[:kp_acflag],
+            kinfo[:kp_traceflag],
+            kinfo[:kp_fd],
+            kinfo[:kp_siglist],
+            kinfo[:kp_sigignore],
+            kinfo[:kp_sigcatch],
+            kinfo[:kp_sigflag],
+            kinfo[:kp_start],
+            kinfo[:kp_comm].to_s,
+            kinfo[:kp_uid],
+            kinfo[:kp_ngroups],
+            kinfo[:kp_groups].to_a[0..kinfo[:kp_ngroups]-1],
+            kinfo[:kp_ruid],
+            kinfo[:kp_svuid],
+            kinfo[:kp_rgid],
+            kinfo[:kp_svgid],
+            kinfo[:kp_pid],
+            kinfo[:kp_ppid],
+            kinfo[:kp_pgid],
+            kinfo[:kp_jobc],
+            kinfo[:kp_sid],
+            kinfo[:kp_login].to_s,
+            kinfo[:kp_tdev],
+            kinfo[:kp_tpgid],
+            kinfo[:kp_tsid],
+            kinfo[:kp_exitstat],
+            kinfo[:kp_nthreads],
+            kinfo[:kp_nice],
+            kinfo[:kp_swtime],
+            kinfo[:kp_vm_map_size],
+            kinfo[:kp_vm_rssize],
+            kinfo[:kp_vm_swrss],
+            kinfo[:kp_vm_tsize],
+            kinfo[:kp_vm_dsize],
+            kinfo[:kp_vm_ssize],
+            kinfo[:kp_vm_prssize],
+            kinfo[:kp_jailid],
+            kinfo[:kp_ru],
+            kinfo[:kp_cru],
+            kinfo[:kp_auxflags],
+            kinfo[:kp_lwp],
+            kinfo[:kp_ktaddr],
           )
 
           struct.freeze # This is readonly data
@@ -114,6 +153,20 @@ module Sys
       else
         pid ? array.first : array
       end
+    end
+
+    # Returns an array of fields that each ProcTableStruct will contain. This
+    # may be useful if you want to know in advance what fields are available
+    # without having to perform at least one read of the /proc table.
+    #
+    # Example:
+    #
+    #   Sys::ProcTable.fields.each{ |field|
+    #      puts "Field: #{field}"
+    #   }
+    #
+    def self.fields
+      @fields
     end
   end
 end
