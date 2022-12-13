@@ -99,7 +99,7 @@ module Sys
             kinfo[:kp_sigignore].bits,
             kinfo[:kp_sigcatch].bits,
             kinfo[:kp_sigflag],
-            kinfo[:kp_start],
+            Time.at(kinfo[:kp_start][:tv_sec]),
             kinfo[:kp_comm].to_s,
             kinfo[:kp_uid],
             kinfo[:kp_ngroups],
