@@ -39,6 +39,10 @@ module Sys
 
     class Sigset < FFI::Struct
       layout(:__bits, [:uint, 4])
+
+      def bits
+        self[:__bits].to_a
+      end
     end
 
     class KInfoLWP < FFI::Struct
