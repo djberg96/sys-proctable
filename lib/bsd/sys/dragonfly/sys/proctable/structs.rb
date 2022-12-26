@@ -139,6 +139,102 @@ module Sys
         :kl_wmesg, [:char, WMESGLEN+1],
         :kl_comm, [:char, MAXCOMLEN+1]
       )
+
+      def pid
+        self[:kl_pid]
+      end
+
+      def tid
+        self[:kl_tid]
+      end
+
+      def flags
+        self[:kl_flags]
+      end
+
+      def stat
+        self[:kl_stat]
+      end
+
+      def lock
+        self[:kl_lock]
+      end
+
+      def tdflags
+        self[:kl_tdflags]
+      end
+
+      def prio
+        self[:kl_prio]
+      end
+
+      def tdprio
+        self[:kl_tdprio]
+      end
+
+      def rtprio
+        self[:kl_rtprio]
+      end
+
+      def uticks
+        self[:kl_uticks]
+      end
+
+      def sticks
+        self[:kl_sticks]
+      end
+
+      def iticks
+        self[:kl_iticks]
+      end
+
+      def cpticks
+        self[:kl_cpticks]
+      end
+
+      def pctcpu
+        self[:kl_pctcpu]
+      end
+
+      def slptime
+        self[:kl_slptime]
+      end
+
+      def origcpu
+        self[:kl_origcpu]
+      end
+
+      def estcpu
+        self[:kl_estcpu]
+      end
+
+      def cpuid
+        self[:kl_cpuid]
+      end
+
+      def ru
+        self[:kl_ru]
+      end
+
+      def siglist
+        self[:kl_siglist]
+      end
+
+      def sigmask
+        self[:kl_sigmask]
+      end
+
+      def wchan
+        self[:kl_wchan]
+      end
+
+      def wmesg
+        self[:kl_wmesg].to_s
+      end
+
+      def comm
+        self[:kl_comm].to_s
+      end
     end
 
     class KInfoProc < FFI::Struct
