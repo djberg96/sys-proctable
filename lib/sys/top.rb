@@ -20,13 +20,18 @@ module Sys
 
       aix = RbConfig::CONFIG['host_os'] =~ /aix/i
       darwin = RbConfig::CONFIG['host_os'] =~ /darwin/i
+      dragonfly = RbConfig::CONFIG['host_os'] =~ /dragonfly/i
 
       # Sort by pid on Windows and AIX by default
       if (File::ALT_SEPARATOR || aix || darwin) && field == 'pctcpu'
         field = 'pid'
       end
 
-      Sys::ProcTable.ps.sort_by{ |obj| obj.send(field) || '' }[0..num-1]
+      if dragonfly && field == 'pctcpu'
+        Sys::ProcTable.ps.sort_by{ |obj| obj.lwp.pctcpu }[0..num-1]
+      else
+        Sys::ProcTable.ps.sort_by{ |obj| obj.send(field) || '' }[0..num-1]
+      end
     end
   end
 end

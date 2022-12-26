@@ -63,9 +63,9 @@ RSpec::Core::RakeTask.new(:spec) do |t|
     when /darwin/i
       t.rspec_opts = '-Ilib/darwin'
       t.pattern << 'spec/sys_proctable_darwin_spec.rb'
-    when /freebsd/i
-      t.rspec_opts = '-Ilib/freebsd'
-      t.pattern << 'spec/sys_proctable_freebsd_spec.rb'
+    when /bsd|dragonfly/i
+      t.rspec_opts = '-Ilib/bsd'
+      t.pattern << 'spec/sys_proctable_bsd_spec.rb'
     when /linux/i
       t.rspec_opts = '-Ilib/linux'
       t.pattern << 'spec/sys_proctable_linux_spec.rb'

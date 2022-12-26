@@ -18,6 +18,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('rake')
   spec.add_development_dependency('rubocop')
   spec.add_development_dependency('rubocop-rspec')
+  spec.add_development_dependency('mkmf-lite')
 
   spec.metadata = {
     'homepage_uri'          => 'https://github.com/djberg96/sys-proctable',
