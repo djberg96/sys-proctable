@@ -18,6 +18,7 @@
 * Windows 2000 or later
 * Linux 2.6+
 * FreeBSD
+* DragonflyBSD
 * Solaris 8+
 * OS X 10.7+
 * AIX 5.3+

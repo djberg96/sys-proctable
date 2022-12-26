@@ -1,3 +1,8 @@
+## 1.3.0 - 26-Dec-2022
+* Added DragonflyBSD support.
+* Reorganized the BSD code so that FreeBSD and Dragonfly BSD live in their
+  own space for easier maintenance.
+
 ## 1.2.7 - 28-Oct-2022
 * Fix bug on Solaris where it would fail trying to read zero-byte pseudo-kernel
   processes. Thanks go to Robert Waffen for the spot and the patch.

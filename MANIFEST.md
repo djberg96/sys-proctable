@@ -14,7 +14,14 @@
 * lib/sys/proctable/version.rb
 * lib/aix/sys/proctable.rb
 * lib/darwin/sys/proctable.rb
-* lib/freebsd/sys/proctable.rb
+* lib/bsd/sys/dragonfly/sys/proctable.rb
+* lib/bsd/sys/dragonfly/sys/proctable/constants.rb
+* lib/bsd/sys/dragonfly/sys/proctable/functions.rb
+* lib/bsd/sys/dragonfly/sys/proctable/structs.rb
+* lib/bsd/sys/freebsd/sys/proctable.rb
+* lib/bsd/sys/freebsd/sys/proctable/constants.rb
+* lib/bsd/sys/freebsd/sys/proctable/functions.rb
+* lib/bsd/sys/freebsd/sys/proctable/structs.rb
 * lib/linux/sys/proctable.rb
 * lib/sunos/sys/proctable.rb
 * lib/windows/sys/proctable.rb
