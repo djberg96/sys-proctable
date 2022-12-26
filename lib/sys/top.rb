@@ -15,7 +15,7 @@ module Sys
     #
     # Exception: the default sort field is 'pid' on AIX, Darwin and Windows.
     #
-    def self.top(num=10, field='pctcpu')
+    def self.top(num = 10, field = 'pctcpu')
       field = field.to_s if field.is_a?(Symbol)
 
       aix = RbConfig::CONFIG['host_os'] =~ /aix/i

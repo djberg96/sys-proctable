@@ -15,7 +15,7 @@ RSpec.describe 'common' do
 
   context 'constants' do
     it 'has a VERSION constant set to the expected value' do
-      expect(Sys::ProcTable::VERSION).to eql('1.2.6')
+      expect(Sys::ProcTable::VERSION).to eql('1.2.7')
       expect(Sys::ProcTable::VERSION).to be_frozen
     end
 
@@ -42,12 +42,12 @@ RSpec.describe 'common' do
     end
 
     it 'allows a pid option as an argument' do
-      expect{ Sys::ProcTable.ps(pid: 0) }.not_to raise_error
+      expect{ Sys::ProcTable.ps(:pid => 0) }.not_to raise_error
     end
 
     it 'allows the pid to be nil' do
-      expect{ Sys::ProcTable.ps(pid: nil) }.not_to raise_error
-      expect(Sys::ProcTable.ps(pid: nil)).to be_kind_of(Array)
+      expect{ Sys::ProcTable.ps(:pid => nil) }.not_to raise_error
+      expect(Sys::ProcTable.ps(:pid => nil)).to be_kind_of(Array)
     end
 
     it 'returns expected results with no arguments' do
@@ -55,16 +55,16 @@ RSpec.describe 'common' do
     end
 
     it 'returns expected results with a pid argument' do
-      expect(Sys::ProcTable.ps(pid: @pid)).to be_kind_of(Struct::ProcTableStruct)
+      expect(Sys::ProcTable.ps(:pid => @pid)).to be_kind_of(Struct::ProcTableStruct)
     end
 
     it 'returns nil if the process does not exist' do
-      expect(Sys::ProcTable.ps(pid: 999999999)).to be_nil
+      expect(Sys::ProcTable.ps(:pid => 999999999)).to be_nil
     end
 
     it 'returns nil in block form whether or not a pid was provided' do
       expect(Sys::ProcTable.ps{}).to be_nil
-      expect(Sys::ProcTable.ps(pid: 999999999){}).to be_nil
+      expect(Sys::ProcTable.ps(:pid => 999999999){}).to be_nil
     end
 
     it 'returns frozen structs' do
@@ -72,7 +72,7 @@ RSpec.describe 'common' do
     end
 
     it 'expects a numeric pid argument if present' do
-      expect{ Sys::ProcTable.ps(pid: 'vim') }.to raise_error(TypeError)
+      expect{ Sys::ProcTable.ps(:pid => 'vim') }.to raise_error(TypeError)
     end
 
     it 'accepts keyword arguments only' do

@@ -11,15 +11,12 @@ on:
   push:
     branches: [ main ]
     paths-ignore:
-      - '**/README.md'
-      - '**/CHANGES.md'
-      - '**/MANIFEST.md'
+      - '**/*.md'
   pull_request:
     branches: [ main ]
     paths-ignore:
-      - '**/README.md'
-      - '**/CHANGES.md'
-      - '**/MANIFEST.md'
+      - '**/*.md'
+  workflow_dispatch:
 
 jobs:
   test:
@@ -37,12 +34,34 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Set up Ruby
-    # To automatically get bug fixes and new Ruby versions for ruby/setup-ruby,
-    # change this to (see https://github.com/ruby/setup-ruby#versioning):
-    # uses: ruby/setup-ruby@v1
-      uses: ruby/setup-ruby@473e4d8fe5dd94ee328fdfca9f8c9c7afc9dae5e
+      uses: ruby/setup-ruby@v1
       with:
         ruby-version: ${{ matrix.ruby-version }}
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run tests
       run: bundle exec rake
+
+  # test_solaris:
+  #   runs-on: macos-12
+  #   name: A job to run test in Solaris
+  #   steps:
+  #   - uses: actions/checkout@v2
+  #   - name: test Solaris
+  #     id: test
+  #     uses: vmactions/solaris-vm@v0
+  #     with:
+  #       usesh: true
+  #       prepare: |
+  #         # as far as i know latest possible version ist 2.6.x in Solaris 11.4
+  #         pkgutil -y -i runtime/ruby-26
+  #         ruby -v
+  #         gem install bundler
+  #         bundle install
+  #         #
+  #         # maybe use puppet to get new ruby (?)
+  #         # so we would get ruby 2.7.6p219
+  #         # curl -JLO 'https://pm.puppetlabs.com/puppet-agent/2021.7.1/7.20.0/repos/solaris/11/puppet7/puppet-agent@7.20.0,5.11-1.i386.p5p'
+  #         # pkg install -g file://$(pwd)/puppet-agent\@7.20.0\,5.11-1.i386.p5p pkg:/puppet-agent
+
+  #       run: |
+  #         bundle exec rake

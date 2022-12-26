@@ -1,3 +1,18 @@
+## 1.2.7 - 28-Oct-2022
+* Fix bug on Solaris where it would fail trying to read zero-byte pseudo-kernel
+  processes. Thanks go to Robert Waffen for the spot and the patch.
+* Fixed a bug for MacOS that potentially caused it to miss thread info.
+* Fixed specs for AIX that had gotten mangled when I switched to rspec
+* Some gemspec updates, including the addition of rubocop as a development
+  dependency, and mandatory MFA.
+* Lots of rubocop related updates, mostly stylistic, but in some cases things
+  that were always meant to be private (like C struct wrappers) have been
+  explicitly marked as private.
+* Lots of general spec refactoring, including updates for MacOS since Catalina
+  and later that no longer allow you to collect env information for spawned
+  processes.
+* Switched to github actions.
+
 ## 1.2.6 - 25-Aug-2020
 * Made some updates so that it worked properly with TruffleRuby on Mac.
 * Fixed an issue on Linux where non-ascii environ strings could cause failure.

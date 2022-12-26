@@ -43,7 +43,7 @@ RSpec.describe Sys::ProcTable, :bsd do
   end
 
   context 'ProcTable::Struct members' do
-    subject(:process){ described_class.ps(pid: Process.pid) }
+    subject(:process){ described_class.ps(:pid => Process.pid) }
 
     it 'contains a pid member and returns the expected value' do
       expect(process).to respond_to(:pid)

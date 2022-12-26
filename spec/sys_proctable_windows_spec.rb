@@ -73,7 +73,7 @@ RSpec.describe Sys::ProcTable, :windows do
 
   context 'ps' do
     it 'accepts an optional host' do
-      expect{ described_class.ps(host: hostname) }.not_to raise_error
+      expect{ described_class.ps(:host => hostname) }.not_to raise_error
     end
 
     it 'ignores unused options' do

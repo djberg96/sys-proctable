@@ -33,7 +33,7 @@ RSpec.describe Sys::ProcTable, :sunos do
   end
 
   context 'ProcTable::Struct members' do
-    subject(:process){ described_class.ps(pid: Process.pid) }
+    subject(:process){ described_class.ps(:pid => Process.pid) }
 
     it 'contains a pid member and returns the expected value' do
       expect(process).to respond_to(:pid)
@@ -231,7 +231,7 @@ RSpec.describe Sys::ProcTable, :sunos do
   end
 
   context 'lwpsinfo struct' do
-    process { described_class.ps(pid: Process.pid) }
+    process { described_class.ps(:pid => Process.pid) }
 
     it 'has a lwpid member that returns the expected value' do
       expect(process).to respond_to(:lwpid)
@@ -260,7 +260,7 @@ RSpec.describe Sys::ProcTable, :sunos do
     it 'has a sname member that returns the expected value' do
       expect(process).to respond_to(:sname)
       expect(process.sname).to be_kind_of(String)
-      expect(['S','R','Z','T','I','O']).to include(process.sname)
+      expect(%w[S R Z T I O]).to include(process.sname)
     end
 
     it 'has a nice member that returns the expected value' do
@@ -284,13 +284,13 @@ RSpec.describe Sys::ProcTable, :sunos do
     it 'has a clname member that returns the expected value' do
       expect(process).to respond_to(:clname)
       expect(process.clname).to be_kind_of(String)
-      expect(process.clname.size).to be_between(0,8)
+      expect(process.clname.size).to be_between(0, 8)
     end
 
     it 'has a name member that returns the expected value' do
       expect(process).to respond_to(:name)
       expect(process.name).to be_kind_of(String)
-      expect(process.name.size).to be_between(0,16)
+      expect(process.name.size).to be_between(0, 16)
     end
 
     it 'has an onpro member that returns the expected value' do

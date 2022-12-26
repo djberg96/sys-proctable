@@ -1,5 +1,7 @@
 require: rubocop-rspec
 
+RSpec/BeforeAfterAll:
+  Enabled: false
 RSpec/MultipleExpectations:
   Max: 4
 RSpec/ContextWording:
@@ -15,12 +17,19 @@ AllCops:
     - sys-proctable.gemspec
     - Gemfile
     - Rakefile
+    - examples/*.rb
+    - benchmarks/*.rb
 Lint/AssignmentInCondition:
   Enabled: false
+Style/BlockDelimiters:
+  Exclude:
+    - spec/*.rb
 Lint/EmptyBlock:
   Exclude:
     - spec/*.rb
 Style/MethodCallWithoutArgsParentheses:
+  Enabled: false
+Style/NumericLiterals:
   Enabled: false
 Style/NumericPredicate:
   Enabled: false
@@ -37,6 +46,8 @@ Style/RedundantBegin:
 Style/SafeNavigation:
   Enabled: false
 Layout/EmptyLineAfterGuardClause:
+  Enabled: false
+Layout/FirstArrayElementIndentation:
   Enabled: false
 Layout/CaseIndentation:
   IndentOneStep: true

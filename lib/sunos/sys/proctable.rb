@@ -110,7 +110,7 @@ module Sys
         :pr_slptime, Timeval,
         :pr_wtime, Timeval,
         :pr_stoptime, Timeval,
-        :pr_filetime, [Timeval,6],
+        :pr_filetime, [Timeval, 6],
         :pr_minf, :ulong_t,
         :pr_majf, :ulong_t,
         :pr_nswap, :ulong_t,
@@ -343,7 +343,7 @@ module Sys
               env_address += data.length + 1 # Add 1 for the space
             end
           end
-        rescue Errno::EACCES, Errno::EOVERFLOW, EOFError, RangeError
+        rescue Errno::EACCES, Errno::EBADF, Errno::EOVERFLOW, EOFError, RangeError
           # Skip this if we don't have proper permissions, if there's
           # no associated environment, or if there's a largefile issue.
         rescue Errno::ENOENT
