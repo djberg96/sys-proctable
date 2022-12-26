@@ -42,7 +42,7 @@ module Sys
     #   end
     #
     #   # Print process table information for only pid 1001
-    #   p ProcTable.ps(1001)
+    #   p ProcTable.ps(pid: 1001)
     #
     def self.ps(**kwargs)
       pid = kwargs[:pid]
