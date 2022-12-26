@@ -170,5 +170,3 @@ module Sys
     end
   end
 end
-
-p Sys::ProcTable.ps(:pid => Process.pid)
