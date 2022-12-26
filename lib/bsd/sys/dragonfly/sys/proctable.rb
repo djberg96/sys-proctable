@@ -1,6 +1,7 @@
 require_relative 'proctable/constants'
 require_relative 'proctable/structs'
 require_relative 'proctable/functions'
+require 'sys/proctable/version'
 
 module Sys
   class ProcTable
@@ -22,7 +23,9 @@ module Sys
       vm_dsize vm_ssize vm_prssize jailid ru cru auxflags lwp ktaddr
     ]
 
-    ProcTableStruct = Struct.new('ProcTableStruct', *@fields)
+    ProcTableStruct = Struct.new('ProcTableStruct', *@fields) do
+      alias cmdline comm
+    end
 
     # In block form, yields a ProcTableStruct for each process entry that you
     # have rights to. This method returns an array of ProcTableStruct's in
