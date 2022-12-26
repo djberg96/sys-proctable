@@ -32,6 +32,70 @@ module Sys
         :ru_nvcsw, :long,
         :ru_nivcsw, :long
       )
+
+      def utime
+        Time.at(self[:ru_utime][:tv_sec])
+      end
+
+      def stime
+        Time.at(self[:ru_stime][:tv_sec])
+      end
+
+      def maxrss
+        self[:ru_maxrss]
+      end
+
+      def ixrss
+        self[:ru_ixrss]
+      end
+
+      def idrss
+        self[:ru_idrss]
+      end
+
+      def isrss
+        self[:ru_isrss]
+      end
+
+      def minflt
+        self[:ru_minflt]
+      end
+
+      def majflt
+        self[:ru_majflt]
+      end
+
+      def nswap
+        self[:ru_nswap]
+      end
+
+      def inblock
+        self[:ru_inblock]
+      end
+
+      def oublock
+        self[:ru_oublock]
+      end
+
+      def msgsnd
+        self[:ru_msgsnd]
+      end
+
+      def msgrcv
+        self[:ru_msgrcv]
+      end
+
+      def nsignals
+        self[:ru_nsignals]
+      end
+
+      def nvcsw
+        self[:ru_nivcsw]
+      end
+
+      def nivcsw
+        self[:ru_nivcsw]
+      end
     end
 
     enum :lwpstat, [:LSRUN, 1, :LSSTOP, :LSSLEEP]
