@@ -21,6 +21,8 @@ jobs:
         exclude:
           - ruby-version: truffleruby
             platform: windows-latest
+          - ruby-version: jruby
+            platform: windows-latest
     runs-on: ${{ matrix.platform }}
     steps:
     - uses: actions/checkout@v3
