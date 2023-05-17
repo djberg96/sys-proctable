@@ -8,6 +8,6 @@ module Sys
     KERN_PROC_ALL  = 0
     KERN_PROC_PID = 1
 
-    O_RDONLY = 0
+    O_RDONLY = 0x0000
   end
 end
