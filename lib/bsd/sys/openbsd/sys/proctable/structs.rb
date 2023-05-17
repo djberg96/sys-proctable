@@ -114,6 +114,7 @@ module Sys
 
       layout(
         :kl_pid, :pid_t,
+        :kl_tid, :pid_t,
         :kl_flags, :int,
         :kl_stat, :lwpstat,
         :kl_lock, :int,
