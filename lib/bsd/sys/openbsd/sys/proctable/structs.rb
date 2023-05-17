@@ -134,6 +134,7 @@ module Sys
         :kl_ru, Rusage,
         :kl_siglist, Sigset,
         :kl_sigmask, Sigset,
+        :kl_wchan, :uint64_t,
         :kl_wmesg, [:char, WMESGLEN+1],
         :kl_comm, [:char, MAXCOMLEN+1]
       )
@@ -243,13 +244,13 @@ module Sys
       end
 
       layout(
-        :kp_paddr, :uintptr_t,
+        :kp_paddr, :uint64_t,
         :kp_flags, :int,
         :kp_stat, :procstat,
         :kp_lock, :int,
         :kp_acflag, :int,
         :kp_traceflag, :int,
-        :kp_fd, :uintptr_t,
+        :kp_fd, :uint64_t,
         :kp_siglist, Sigset,
         :kp_sigignore, Sigset,
         :kp_sigcatch, Sigset,
@@ -288,7 +289,7 @@ module Sys
         :kp_cru, Rusage,
         :kp_auxflags, :int,
         :kp_lwp, KInfoLWP,
-        :kp_ktaddr, :uintptr_t,
+        :kp_ktaddr, :uint64_t,
         :kp_spare, [:int, 2]
       )
     end
