@@ -15,7 +15,7 @@ task :install do
   file = nil
   dir  = File.join(CONFIG['sitelibdir'], 'sys')
 
-  Dir.mkdir(dir) unless File.exists?(dir)
+  Dir.mkdir(dir) unless File.exist?(dir)
 
   case CONFIG['host_os']
     when /mswin|win32|msdos|cygwin|mingw|windows/i
