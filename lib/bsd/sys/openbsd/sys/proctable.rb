@@ -48,7 +48,7 @@ module Sys
       pid = kwargs[:pid]
 
       begin
-        kd = kvm_open(nil, nil, nil, 0, nil)
+        kd = kvm_open(nil, nil, nil, O_RDONLY, nil)
 
         if kd.null?
           raise SystemCallError.new('kvm_open', FFI.errno)
