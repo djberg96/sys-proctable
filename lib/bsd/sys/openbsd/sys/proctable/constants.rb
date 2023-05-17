@@ -9,5 +9,7 @@ module Sys
     KERN_PROC_PID = 1
 
     O_RDONLY = 0
+
+    ESIZE = 4
   end
 end
