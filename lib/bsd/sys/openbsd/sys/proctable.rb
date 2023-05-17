@@ -50,8 +50,8 @@ module Sys
       begin
         kd = kvm_openfiles(nil, nil, nil, O_RDONLY, nil)
 
-        if kd.null?
-          raise SystemCallError.new('kvm_open', FFI.errno)
+        if kd.nil?
+          raise SystemCallError.new('kvm_openfiles', FFI.errno)
         end
 
         ptr = FFI::MemoryPointer.new(:int) # count
@@ -62,7 +62,7 @@ module Sys
           procs = kvm_getprocs(kd, KERN_PROC_ALL, 0, ptr)
         end
 
-        if procs.null?
+        if procs.nil?
           if pid && FFI.errno == Errno::ESRCH::Errno
             return nil
           else
@@ -79,10 +79,10 @@ module Sys
 
           args = kvm_getargv(kd, kinfo, 0)
 
-          unless args.null?
+          unless args.nil?
             cmd = []
 
-            until ((ptr = args.read_pointer).null?)
+            until ((ptr = args.read_pointer).nil?)
               cmd << ptr.read_string
               args += FFI::Type::POINTER.size
             end
@@ -148,7 +148,7 @@ module Sys
           end
         }
       ensure
-        kvm_close(kd) unless kd.null?
+        kvm_close(kd) unless kd.nil?
       end
 
       if block_given?
