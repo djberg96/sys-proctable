@@ -48,7 +48,7 @@ module Sys
       pid = kwargs[:pid]
 
       begin
-        kd = kvm_openfiles(nil, nil, nil, KVM_NO_FILES, nil)
+        kd = kvm_openfiles(nil, nil, nil, O_RDONLY, nil)
 
         if kd.nil?
           raise SystemCallError.new('kvm_openfiles', FFI.errno)
