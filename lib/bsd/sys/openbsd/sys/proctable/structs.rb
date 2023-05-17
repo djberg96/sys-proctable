@@ -134,7 +134,6 @@ module Sys
         :kl_ru, Rusage,
         :kl_siglist, Sigset,
         :kl_sigmask, Sigset,
-        :kl_wchan, :uintptr_t,
         :kl_wmesg, [:char, WMESGLEN+1],
         :kl_comm, [:char, MAXCOMLEN+1]
       )
