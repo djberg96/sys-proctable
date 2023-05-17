@@ -26,8 +26,8 @@ task :install do
       file = 'lib/sunos/sys/proctable.rb'
     when /aix/i
       file = 'lib/aix/sys/proctable.rb'
-    when /freebsd/i
-      file = 'lib/freebsd/sys/proctable.rb'
+    when /bsd/i
+      file = 'lib/bsd/sys/proctable.rb'
     when /darwin/i
       file = 'lib/darwin/sys/proctable.rb'
   end
