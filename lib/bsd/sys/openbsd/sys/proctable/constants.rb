@@ -1,3 +1,4 @@
+require 'ffi'
 require 'ffi/tools/const_generator'
 module Sys
   module ProcTableConstants
