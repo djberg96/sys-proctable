@@ -48,7 +48,8 @@ module Sys
       pid = kwargs[:pid]
 
       begin
-        kd = kvm_openfiles(nil, nil, nil, KVM_NO_FILES, nil)
+        kd = nil
+        kd = kvm_openfiles(nil, nil, nil, kvm_no_files, nil)
 
         if kd.nil?
           raise SystemCallError.new('kvm_openfiles', FFI.errno)
@@ -148,8 +149,9 @@ module Sys
             array << struct
           end
         }
-        # ensure
-        # kvm_close(kd) unless kd.nil?
+      ensure
+        kvm_close(kd) unless kd.nil?
+        browser_obj[:browser]&.close
       end
 
       if block_given?
