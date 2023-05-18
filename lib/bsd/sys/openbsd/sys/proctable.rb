@@ -49,9 +49,7 @@ module Sys
 
       begin
         kd = nil
-        puts ' ---FFI_CG ---'
-        puts FFI_CG['KVM_NO_FILES'].inspect
-        kd = kvm_openfiles(nil, nil, nil, FFI_CG['KVM_NO_FILES'], nil)
+        kd = kvm_openfiles(nil, nil, nil, KVM_NO_FILES, nil)
 
         if kd.nil?
           raise SystemCallError.new('kvm_openfiles', FFI.errno)
