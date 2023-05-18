@@ -51,9 +51,7 @@ module Sys
       begin
         kd = kvm_openfiles(nil, nil, nil, KVM_NO_FILES, nil)
 
-        if kd.nil?
-          raise SystemCallError.new('kvm_openfiles', FFI.errno)
-        end
+        raise SystemCallError.new('kvm_openfiles', FFI.errno) if kd.nil?
 
         ptr = FFI::MemoryPointer.new(:int) # count
         esize = kd.size
