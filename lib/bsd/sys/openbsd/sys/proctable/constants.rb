@@ -9,6 +9,6 @@ module Sys
     KERN_PROC_PID = 1
 
     ESIZE = 4
-    KVM_NO_FILES = 2147483647
+    KVM_NO_FILES = 2147483648
   end
 end
