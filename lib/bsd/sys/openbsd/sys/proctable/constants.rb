@@ -9,6 +9,6 @@ module Sys
     KERN_PROC_PID = 1
 
     ESIZE = 4
-    KVM_NO_FILES = -1
+    KVM_NO_FILES = 0x8
   end
 end
