@@ -56,12 +56,13 @@ module Sys
         end
 
         ptr = FFI::MemoryPointer.new(:int) # count
-        esize = 0
+        esize = kd.length
 
         if pid
-          procs = kvm_getprocs(kd, KERN_PROC_PID, pid, ESIZE, ptr)
+
+          procs = kvm_getprocs(kd, KERN_PROC_PID, pid, esize, ptr)
         else
-          procs = kvm_getprocs(kd, KERN_PROC_ALL, 0, ESIZE, ptr)
+          procs = kvm_getprocs(kd, KERN_PROC_ALL, 0, esize, ptr)
         end
 
         if procs.nil?
