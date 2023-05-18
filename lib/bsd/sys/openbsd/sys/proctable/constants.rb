@@ -1,5 +1,3 @@
-require 'ffi'
-require 'ffi/tools/const_generator'
 module Sys
   module ProcTableConstants
     WMESGLEN   = 8
@@ -11,6 +9,6 @@ module Sys
     KERN_PROC_PID = 1
 
     ESIZE = 4
-    KVM_NO_FILES = FFI::ConstGenerator.new(:kvm) { |cg| cg.const(:KVM_NO_FILES) }['KVM_NO_FILES']
+    KVM_NO_FILES = -1
   end
 end
