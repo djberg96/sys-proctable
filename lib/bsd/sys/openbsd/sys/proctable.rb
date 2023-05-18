@@ -149,7 +149,7 @@ module Sys
           end
         }
       ensure
-        raise kd.class
+        raise "kd => #{kd} kd.class #{kd.class}"
         kvm_close(kd) unless kd.nil?
       end
 
