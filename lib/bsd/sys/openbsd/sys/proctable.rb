@@ -47,8 +47,8 @@ module Sys
     def self.ps(**kwargs)
       pid = kwargs[:pid]
 
+      kd = nil
       begin
-        kd = nil
         kd = kvm_openfiles(nil, nil, nil, KVM_NO_FILES, nil)
 
         if kd.nil?
