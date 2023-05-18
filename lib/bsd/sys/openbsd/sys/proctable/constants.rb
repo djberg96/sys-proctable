@@ -11,7 +11,7 @@ module Sys
     KERN_PROC_PID = 1
 
     ESIZE = 4
-    kvm_const = FFI::ConstGenerator.new('kvm', required: true) do |gen|
+    FFI_CG = FFI::ConstGenerator.new('kvm', required: true) do |gen|
       gen.const(:KVM_NO_FILES)
     end
   end
