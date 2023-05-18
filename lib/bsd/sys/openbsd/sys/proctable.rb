@@ -54,10 +54,10 @@ module Sys
         raise SystemCallError.new('kvm_openfiles', FFI.errno) if kd.nil?
 
         ptr = FFI::MemoryPointer.new(:int) # count
-        esize = kd.size
+        # esize = kd.size
+        esize = 0
 
         if pid
-
           procs = kvm_getprocs(kd, KERN_PROC_PID, pid, esize, ptr)
         else
           procs = kvm_getprocs(kd, KERN_PROC_ALL, 0, esize, ptr)
@@ -148,8 +148,8 @@ module Sys
             array << struct
           end
         }
-      # ensure
-      #   kvm_close(kd) unless kd.nil?
+      ensure
+        kvm_close(kd) unless kd.nil?
       end
 
       if block_given?
