@@ -151,6 +151,7 @@ module Sys
           end
         }
       ensure
+        raise kd
         kvm_close(kd) unless kd.nil?
       end
 
