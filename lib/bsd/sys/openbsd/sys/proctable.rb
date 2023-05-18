@@ -151,7 +151,6 @@ module Sys
         }
       ensure
         kvm_close(kd) unless kd.nil?
-        browser_obj[:browser]&.close
       end
 
       if block_given?
