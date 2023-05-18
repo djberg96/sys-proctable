@@ -48,6 +48,7 @@ module Sys
       pid = kwargs[:pid]
 
       kd = nil
+      struct = nil
       begin
         kd = kvm_openfiles(nil, nil, nil, KVM_NO_FILES, nil)
 
