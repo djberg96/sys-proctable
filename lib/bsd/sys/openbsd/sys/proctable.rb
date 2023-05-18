@@ -47,8 +47,7 @@ module Sys
     def self.ps(**kwargs)
       pid = kwargs[:pid]
 
-      kd = nil
-      struct = nil
+      # kd = nil
       begin
         kd = kvm_openfiles(nil, nil, nil, KVM_NO_FILES, nil)
 
@@ -150,7 +149,6 @@ module Sys
           end
         }
       ensure
-        raise "struct.freeze => #{struct.freeze}"
         kvm_close(kd) unless kd.nil?
       end
 
