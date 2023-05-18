@@ -148,9 +148,8 @@ module Sys
             array << struct
           end
         }
-      ensure
-        raise "kd => #{kd} kd.class #{kd.class}"
-        kvm_close(kd) unless kd.nil?
+      # ensure
+      #   kvm_close(kd) unless kd.nil?
       end
 
       if block_given?
