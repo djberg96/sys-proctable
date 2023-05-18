@@ -10,6 +10,6 @@ module Sys
     attach_function :kvm_close, [:pointer], :int
     attach_function :kvm_getprocs, [:pointer, :int, :int, :size_t, :pointer], :pointer
     attach_function :kvm_getargv, [:pointer, :pointer, :int], :pointer
-    attach_variable :kvm_no_files, :int
+    attach_variable :KVM_NO_FILES, :int
   end
 end
