@@ -56,7 +56,7 @@ module Sys
         end
 
         ptr = FFI::MemoryPointer.new(:int) # count
-        esize = kd.length
+        esize = kd.size
 
         if pid
 
