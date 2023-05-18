@@ -12,7 +12,7 @@ module Sys
 
     ESIZE = 4
     FFI_CG = FFI::ConstGenerator.new(:kvm) do |gen|
-      gen.const('KVM_NO_FILES')
+      gen.const(:KVM_NO_FILES)
     end
   end
 end
