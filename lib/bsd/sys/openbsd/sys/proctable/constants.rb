@@ -1,3 +1,4 @@
+require 'ffi/tools/const_generator'
 module Sys
   module ProcTableConstants
     WMESGLEN   = 8
@@ -9,5 +10,8 @@ module Sys
     KERN_PROC_PID = 1
 
     ESIZE = 4
+    kvm_const = FFI::ConstGenerator.new('kvm', required: true) do |gen|
+      gen.const(:KVM_NO_FILES)
+    end
   end
 end

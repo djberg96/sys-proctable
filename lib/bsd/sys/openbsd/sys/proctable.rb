@@ -49,7 +49,7 @@ module Sys
 
       begin
         kd = nil
-        kd = kvm_openfiles(nil, nil, nil, kvm_no_files, nil)
+        kd = kvm_openfiles(nil, nil, nil, kvm_const['KVM_NO_FILES'], nil)
 
         if kd.nil?
           raise SystemCallError.new('kvm_openfiles', FFI.errno)
