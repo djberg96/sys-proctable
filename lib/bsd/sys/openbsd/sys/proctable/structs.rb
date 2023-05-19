@@ -141,7 +141,7 @@ module Sys
       )
 
       def pid
-        self[:ki_pid]
+        self[:p_pid]
       end
 
       def tid
@@ -265,7 +265,7 @@ module Sys
         :kp_svuid, :uid_t,
         :kp_rgid, :gid_t,
         :kp_svgid, :gid_t,
-        :kp_p_pid, :pid_t,
+        :p_pid, :pid_t,
         :kp_ppid, :pid_t,
         :kp_pgid, :pid_t,
         :kp_jobc, :int,
