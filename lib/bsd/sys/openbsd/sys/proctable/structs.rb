@@ -114,30 +114,30 @@ module Sys
 
       layout(
         :p_pid, :pid_t,
-        :kl_tid, :pid_t,
-        :kl_flags, :int,
-        :kl_stat, :lwpstat,
-        :kl_lock, :int,
-        :kl_tdflags, :int,
-        :kl_mpcount, :int,
-        :kl_prio, :int,
-        :kl_tdprio, :int,
-        :kl_rtprio, RTPrio,
-        :kl_uticks, :uint64_t,
-        :kl_sticks, :uint64_t,
-        :kl_iticks, :uint64_t,
-        :kl_cpticks, :uint64_t,
-        :kl_pctcpu, :uint,
-        :kl_slptime, :uint,
-        :kl_origcpu, :int,
-        :kl_estcpu, :int,
-        :kl_cpuid, :int,
-        :kl_ru, Rusage,
-        :kl_siglist, Sigset,
-        :kl_sigmask, Sigset,
-        :kl_wchan, :uint64_t,
-        :kl_wmesg, [:char, WMESGLEN+1],
-        :kl_comm, [:char, MAXCOMLEN+1]
+        :p_tid, :pid_t,
+        :p_flags, :int,
+        :p_stat, :lwpstat,
+        :p_lock, :int,
+        :p_tdflags, :int,
+        :p_mpcount, :int,
+        :p_prio, :int,
+        :p_tdprio, :int,
+        :p_rtprio, RTPrio,
+        :p_uticks, :uint64_t,
+        :p_sticks, :uint64_t,
+        :p_iticks, :uint64_t,
+        :p_cpticks, :uint64_t,
+        :p_pctcpu, :uint,
+        :p_slptime, :uint,
+        :p_origcpu, :int,
+        :p_estcpu, :int,
+        :p_cpuid, :int,
+        :p_ru, Rusage,
+        :p_siglist, Sigset,
+        :p_sigmask, Sigset,
+        :p_wchan, :uint64_t,
+        :p_wmesg, [:char, WMESGLEN+1],
+        :p_comm, [:char, MAXCOMLEN+1]
       )
 
       def pid
@@ -145,95 +145,95 @@ module Sys
       end
 
       def tid
-        self[:kl_tid]
+        self[:p_tid]
       end
 
       def flags
-        self[:kl_flags]
+        self[:p_flags]
       end
 
       def stat
-        self[:kl_stat]
+        self[:p_stat]
       end
 
       def lock
-        self[:kl_lock]
+        self[:p_lock]
       end
 
       def tdflags
-        self[:kl_tdflags]
+        self[:p_tdflags]
       end
 
       def prio
-        self[:kl_prio]
+        self[:p_prio]
       end
 
       def tdprio
-        self[:kl_tdprio]
+        self[:p_tdprio]
       end
 
       def rtprio
-        self[:kl_rtprio]
+        self[:p_rtprio]
       end
 
       def uticks
-        self[:kl_uticks]
+        self[:p_uticks]
       end
 
       def sticks
-        self[:kl_sticks]
+        self[:p_sticks]
       end
 
       def iticks
-        self[:kl_iticks]
+        self[:p_iticks]
       end
 
       def cpticks
-        self[:kl_cpticks]
+        self[:p_cpticks]
       end
 
       def pctcpu
-        self[:kl_pctcpu]
+        self[:p_pctcpu]
       end
 
       def slptime
-        self[:kl_slptime]
+        self[:p_slptime]
       end
 
       def origcpu
-        self[:kl_origcpu]
+        self[:p_origcpu]
       end
 
       def estcpu
-        self[:kl_estcpu]
+        self[:p_estcpu]
       end
 
       def cpuid
-        self[:kl_cpuid]
+        self[:p_cpuid]
       end
 
       def ru
-        self[:kl_ru]
+        self[:p_ru]
       end
 
       def siglist
-        self[:kl_siglist]
+        self[:p_siglist]
       end
 
       def sigmask
-        self[:kl_sigmask]
+        self[:p_sigmask]
       end
 
       def wchan
-        self[:kl_wchan]
+        self[:p_wchan]
       end
 
       def wmesg
-        self[:kl_wmesg].to_s
+        self[:p_wmesg].to_s
       end
 
       def comm
-        self[:kl_comm].to_s
+        self[:p_comm].to_s
       end
     end
 
@@ -245,53 +245,53 @@ module Sys
       end
 
       layout(
-        :kp_paddr, :uint64_t,
-        :kp_flags, :int,
-        :kp_stat, :procstat,
-        :kp_lock, :int,
-        :kp_acflag, :int,
-        :kp_traceflag, :int,
-        :kp_fd, :uint64_t,
-        :kp_siglist, Sigset,
-        :kp_sigignore, Sigset,
-        :kp_sigcatch, Sigset,
-        :kp_sigflag, :int,
-        :kp_start, Timeval,
-        :kp_comm, [:char, MAXCOMLEN+1],
-        :kp_uid, :uid_t,
-        :kp_ngroups, :short,
-        :kp_groups, [:gid_t, NGROUPS],
-        :kp_ruid, :uid_t,
-        :kp_svuid, :uid_t,
-        :kp_rgid, :gid_t,
-        :kp_svgid, :gid_t,
+        :p_paddr, :uint64_t,
+        :p_flags, :int,
+        :p_stat, :procstat,
+        :p_lock, :int,
+        :p_acflag, :int,
+        :p_traceflag, :int,
+        :p_fd, :uint64_t,
+        :p_siglist, Sigset,
+        :p_sigignore, Sigset,
+        :p_sigcatch, Sigset,
+        :p_sigflag, :int,
+        :p_start, Timeval,
+        :p_comm, [:char, MAXCOMLEN+1],
+        :p_uid, :uid_t,
+        :p_ngroups, :short,
+        :p_groups, [:gid_t, NGROUPS],
+        :p_ruid, :uid_t,
+        :p_svuid, :uid_t,
+        :p_rgid, :gid_t,
+        :p_svgid, :gid_t,
         :p_pid, :pid_t,
-        :kp_ppid, :pid_t,
-        :kp_pgid, :pid_t,
-        :kp_jobc, :int,
-        :kp_sid, :pid_t,
-        :kp_login, [:char, roundup(MAXLOGNAME, FFI::Type::LONG.size)],
-        :kp_tdev, :dev_t,
-        :kp_tpgid, :pid_t,
-        :kp_tsid, :pid_t,
-        :kp_exitstat, :ushort,
-        :kp_nthreads, :int,
-        :kp_nice, :int,
-        :kp_swtime, :uint,
-        :kp_vm_map_size, :size_t,
-        :kp_vm_rssize, :segsz_t,
-        :kp_vm_swrss, :segsz_t,
-        :kp_vm_tsize, :segsz_t,
-        :kp_vm_dsize, :segsz_t,
-        :kp_vm_ssize, :segsz_t,
-        :kp_vm_prssize, :uint,
-        :kp_jailid, :int,
-        :kp_ru, Rusage,
-        :kp_cru, Rusage,
-        :kp_auxflags, :int,
-        :kp_lwp, KInfoLWP,
-        :kp_ktaddr, :uint64_t,
-        :kp_spare, [:int, 2]
+        :p_ppid, :pid_t,
+        :p_pgid, :pid_t,
+        :p_jobc, :int,
+        :p_sid, :pid_t,
+        :p_login, [:char, roundup(MAXLOGNAME, FFI::Type::LONG.size)],
+        :p_tdev, :dev_t,
+        :p_tpgid, :pid_t,
+        :p_tsid, :pid_t,
+        :p_exitstat, :ushort,
+        :p_nthreads, :int,
+        :p_nice, :int,
+        :p_swtime, :uint,
+        :p_vm_map_size, :size_t,
+        :p_vm_rssize, :segsz_t,
+        :p_vm_swrss, :segsz_t,
+        :p_vm_tsize, :segsz_t,
+        :p_vm_dsize, :segsz_t,
+        :p_vm_ssize, :segsz_t,
+        :p_vm_prssize, :uint,
+        :p_jailid, :int,
+        :p_ru, Rusage,
+        :p_cru, Rusage,
+        :p_auxflags, :int,
+        :p_lwp, KInfoLWP,
+        :p_ktaddr, :uint64_t,
+        :p_spare, [:int, 2]
       )
     end
   end
