@@ -265,7 +265,7 @@ module Sys
         :kp_svuid, :uid_t,
         :kp_rgid, :gid_t,
         :kp_svgid, :gid_t,
-        :kp_pid, :pid_t,
+        :pid, :pid_t,
         :kp_ppid, :pid_t,
         :kp_pgid, :pid_t,
         :kp_jobc, :int,
