@@ -113,7 +113,7 @@ module Sys
       include Sys::ProcTableConstants
 
       layout(
-        :ki_p_pid, :pid_t,
+        :p_pid, :pid_t,
         :kl_tid, :pid_t,
         :kl_flags, :int,
         :kl_stat, :lwpstat,
