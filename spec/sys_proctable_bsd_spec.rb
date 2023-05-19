@@ -20,6 +20,18 @@ RSpec.describe Sys::ProcTable, :bsd do
     ]
   }
 
+  let(:fields_openbsd){
+    %w[
+      pid ppid pgid tpgid sid tsid jobc uid ruid rgid
+      ngroups groups size rssize swrss tsize dsize ssize
+      xstat acflag pctcpu estcpu slptime swtime runtime start
+      flag state nice lock rqindex oncpu lastcpu wmesg login
+      lockname comm ttynum ttydev jid priority usrpri cmdline
+      utime stime maxrss ixrss idrss isrss minflt majflt nswap
+      inblock oublock msgsnd msgrcv nsignals nvcsw nivcsw
+    ]
+  }
+
   let(:fields_dragonfly){
     %w[
       paddr flags stat lock acflag traceflag fd siglist sigignore

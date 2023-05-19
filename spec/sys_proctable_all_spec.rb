@@ -15,7 +15,7 @@ RSpec.describe 'common' do
 
   context 'constants' do
     it 'has a VERSION constant set to the expected value' do
-      expect(Sys::ProcTable::VERSION).to eql('1.3.0')
+      expect(Sys::ProcTable::VERSION).to eql('1.3.1')
       expect(Sys::ProcTable::VERSION).to be_frozen
     end
 

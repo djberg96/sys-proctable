@@ -15,7 +15,7 @@ task :install do
   file = nil
   dir  = File.join(CONFIG['sitelibdir'], 'sys')
 
-  Dir.mkdir(dir) unless File.exists?(dir)
+  Dir.mkdir(dir) unless File.exist?(dir)
 
   case CONFIG['host_os']
     when /mswin|win32|msdos|cygwin|mingw|windows/i
@@ -26,8 +26,8 @@ task :install do
       file = 'lib/sunos/sys/proctable.rb'
     when /aix/i
       file = 'lib/aix/sys/proctable.rb'
-    when /freebsd/i
-      file = 'lib/freebsd/sys/proctable.rb'
+    when /bsd/i
+      file = 'lib/bsd/sys/proctable.rb'
     when /darwin/i
       file = 'lib/darwin/sys/proctable.rb'
   end

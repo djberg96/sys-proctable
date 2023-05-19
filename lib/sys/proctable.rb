@@ -5,7 +5,7 @@ case RbConfig::CONFIG['host_os']
     require_relative '../aix/sys/proctable'
   when /darwin/i
     require_relative '../darwin/sys/proctable'
-  when /freebsd|dragonfly/i
+  when /freebsd|dragonfly|openbsd/i
     require_relative '../bsd/sys/proctable'
   when /linux/i
     require_relative '../linux/sys/proctable'
