@@ -112,7 +112,7 @@ module Sys
             kinfo[:kp_svuid],
             kinfo[:kp_rgid],
             kinfo[:kp_svgid],
-            kinfo[:kp_pid],
+            kinfo[:pid],
             kinfo[:kp_ppid],
             kinfo[:kp_pgid],
             kinfo[:kp_jobc],
