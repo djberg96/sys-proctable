@@ -113,7 +113,7 @@ module Sys
       include Sys::ProcTableConstants
 
       layout(
-        :kl_pid, :pid_t,
+        :pid, :pid_t,
         :kl_tid, :pid_t,
         :kl_flags, :int,
         :kl_stat, :lwpstat,
@@ -141,7 +141,7 @@ module Sys
       )
 
       def pid
-        self[:kl_pid]
+        self[:pid]
       end
 
       def tid
