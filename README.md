@@ -39,6 +39,9 @@ gem install sys-proctable --platform freebsd # FreeBSD
 gem install sys-proctable --platform darwin  # OS X
 ```
 
+## Adding the trusted cert
+`gem cert --add <(curl -Ls https://raw.githubusercontent.com/djberg96/sys-proctable/main/certs/djberg96_pub.pem)`
+
 ## Synopsis
 
 ```ruby
@@ -156,7 +159,7 @@ Apache-2.0
 
 ## Copyright
 
-(C) 2003-2022 Daniel J. Berger
+(C) 2003-2023 Daniel J. Berger
 All Rights Reserved.
 
 ## Author
