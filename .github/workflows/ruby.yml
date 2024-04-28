@@ -45,8 +45,7 @@ jobs:
       with:
         usesh: true
         prepare: |
-          # as far as i know latest possible version ist 2.6.x in Solaris 11.4
-          pkgutil -y -i runtime/ruby-26
+          pkgutil -y -i ruby
           ruby -v
           gem install bundler
           bundle install
