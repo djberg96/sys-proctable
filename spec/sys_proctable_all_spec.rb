@@ -21,7 +21,7 @@ RSpec.describe 'common' do
 
     it 'defines a custom error class' do
       expect{ Sys::ProcTable::Error }.not_to raise_error
-      expect(Sys::ProcTable::Error.new).to be_kind_of(StandardError)
+      expect(Sys::ProcTable::Error.new).to be_a(StandardError)
     end
   end
 
@@ -31,8 +31,8 @@ RSpec.describe 'common' do
     end
 
     it 'returns the expected data type for the fields singleton method' do
-      expect(Sys::ProcTable.fields).to be_kind_of(Array)
-      expect(Sys::ProcTable.fields.first).to be_kind_of(String)
+      expect(Sys::ProcTable.fields).to be_a(Array)
+      expect(Sys::ProcTable.fields.first).to be_a(String)
     end
   end
 
@@ -47,15 +47,15 @@ RSpec.describe 'common' do
 
     it 'allows the pid to be nil' do
       expect{ Sys::ProcTable.ps(:pid => nil) }.not_to raise_error
-      expect(Sys::ProcTable.ps(:pid => nil)).to be_kind_of(Array)
+      expect(Sys::ProcTable.ps(:pid => nil)).to be_a(Array)
     end
 
     it 'returns expected results with no arguments' do
-      expect(Sys::ProcTable.ps).to be_kind_of(Array)
+      expect(Sys::ProcTable.ps).to be_a(Array)
     end
 
     it 'returns expected results with a pid argument' do
-      expect(Sys::ProcTable.ps(:pid => @pid)).to be_kind_of(Struct::ProcTableStruct)
+      expect(Sys::ProcTable.ps(:pid => @pid)).to be_a(Struct::ProcTableStruct)
     end
 
     it 'returns nil if the process does not exist' do
