@@ -50,7 +50,7 @@ RSpec.describe Sys::ProcTable, :aix do
     if @p2info.size == 1
       @p2info = @p2info[0]
     else
-      $stderr.puts "expected a single process, have #{@p2info.size}"
+      warn "expected a single process, have #{@p2info.size}"
       exit 1
     end
   end
