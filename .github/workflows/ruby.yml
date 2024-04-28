@@ -34,21 +34,21 @@ jobs:
     - name: Run tests
       run: bundle exec rake
 
-   test_solaris:
-     runs-on: ubuntu-latest
-     name: A job to run test in Solaris
-     steps:
-     - uses: actions/checkout@v2
-     - name: test Solaris
-       id: test
-       uses: vmactions/solaris-vm@v1
-       with:
-         usesh: true
-         prepare: |
-           # as far as i know latest possible version ist 2.6.x in Solaris 11.4
-           pkgutil -y -i runtime/ruby-26
-           ruby -v
-           gem install bundler
-           bundle install
-         run: |
-           bundle exec rake
+  test_solaris:
+    runs-on: ubuntu-latest
+    name: A job to run test in Solaris
+    steps:
+    - uses: actions/checkout@v2
+    - name: test Solaris
+      id: test
+      uses: vmactions/solaris-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          # as far as i know latest possible version ist 2.6.x in Solaris 11.4
+          pkgutil -y -i runtime/ruby-26
+          ruby -v
+          gem install bundler
+          bundle install
+        run: |
+          bundle exec rake
