@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require_relative 'proctable/constants'
 require_relative 'proctable/structs'
 require_relative 'proctable/functions'

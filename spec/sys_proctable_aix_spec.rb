@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 #######################################################################
 # sys_proctable_aix_spec.rb
 #

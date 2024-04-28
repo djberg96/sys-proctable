@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 ################################################################
 # sys_proctable_bsd_rspec.rb
 #

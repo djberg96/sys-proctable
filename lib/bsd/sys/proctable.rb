@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 case RbConfig::CONFIG['host_os']
   when /freebsd/i
     require_relative 'freebsd/sys/proctable'
