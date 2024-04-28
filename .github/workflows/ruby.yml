@@ -12,6 +12,28 @@ on:
   workflow_dispatch:
 
 jobs:
+  test_xplatform:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        os:
+          - name: freebsd
+            architecture: x86-64
+            version: '14.0'
+      steps:
+        - uses: actions/checkout@v4
+        - name: Test on ${{ matrix.os.name }} 
+          uses: cross-platform-actions/action@v0.24.0
+      with:
+        operating_system: ${{ matrix.os.name }}
+        architecture: ${{ matrix.os.architecture }}
+        version: ${{ matrix.os.version }}
+        shell: bash
+        memory: 2GB
+        cpu_count: 2
+        run: |
+          pkg install -i -y ruby
+          bundle install
   test:
     strategy:
       fail-fast: false
