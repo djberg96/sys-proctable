@@ -10,6 +10,8 @@ RSpec/FilePath:
   SpecSuffixOnly: true
 RSpec/InstanceVariable:
   Enabled: false
+RSpec/SpecFilePathFormat:
+  Enabled: false
 
 AllCops:
   NewCops: enable

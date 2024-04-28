@@ -100,7 +100,7 @@ RSpec.describe Sys::ProcTable, :darwin do
     end
 
     it 'returns a string with the expected arguments for the cmdline member', :skip => :jruby do
-      ptable = Sys::ProcTable.ps(:pid => @pid2)
+      ptable = described_class.ps(:pid => @pid2)
       expect(ptable.cmdline).to eq('ruby -Ilib -e sleep \'120\'.to_i -- foo bar')
     end
 
