@@ -94,4 +94,9 @@ namespace :gem do
   end
 end
 
+# Clean up afterwards
+Rake::Task[:spec].enhance do
+  Rake::Task[:clean].invoke
+end
+
 task :default => :spec
