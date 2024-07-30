@@ -46,6 +46,7 @@ jobs:
           pkg install -y ruby devel/ruby-gems
 
         run: |
+          ruby -e 'puts RbConfig::CONFIG["host_os"]'
           gem install bundler --no-document
           bundle install --quiet
           bundle exec rspec
