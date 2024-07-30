@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['2.6', '2.7', '3.0', '3.1', '3.2', '3.3', 'jruby', 'truffleruby']
+        ruby-version: ['2.7', '3.0', '3.1', '3.2', '3.3', 'jruby', 'truffleruby']
         platform: [ubuntu-latest, macos-latest, windows-latest]
         exclude:
           - ruby-version: truffleruby
@@ -33,28 +33,19 @@ jobs:
         bundler-cache: true # runs 'bundle install' and caches installed gems automatically
     - name: Run tests
       run: bundle exec rake
+  freebsd:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v4
+    - name: Test in FreeBSD
+      id: test
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        prepare: |
+          pkg install -y ruby devel/ruby-gems
 
-  # test_solaris:
-  #   runs-on: macos-12
-  #   name: A job to run test in Solaris
-  #   steps:
-  #   - uses: actions/checkout@v2
-  #   - name: test Solaris
-  #     id: test
-  #     uses: vmactions/solaris-vm@v0
-  #     with:
-  #       usesh: true
-  #       prepare: |
-  #         # as far as i know latest possible version ist 2.6.x in Solaris 11.4
-  #         pkgutil -y -i runtime/ruby-26
-  #         ruby -v
-  #         gem install bundler
-  #         bundle install
-  #         #
-  #         # maybe use puppet to get new ruby (?)
-  #         # so we would get ruby 2.7.6p219
-  #         # curl -JLO 'https://pm.puppetlabs.com/puppet-agent/2021.7.1/7.20.0/repos/solaris/11/puppet7/puppet-agent@7.20.0,5.11-1.i386.p5p'
-  #         # pkg install -g file://$(pwd)/puppet-agent\@7.20.0\,5.11-1.i386.p5p pkg:/puppet-agent
-
-  #       run: |
-  #         bundle exec rake
+        run: |
+          gem install bundler --no-document
+          bundle install --quiet
+          bundle exec rspec
