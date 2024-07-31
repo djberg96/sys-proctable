@@ -225,15 +225,19 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(Sys::ProcTableStructs::Timeval.size).to eq(dummy.check_sizeof('struct timeval', 'sys/time.h'))
     end
 
-    it 'has an rtprio struct of the expected size' do
+    it 'has an rtprio struct of the expected size', :dragonfly do
       expect(Sys::ProcTableStructs::RTPrio.size).to eq(dummy.check_sizeof('struct rtprio', 'sys/rtprio.h'))
+    end
+
+    it 'has an rtprio struct of the expected size', :freebsd do
+      expect(Sys::ProcTableStructs::Priority.size).to eq(dummy.check_sizeof('struct priority', 'sys/priority.h'))
     end
 
     it 'has an rusage struct of the expected size' do
       expect(Sys::ProcTableStructs::Rusage.size).to eq(dummy.check_sizeof('struct rusage', 'sys/resource.h'))
     end
 
-    it 'has an kinfo_lwp struct of the expected size' do
+    it 'has an kinfo_lwp struct of the expected size', :dragonfly do
       expect(Sys::ProcTableStructs::KInfoLWP.size).to eq(dummy.check_sizeof('struct kinfo_lwp', 'sys/kinfo.h'))
     end
 
