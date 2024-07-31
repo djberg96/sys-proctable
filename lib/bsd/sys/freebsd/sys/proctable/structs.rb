@@ -48,6 +48,8 @@ module Sys
     end
 
     class KInfoProc < FFI::Struct
+      include Sys::ProcTableConstants
+
       layout(
         :ki_structsize, :int,
         :ki_layout, :int,
