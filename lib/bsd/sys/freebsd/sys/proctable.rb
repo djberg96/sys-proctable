@@ -1,4 +1,6 @@
-require 'ffi'
+require_relative 'proctable/constants'
+require_relative 'proctable/structs'
+require_relative 'proctable/functions'
 require 'sys/proctable/version'
 
 module Sys
