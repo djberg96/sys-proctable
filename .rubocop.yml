@@ -53,6 +53,8 @@ Layout/CaseIndentation:
   IndentOneStep: true
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
+Layout/SpaceInsideHashLiteralBraces:
+  Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
