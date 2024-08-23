@@ -35,7 +35,7 @@ RSpec.describe Sys::ProcTable, :darwin do
     end
 
     it 'returns the expected results for the fields method' do
-      expect(described_class.fields).to be_kind_of(Array)
+      expect(described_class.fields).to be_a(Array)
       expect(described_class.fields).to eq(fields)
     end
   end
@@ -45,55 +45,55 @@ RSpec.describe Sys::ProcTable, :darwin do
 
     it 'contains a pid member and returns the expected value' do
       expect(process).to respond_to(:pid)
-      expect(process.pid).to be_kind_of(Numeric)
+      expect(process.pid).to be_a(Numeric)
       expect(process.pid).to eq(@pid1)
     end
 
     it 'contains a ppid member and returns the expected value' do
       expect(process).to respond_to(:ppid)
-      expect(process.ppid).to be_kind_of(Numeric)
+      expect(process.ppid).to be_a(Numeric)
       expect(process.ppid).to eq(Process.pid)
     end
 
     it 'contains a pgid member and returns the expected value' do
       expect(process).to respond_to(:pgid)
-      expect(process.pgid).to be_kind_of(Numeric)
+      expect(process.pgid).to be_a(Numeric)
       expect(process.pgid).to eq(Process.getpgrp)
     end
 
     it 'contains a ruid member and returns the expected value' do
       expect(process).to respond_to(:ruid)
-      expect(process.ruid).to be_kind_of(Numeric)
+      expect(process.ruid).to be_a(Numeric)
       expect(process.ruid).to eq(Process.uid)
     end
 
     it 'contains an rgid member and returns the expected value' do
       expect(process).to respond_to(:rgid)
-      expect(process.rgid).to be_kind_of(Numeric)
+      expect(process.rgid).to be_a(Numeric)
       expect(process.rgid).to eq(Process.gid)
     end
 
     it 'contains an svuid member and returns the expected value' do
       expect(process).to respond_to(:svuid)
-      expect(process.svuid).to be_kind_of(Numeric)
+      expect(process.svuid).to be_a(Numeric)
       expect(process.svuid).to eq(Process.uid)
     end
 
     it 'contains an svgid member and returns the expected value' do
       expect(process).to respond_to(:svgid)
-      expect(process.svgid).to be_kind_of(Numeric)
+      expect(process.svgid).to be_a(Numeric)
       expect(process.svgid).to eq(Process.gid)
     end
 
     it 'contains a comm member and returns the expected value' do
       expect(process).to respond_to(:comm)
-      expect(process.comm).to be_kind_of(String)
+      expect(process.comm).to be_a(String)
       expect(process.comm).to eq('sleep')
     end
 
     it 'contains a cmdline member and returns the expected value' do
       expect(process).to respond_to(:cmdline)
-      expect(process.cmdline).to be_kind_of(String)
+      expect(process.cmdline).to be_a(String)
       expect(process.cmdline).to eq('sleep 60')
     end
 
@@ -104,14 +104,14 @@ RSpec.describe Sys::ProcTable, :darwin do
 
     it 'contains an exe member and returns the expected value' do
       expect(process).to respond_to(:exe)
-      expect(process.exe).to be_kind_of(String)
+      expect(process.exe).to be_a(String)
       expect(process.exe).to eq(`which sleep`.chomp)
     end
 
     it 'contains an environ member and returns the expected value' do
       skip 'It appears to no longer be possible to get environ on spawned processes on Catalina or later in most cases'
       expect(process).to respond_to(:environ)
-      expect(process.environ).to be_kind_of(Hash)
+      expect(process.environ).to be_a(Hash)
       expect(process.environ['A']).to eq('B')
       expect(process.environ['Z']).to be_nil
     end
