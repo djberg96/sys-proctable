@@ -23,7 +23,6 @@
 * lib/bsd/sys/freebsd/sys/proctable/functions.rb
 * lib/bsd/sys/freebsd/sys/proctable/structs.rb
 * lib/linux/sys/proctable.rb
-* lib/sunos/sys/proctable.rb
 * lib/windows/sys/proctable.rb
 * spec/spec_helper.rb
 * spec/sys_proctable_aix_spec.rb
@@ -31,6 +30,5 @@
 * spec/sys_proctable_darwin_spec.rb
 * spec/sys_proctable_freebsd_spec.rb
 * spec/sys_proctable_linux_spec.rb
-* spec/sys_proctable_sunos_spec.rb
 * spec/sys_proctable_windows_spec.rb
 * spec/sys_top_spec.rb
