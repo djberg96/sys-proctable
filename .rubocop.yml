@@ -51,6 +51,8 @@ Layout/FirstArrayElementIndentation:
   Enabled: false
 Layout/CaseIndentation:
   IndentOneStep: true
+Layout/LeadingCommentSpace:
+  Enabled: false
 Layout/SpaceBeforeBlockBraces:
   Enabled: false
 Layout/SpaceInsideHashLiteralBraces:
