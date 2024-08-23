@@ -3,7 +3,9 @@ require: rubocop-rspec
 RSpec/BeforeAfterAll:
   Enabled: false
 RSpec/MultipleExpectations:
-  Max: 4
+  Max: 10 
+RSpec/ExampleLength:
+  Max: 15
 RSpec/ContextWording:
   Enabled: false
 RSpec/SpecFilePathFormat:
