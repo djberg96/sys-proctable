@@ -22,8 +22,6 @@ task :install do
       file = 'lib/windows/sys/proctable.rb'
     when /linux/i
       file = 'lib/linux/sys/proctable.rb'
-    when /sunos|solaris/i
-      file = 'lib/sunos/sys/proctable.rb'
     when /aix/i
       file = 'lib/aix/sys/proctable.rb'
     when /freebsd/i
@@ -69,9 +67,6 @@ RSpec::Core::RakeTask.new(:spec) do |t|
     when /linux/i
       t.rspec_opts = '-Ilib/linux'
       t.pattern << 'spec/sys_proctable_linux_spec.rb'
-    when /sunos|solaris/i
-      t.rspec_opts = '-Ilib/sunos'
-      t.pattern << 'spec/sys_proctable_sunos_spec.rb'
     when /mswin|msdos|cygwin|mingw|windows/i
       t.rspec_opts = '-Ilib/windows'
       t.pattern << 'spec/sys_proctable_windows_spec.rb'

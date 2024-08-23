@@ -19,7 +19,6 @@
 * Linux 2.6+
 * FreeBSD
 * DragonflyBSD
-* Solaris 8+
 * OS X 10.7+
 * AIX 5.3+
 
@@ -33,7 +32,6 @@ For version 1.1.5 or earlier, you may need to specify a platform in some cases. 
 
 ```sh
 gem install sys-proctable --platform mswin32 # Windows
-gem install sys-proctable --platform sunos   # Solaris
 gem install sys-proctable --platform linux   # Linux
 gem install sys-proctable --platform freebsd # FreeBSD
 gem install sys-proctable --platform darwin  # OS X
@@ -106,19 +104,10 @@ bundle config specific_platform true
 
 You should not have to do this for version 1.2.0 or later.
 
-### Solaris
-
-The cmdline member on Solaris is limited to 80 characters unless you (or
-your program) own the process. This is a Solaris design flaw/feature.
-
 ### OS X
 
 The libproc interface is used. That means you will only get list of
 processes that you have access to. To get a full listing, run as root.
-
-## Future Plans
-
-Support for Solaris will probably be dropped in the next major release.
 
 ## Acknowledgements
 
