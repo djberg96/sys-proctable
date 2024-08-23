@@ -41,7 +41,6 @@ RSpec.describe Sys::ProcTable, :aix do
 
     sleep(2)  # wait to make sure the above execs have completed in children
 
-
     @p1info = ProcTable.ps(@pid1)
     @p2info = ProcTable.ps.select { |e| e.pid == @pid2 }
 
