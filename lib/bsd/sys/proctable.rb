@@ -4,5 +4,5 @@ case RbConfig::CONFIG['host_os']
   when /dragonfly/i
     require_relative 'dragonfly/sys/proctable'
   else
-    raise "Unsupported version of BSD"
+    raise 'Unsupported version of BSD'
 end

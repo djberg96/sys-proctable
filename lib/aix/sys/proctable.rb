@@ -181,11 +181,11 @@ module Sys
 
     public
 
-    ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
+    ProcTableStruct = Struct.new('ProcTableStruct', *@fields) do
       alias comm fname
     end
 
-    ProcTableMapStruct = Struct.new("ProcTableMapStruct", *@map_fields)
+    ProcTableMapStruct = Struct.new('ProcTableMapStruct', *@map_fields)
 
     # In block form, yields a ProcTableStruct for each process entry that you
     # have rights to. This method returns an array of ProcTableStruct's in
@@ -212,7 +212,7 @@ module Sys
       array  = block_given? ? nil : []
       struct = nil
 
-      Dir.foreach("/proc") do |file|
+      Dir.foreach('/proc') do |file|
         next if file =~ /\D/ # Skip non-numeric entries under /proc
 
         # Only return information for a given pid, if provided
@@ -340,7 +340,7 @@ module Sys
                       caller
               end
 
-              envp = fd.sysread(4).unpack("L")[0]
+              envp = fd.sysread(4).unpack('L')[0]
               break if envp.zero?
               np = fd.sysseek(envp, IO::SEEK_SET)
               data = fd.sysread(1024)[/^[^\0]*/] # Null strip
