@@ -267,11 +267,11 @@ RSpec.describe Sys::ProcTable, :aix do
     it 'contains a cmd_args member and returns the expected value' do
       expect(@p1info).to respond_to(:cmd_args)
       expect(@p1info.cmd_args).to be_a(Array)
-      expect(@p1info.cmd_args).to_eql(['ruby', @p1args].flatten)
+      expect(@p1info.cmd_args).to eql(['ruby', @p1args].flatten)
 
       expect(@p2info).to respond_to(:cmd_args)
       expect(@p2info.cmd_args).to be_a(Array)
-      expect(@p2info.cmd_args).to_eql(['ruby', @p2args].flatten)
+      expect(@p2info.cmd_args).to eql(['ruby', @p2args].flatten)
     end
 
     it 'contains an environ member and returns the expected value' do
