@@ -6,8 +6,8 @@ RSpec/MultipleExpectations:
   Max: 4
 RSpec/ContextWording:
   Enabled: false
-RSpec/FilePath:
-  SpecSuffixOnly: true
+RSpec/SpecFilePathSuffix:
+  Enabled: false
 RSpec/InstanceVariable:
   Enabled: false
 
@@ -56,7 +56,7 @@ Layout/SpaceBeforeBlockBraces:
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
-  IgnoredMethods: ['describe', 'context']
+  AllowedMethods: ['describe', 'context']
 Metrics/ClassLength:
   Enabled: false
 Metrics/MethodLength:
