@@ -50,12 +50,14 @@ module Sys
     #
     def self.ps(**kwargs)
       pid = kwargs[:pid]
+      errbuf = 0.chr * POSIX2_LINE_MAX
 
       begin
-        kd = kvm_open(nil, nil, nil, 0, nil)
+        kd = kvm_openfiles(nil, nil, nil, 0, errbuf)
 
         if kd.null?
-          raise SystemCallError.new('kvm_open', FFI.errno)
+          error = errbuf.split(0.chr).first
+          raise SystemCallError.new("kvm_openfiles - #{error}", FFI.errno)
         end
 
         ptr = FFI::MemoryPointer.new(:int) # count
