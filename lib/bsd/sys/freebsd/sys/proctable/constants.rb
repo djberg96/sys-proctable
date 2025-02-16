@@ -1,6 +1,7 @@
 module Sys
   module ProcTableConstants
     POSIX_ARG_MAX = 4096
+    POSIX2_LINE_MAX = 2048
 
     KERN_PROC_PID  = 1
     KERN_PROC_PROC = 8
