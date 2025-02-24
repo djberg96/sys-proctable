@@ -92,7 +92,7 @@ Sys::ProcTable.ps(host: some_host)
 ### FreeBSD
 
 A kvm interface is used. That means the owner of the process using the
-sys-proctable library needs to be a member of the kvm group (or root).
+sys-proctable library needs to be a member of the kmem group (or root).
 
 ### Bundler
 
