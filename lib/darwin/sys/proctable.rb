@@ -417,7 +417,7 @@ module Sys
         argc = array.size
       end
 
-      cmdline = ''
+      cmdline = +''
 
       # Extract the full command line and its arguments from the array
       argc.times do
