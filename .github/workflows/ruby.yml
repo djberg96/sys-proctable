@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        ruby-version: ['2.7', '3.0', '3.1', '3.2', '3.3', 'jruby', 'truffleruby']
+        ruby-version: ['2.7', '3.0', '3.1', '3.2', '3.3', '3.4', 'jruby', 'truffleruby']
         platform: [ubuntu-latest, macos-latest, windows-latest]
         exclude:
           - ruby-version: truffleruby
