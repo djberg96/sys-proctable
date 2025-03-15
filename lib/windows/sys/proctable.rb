@@ -68,7 +68,7 @@ module Sys
       write_transfer_count
     ]
 
-    ProcTableStruct = Struct.new("ProcTableStruct", *@fields)
+    ProcTableStruct = Struct.new('ProcTableStruct', *@fields)
 
     # call-seq:
     #    ProcTable.fields
@@ -108,7 +108,7 @@ module Sys
       rescue WIN32OLERuntimeError => err
         raise Error, err # Re-raise as ProcTable::Error
       else
-        wmi.InstancesOf("Win32_Process").each do |wproc|
+        wmi.InstancesOf('Win32_Process').each do |wproc|
           if pid && wproc.ProcessId != pid
             next
           end

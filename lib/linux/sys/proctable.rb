@@ -14,8 +14,8 @@ module Sys
     # There is no constructor
     private_class_method :new
 
-    @mem_total = File.read("/proc/meminfo")[/MemTotal.*/].split[1].to_i * 1024 rescue nil
-    @boot_time = File.read("/proc/stat")[/btime.*/].split.last.to_i rescue nil
+    @mem_total = File.read('/proc/meminfo')[/MemTotal.*/].split[1].to_i * 1024 rescue nil
+    @boot_time = File.read('/proc/stat')[/btime.*/].split.last.to_i rescue nil
 
     @fields = [
       'cmdline',               # Complete command line
@@ -121,7 +121,7 @@ module Sys
 
       raise TypeError if pid && !pid.is_a?(Numeric)
 
-      Dir.foreach("/proc") do |file|
+      Dir.foreach('/proc') do |file|
         next if file =~ /\D/ # Skip non-numeric directories
         next if pid && file.to_i != pid
 
@@ -144,7 +144,7 @@ module Sys
         struct.environ = {}
 
         begin
-          File.read("/proc/#{file}/environ").force_encoding("UTF-8").split("\0").each do |str|
+          File.read("/proc/#{file}/environ").force_encoding('UTF-8').split("\0").each do |str|
             key, value = str.split('=')
             struct.environ[key] = value
           end
@@ -188,7 +188,7 @@ module Sys
         # are true for a file in the /proc fileystem but raises a Errno:EACCESS
         # when your try to read it without permissions.
         unless smaps == false
-          smaps_contents = File.read("/proc/#{file}/smaps") rescue ""
+          smaps_contents = File.read("/proc/#{file}/smaps") rescue ''
           struct.smaps = Smaps.new(file, smaps_contents)
         end
 
@@ -309,7 +309,7 @@ module Sys
       return nil unless @mem_total
       page_size = 4096
       rss_total = rss * page_size
-      format("%3.2f", (rss_total.to_f / @mem_total) * 100).to_f
+      format('%3.2f', (rss_total.to_f / @mem_total) * 100).to_f
     end
 
     private_class_method :get_pctmem
@@ -321,7 +321,7 @@ module Sys
       hertz = 100.0
       utime = (utime * 10000).to_f
       stime = (start_time.to_f / hertz) + @boot_time
-      format("%3.2f", (utime / 10000.0) / (Time.now.to_i - stime)).to_f
+      format('%3.2f', (utime / 10000.0) / (Time.now.to_i - stime)).to_f
     end
 
     private_class_method :get_pctcpu
