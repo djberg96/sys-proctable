@@ -76,6 +76,8 @@ RSpec::Core::RakeTask.new(:spec) do |t|
       t.rspec_opts = '-Ilib/windows'
       t.pattern << 'spec/sys_proctable_windows_spec.rb'
   end
+
+  t.rspec_opts << ' -f documentation -w'
 end
 
 namespace :gem do
