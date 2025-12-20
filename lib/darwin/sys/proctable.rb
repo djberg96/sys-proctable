@@ -159,14 +159,14 @@ module Sys
     ]
 
     # Add a couple aliases to make it similar to Linux
-    ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
+    ProcTableStruct = Struct.new('ProcTableStruct', *@fields) do
       alias_method :vsize, :virtual_size
       alias_method :rss, :resident_size
     end
 
     private_constant :ProcTableStruct
 
-    ThreadInfoStruct = Struct.new("ThreadInfo", :user_time, :system_time,
+    ThreadInfoStruct = Struct.new('ThreadInfo', :user_time, :system_time,
       :cpu_usage, :policy, :run_state, :flags, :sleep_time, :curpri,
       :priority, :maxpriority, :name
     )

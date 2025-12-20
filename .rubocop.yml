@@ -3,11 +3,13 @@ require: rubocop-rspec
 RSpec/BeforeAfterAll:
   Enabled: false
 RSpec/MultipleExpectations:
-  Max: 4
+  Max: 10 
+RSpec/ExampleLength:
+  Max: 15
 RSpec/ContextWording:
   Enabled: false
-RSpec/FilePath:
-  SpecSuffixOnly: true
+RSpec/SpecFilePathFormat:
+  Enabled: false
 RSpec/InstanceVariable:
   Enabled: false
 
@@ -51,12 +53,16 @@ Layout/FirstArrayElementIndentation:
   Enabled: false
 Layout/CaseIndentation:
   IndentOneStep: true
+Layout/LeadingCommentSpace:
+  Enabled: false
 Layout/SpaceBeforeBlockBraces:
+  Enabled: false
+Layout/SpaceInsideHashLiteralBraces:
   Enabled: false
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
-  IgnoredMethods: ['describe', 'context']
+  AllowedMethods: ['describe', 'context']
 Metrics/ClassLength:
   Enabled: false
 Metrics/MethodLength:
