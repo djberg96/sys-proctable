@@ -16,7 +16,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency('ffi', '~> 1.1')
 
   if Gem.win_platform?
-    spec.add_dependency('win32ole'
+    spec.add_dependency('win32ole')
   end
 
   spec.add_development_dependency('rspec', '~> 3.9')
