@@ -14,6 +14,11 @@ Gem::Specification.new do |spec|
   spec.cert_chain = ['certs/djberg96_pub.pem']
    
   spec.add_dependency('ffi', '~> 1.1')
+
+  if Gem.win_platform?
+    spec.add_dependency('win32ole'
+  end
+
   spec.add_development_dependency('rspec', '~> 3.9')
   spec.add_development_dependency('rake')
   spec.add_development_dependency('rubocop')
