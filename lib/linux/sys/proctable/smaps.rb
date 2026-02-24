@@ -114,15 +114,15 @@ module Sys
       def parse_smaps_line(line)
         case line
           when /^Pss:\s+?(\d+)/
-            @pss += Regexp.last_match[1].to_i * 1000
+            @pss += Regexp.last_match[1].to_i * 1024
           when /^Rss:\s+?(\d+)/
-            @rss += Regexp.last_match[1].to_i * 1000
+            @rss += Regexp.last_match[1].to_i * 1024
           when /^Size:\s+?(\d+)/
-            @vss += Regexp.last_match[1].to_i * 1000
+            @vss += Regexp.last_match[1].to_i * 1024
           when /^Swap:\s+?(\d+)/
-            @swap += Regexp.last_match[1].to_i * 1000
+            @swap += Regexp.last_match[1].to_i * 1024
           when /^Private_(Clean|Dirty):\s+?(\d+)/
-            @uss += Regexp.last_match[2].to_i * 1000
+            @uss += Regexp.last_match[2].to_i * 1024
         end
       end
     end
