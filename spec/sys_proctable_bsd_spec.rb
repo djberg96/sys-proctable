@@ -74,11 +74,13 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a comm member and returns the expected value' do
       expect(process).to respond_to(:comm)
       expect(process.comm).to be_kind_of(String)
+      expect(process.comm).not_to be_empty if RbConfig::CONFIG['host_os'] =~ /freebsd/i
     end
 
     it 'contains a state member and returns the expected value', :freebsd do
       expect(process).to respond_to(:state)
       expect(process.state).to be_kind_of(String)
+      expect(process.state).not_to eql('unknown')
     end
 
     it 'contains a pctcpu member and returns the expected value', :freebsd do
@@ -134,6 +136,7 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a start member and returns the expected value' do
       expect(process).to respond_to(:start)
       expect(process.start).to be_kind_of(Time)
+      expect(process.start).to be > Time.at(1_500_000_000) if RbConfig::CONFIG['host_os'] =~ /freebsd/i
     end
 
     it 'contains a maxrss member and returns the expected value', :freebsd do
@@ -242,9 +245,16 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(Sys::ProcTableStructs::KInfoLWP.size).to eq(dummy.check_sizeof('struct kinfo_lwp', 'sys/kinfo.h'))
     end
 
-    # TODO: Figure out which header is the right one for FreeBSD
     it 'has an kinfo_proc struct of the expected size', :dragonfly do
       expect(Sys::ProcTableStructs::KInfoProc.size).to eq(dummy.check_sizeof('struct kinfo_proc', 'sys/kinfo.h'))
+    end
+
+    it 'has a kinfo_proc struct of the expected size on modern FreeBSD', :freebsd do
+      skip 'Only applies to modern FreeBSD' if RbConfig::CONFIG['host_os'][/freebsd(\d+)/i, 1].to_i < 12
+
+      expected_size = RbConfig::CONFIG['host_cpu'] =~ /i386/i ? 768 : 1088
+
+      expect(Sys::ProcTableStructs::KInfoProc.size).to eq(expected_size)
     end
   end
 end
