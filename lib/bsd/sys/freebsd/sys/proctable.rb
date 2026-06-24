@@ -117,7 +117,7 @@ module Sys
             kinfo[:ki_ssize],
             kinfo[:ki_xstat],
             kinfo[:ki_acflag],
-            kinfo[:ki_pctcpu].to_f,
+            get_pctcpu(kinfo[:ki_pctcpu]),
             kinfo[:ki_estcpu],
             kinfo[:ki_slptime],
             kinfo[:ki_swtime],
@@ -204,6 +204,10 @@ module Sys
       end
     end
 
-    private_class_method :get_state
+    def self.get_pctcpu(fixpt)
+      (fixpt * 100).to_f / FSCALE
+    end
+
+    private_class_method :get_state, :get_pctcpu
   end
 end

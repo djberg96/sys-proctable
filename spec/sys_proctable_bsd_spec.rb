@@ -86,6 +86,8 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a pctcpu member and returns the expected value', :freebsd do
       expect(process).to respond_to(:pctcpu)
       expect(process.pctcpu).to be_kind_of(Float)
+      expect(process.pctcpu).to be >= 0.0
+      expect(process.pctcpu).to be < 10_000.0
     end
 
     it 'contains a oncpu member and returns the expected value', :freebsd do
