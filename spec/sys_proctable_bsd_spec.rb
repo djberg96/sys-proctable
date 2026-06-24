@@ -266,11 +266,6 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(Sys::ProcTableStructs::RTPrio.size).to eq(dummy.check_sizeof('struct rtprio', 'sys/rtprio.h'))
     end
 
-    # TODO: Figure out which header is the right one for FreeBSD
-    #it 'has a priority struct of the expected size', :freebsd do
-    #  expect(Sys::ProcTableStructs::Priority.size).to eq(dummy.check_sizeof('struct priority', 'sys/priority.h'))
-    #end
-
     it 'has an rusage struct of the expected size' do
       expect(Sys::ProcTableStructs::Rusage.size).to eq(dummy.check_sizeof('struct rusage', 'sys/resource.h'))
     end
