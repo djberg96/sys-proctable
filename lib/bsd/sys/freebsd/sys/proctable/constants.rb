@@ -7,6 +7,9 @@ module Sys
     KERN_PROC_PID  = 1
     KERN_PROC_PROC = 8
 
+    NODEV = -1
+    NODEV_U64 = (1 << 64) - 1
+
     S_IFCHR = 0020000
 
     WMESGLEN       = 8

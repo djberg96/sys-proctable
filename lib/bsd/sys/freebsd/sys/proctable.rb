@@ -96,6 +96,10 @@ module Sys
             cmd = cmd.join(' ')
           end
 
+          cmd ||= kinfo[:ki_comm].to_s
+          state = get_state(kinfo[:ki_stat])
+          ttynum = get_ttynum(kinfo[:ki_tdev])
+
           struct = ProcTableStruct.new(
             kinfo[:ki_pid],
             kinfo[:ki_ppid],
@@ -119,12 +123,12 @@ module Sys
             kinfo[:ki_acflag],
             get_pctcpu(kinfo[:ki_pctcpu]),
             kinfo[:ki_estcpu],
-            kinfo[:ki_slptime],
+            get_slptime(kinfo[:ki_slptime], state),
             kinfo[:ki_swtime],
             kinfo[:ki_runtime],
             Time.at(kinfo[:ki_start][:tv_sec]),
             kinfo[:ki_flag],
-            get_state(kinfo[:ki_stat]),
+            state,
             kinfo[:ki_nice],
             kinfo[:ki_lock],
             kinfo[:ki_rqindex],
@@ -134,7 +138,7 @@ module Sys
             kinfo[:ki_login].to_s,
             kinfo[:ki_lockname].to_s,
             kinfo[:ki_comm].to_s,
-            kinfo[:ki_tdev],
+            ttynum,
             devname(kinfo[:ki_tdev], S_IFCHR),
             kinfo[:ki_jid],
             kinfo[:ki_pri][:pri_level],
@@ -208,6 +212,19 @@ module Sys
       (fixpt * 100).to_f / FSCALE
     end
 
-    private_class_method :get_state, :get_pctcpu
+    def self.get_slptime(slptime, state)
+      case state
+        when "sleep", "waiting", "locked", "idle"
+          slptime
+        else
+          0
+      end
+    end
+
+    def self.get_ttynum(ttynum)
+      ttynum == NODEV_U64 ? NODEV : ttynum
+    end
+
+    private_class_method :get_state, :get_pctcpu, :get_slptime, :get_ttynum
   end
 end

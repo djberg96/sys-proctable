@@ -99,6 +99,7 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a ttynum member and returns the expected value', :freebsd do
       expect(process).to respond_to(:ttynum)
       expect(process.ttynum).to be_kind_of(Integer)
+      expect(process.ttynum).to eql(-1) if process.ttydev == '#NODEV'
     end
 
     it 'contains a ttydev member and returns the expected value', :freebsd do
@@ -134,6 +135,12 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a cmdline member and returns the expected value' do
       expect(process).to respond_to(:cmdline)
       expect(process.cmdline).to be_kind_of(String)
+    end
+
+    it 'uses the command name when arguments are unavailable', :freebsd do
+      process = described_class.ps(pid: 0)
+
+      expect(process.cmdline).to eq(process.comm) if process
     end
 
     it 'contains a start member and returns the expected value' do
@@ -221,6 +228,10 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a stime member and returns the expected value', :freebsd do
       expect(process).to respond_to(:stime)
       expect(process.stime).to be_kind_of(Integer)
+    end
+
+    it 'normalizes active process sleep time', :freebsd do
+      expect(process.slptime).to eql(0) if process.state == 'run'
     end
   end
 
