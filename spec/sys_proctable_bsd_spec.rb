@@ -5,6 +5,7 @@
 # library. You should run these tests via the 'rake spec' task.
 ################################################################
 require 'spec_helper'
+require 'ffi/tools/struct_generator'
 require 'mkmf-lite'
 
 RSpec.describe Sys::ProcTable, :bsd do
@@ -226,6 +227,26 @@ RSpec.describe Sys::ProcTable, :bsd do
   context 'C struct verification' do
     let(:dummy){ Class.new{ extend Mkmf::Lite } }
 
+    def with_configured_cc
+      original_cc = ENV['CC']
+      ENV['CC'] ||= RbConfig::CONFIG['CC']
+      yield
+    ensure
+      ENV['CC'] = original_cc
+    end
+
+    def freebsd_kinfo_proc_layout(fields)
+      with_configured_cc do
+        FFI::StructGenerator.new('kinfo_proc') do |generator|
+          generator.name 'struct kinfo_proc'
+          generator.include 'sys/param.h'
+          generator.include 'sys/user.h'
+
+          fields.each_value{ |field| generator.field(field) }
+        end
+      end
+    end
+
     it 'has a timeval struct of the expected size' do
       expect(Sys::ProcTableStructs::Timeval.size).to eq(dummy.check_sizeof('struct timeval', 'sys/time.h'))
     end
@@ -251,12 +272,40 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(Sys::ProcTableStructs::KInfoProc.size).to eq(dummy.check_sizeof('struct kinfo_proc', 'sys/kinfo.h'))
     end
 
-    it 'has a kinfo_proc struct of the expected size on modern FreeBSD', :freebsd do
-      skip 'Only applies to modern FreeBSD' if RbConfig::CONFIG['host_os'][/freebsd(\d+)/i, 1].to_i < 12
+    it 'has a kinfo_proc struct layout that matches the system headers', :freebsd do
+      fields = {
+        :ki_pid => :ki_pid,
+        :ki_size => :ki_size,
+        :ki_pctcpu => :ki_pctcpu,
+        :ki_runtime => :ki_runtime,
+        :ki_comm => :ki_comm,
+        :ki_jid => :ki_jid,
+        :ki_pri => :ki_pri,
+        :ki_rusage => :ki_rusage
+      }
 
-      expected_size = RbConfig::CONFIG['host_cpu'] =~ /i386/i ? 768 : 1088
+      if RbConfig::CONFIG['host_os'][/freebsd(\d+)/i, 1].to_i >= 12
+        fields.merge!(
+          :ki_tdev_freebsd11 => :ki_tdev_freebsd11,
+          :ki_cow => :ki_cow,
+          :ki_loginclass => :ki_loginclass,
+          :ki_moretdname => :ki_moretdname,
+          :ki_reaper => :ki_reaper,
+          :ki_tdev => :ki_tdev,
+          :ki_oncpu => :ki_oncpu,
+          :ki_pd => :ki_pd,
+          :ki_uerrmsg => :ki_uerrmsg,
+          :ki_sflags => :ki_sflag
+        )
+      end
 
-      expect(Sys::ProcTableStructs::KInfoProc.size).to eq(expected_size)
+      generated_layout = freebsd_kinfo_proc_layout(fields)
+
+      expect(Sys::ProcTableStructs::KInfoProc.size).to eq(generated_layout.size.to_i)
+
+      fields.each do |ruby_field, c_field|
+        expect(Sys::ProcTableStructs::KInfoProc.offset_of(ruby_field)).to eq(generated_layout.get_field(c_field).offset)
+      end
     end
   end
 end
