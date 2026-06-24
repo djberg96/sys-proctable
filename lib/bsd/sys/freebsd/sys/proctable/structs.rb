@@ -1,5 +1,5 @@
 require 'ffi'
-require 'rbconfig'
+require 'etc'
 require_relative 'constants'
 
 module Sys
@@ -51,10 +51,13 @@ module Sys
     class KInfoProc < FFI::Struct
       include Sys::ProcTableConstants
 
-      freebsd_major = RbConfig::CONFIG['host_os'][/freebsd(\d+)/i, 1].to_i
+      freebsd_release = Etc.uname[:release]
+      freebsd_major = freebsd_release[/(\d+)/, 1].to_i
+      freebsd_minor = freebsd_release[/\d+\.(\d+)/, 1].to_i
+      has_reaper = freebsd_major > 15 || (freebsd_major == 15 && freebsd_minor >= 1)
 
       if freebsd_major >= 12
-        layout(
+        modern_layout = [
           :ki_structsize, :int,
           :ki_layout, :int,
           :ki_args, :pointer,
@@ -120,9 +123,17 @@ module Sys
           :ki_loginclass, [:char, LOGINCLASSLEN+1],
           :ki_moretdname, [:char, MAXCOMLEN-TDNAMLEN+1],
           :ki_sparestrings, [:char, 38],
-          :ki_spareints, [:int, KI_NSPARE_INT_FREEBSD12],
-          :ki_reaper, :pid_t,
-          :ki_reapsubtree, :pid_t,
+          :ki_spareints, [:int, has_reaper ? KI_NSPARE_INT_FREEBSD15_1 : KI_NSPARE_INT_FREEBSD12],
+        ]
+
+        if has_reaper
+          modern_layout += [
+            :ki_reaper, :pid_t,
+            :ki_reapsubtree, :pid_t,
+          ]
+        end
+
+        modern_layout += [
           :ki_tdev, :uint64_t,
           :ki_oncpu, :int,
           :ki_lastcpu, :int,
@@ -146,7 +157,9 @@ module Sys
           :ki_sparelongs, [:long, KI_NSPARE_LONG],
           :ki_sflags, :long,
           :ki_tdflags, :long
-        )
+        ]
+
+        layout(*modern_layout)
       else
         layout(
         :ki_structsize, :int,
