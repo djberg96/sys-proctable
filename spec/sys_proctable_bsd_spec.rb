@@ -258,13 +258,6 @@ RSpec.describe Sys::ProcTable, :bsd do
       end
     end
 
-    def freebsd_kinfo_proc_field?(field)
-      freebsd_kinfo_proc_layout(:field => field)
-      true
-    rescue RuntimeError
-      false
-    end
-
     it 'has a timeval struct of the expected size' do
       expect(Sys::ProcTableStructs::Timeval.size).to eq(dummy.check_sizeof('struct timeval', 'sys/time.h'))
     end
@@ -286,37 +279,7 @@ RSpec.describe Sys::ProcTable, :bsd do
     end
 
     it 'has a kinfo_proc struct layout that matches the system headers', :freebsd do
-      fields = {
-        :ki_pid => :ki_pid,
-        :ki_size => :ki_size,
-        :ki_pctcpu => :ki_pctcpu,
-        :ki_runtime => :ki_runtime,
-        :ki_comm => :ki_comm,
-        :ki_jid => :ki_jid,
-        :ki_pri => :ki_pri,
-        :ki_rusage => :ki_rusage
-      }
-
-      if RbConfig::CONFIG['host_os'][/freebsd(\d+)/i, 1].to_i >= 12
-        fields.merge!(
-          :ki_tdev_freebsd11 => :ki_tdev_freebsd11,
-          :ki_cow => :ki_cow,
-          :ki_loginclass => :ki_loginclass,
-          :ki_moretdname => :ki_moretdname,
-          :ki_tdev => :ki_tdev,
-          :ki_oncpu => :ki_oncpu,
-          :ki_pd => :ki_pd,
-          :ki_uerrmsg => :ki_uerrmsg,
-          :ki_sflags => :ki_sflag
-        )
-
-        if freebsd_kinfo_proc_field?(:ki_reaper)
-          fields.merge!(
-            :ki_reaper => :ki_reaper,
-            :ki_reapsubtree => :ki_reapsubtree
-          )
-        end
-      end
+      fields = Sys::ProcTableStructs::KInfoProc.members.to_h{ |field| [field, field] }
 
       generated_layout = freebsd_kinfo_proc_layout(fields)
 
