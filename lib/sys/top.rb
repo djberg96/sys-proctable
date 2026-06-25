@@ -9,7 +9,7 @@ module Sys
   class Top
 
     # The version of the sys-top library
-    VERSION = '1.0.5'.freeze
+    VERSION = '1.0.5'
 
     # Returns an array of Struct::ProcTableStruct elements containing up
     # to +num+ elements, sorted by +field+. The default number of elements
