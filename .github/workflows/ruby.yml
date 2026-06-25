@@ -35,8 +35,6 @@ jobs:
       run: bundle exec rake
   freebsd:
     runs-on: ubuntu-latest
-    env:
-      MAKEFLAGS: "-j1" # Cope with a makefile argument error in the github action
     steps:
     - uses: actions/checkout@v4
     - name: Test in FreeBSD
@@ -52,5 +50,6 @@ jobs:
           export CC=gcc
           gcc --version
           gem install bundler --no-document
+          unset MAKEFLAGS
           bundle install --quiet
           bundle exec rspec
