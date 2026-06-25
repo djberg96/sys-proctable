@@ -16,5 +16,5 @@ case RbConfig::CONFIG['host_os']
   when /mswin|win32|dos|cygwin|mingw|windows/i
     require_relative '../windows/sys/proctable'
   else
-    raise "Unsupported platform"
+    raise 'Unsupported platform'
 end

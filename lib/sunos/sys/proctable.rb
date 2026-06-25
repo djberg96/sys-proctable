@@ -214,7 +214,7 @@ module Sys
 
     public
 
-    ProcTableStruct = Struct.new("ProcTableStruct", *@fields) do
+    ProcTableStruct = Struct.new('ProcTableStruct', *@fields) do
       alias comm fname
     end
 
@@ -247,7 +247,7 @@ module Sys
       array  = block_given? ? nil : []
       struct = nil
 
-      Dir.foreach("/proc") do |file|
+      Dir.foreach('/proc') do |file|
         next if file =~ /\D/ # Skip non-numeric entries under /proc
 
         # Only return information for a given pid, if provided
@@ -317,7 +317,7 @@ module Sys
         begin
           File.open("/proc/#{file}/as") do |fd|
             fd.sysseek(struct.argv, IO::SEEK_SET)
-            address = fd.sysread(struct.argc * 4).unpack("L")[0]
+            address = fd.sysread(struct.argc * 4).unpack('L')[0]
 
             struct.cmd_args = []
 
@@ -333,7 +333,7 @@ module Sys
 
             fd.sysseek(struct.envp, IO::SEEK_SET)
 
-            env_address = fd.sysread(128).unpack("L")[0]
+            env_address = fd.sysread(128).unpack('L')[0]
 
             # TODO: Optimization potential here.
             loop do

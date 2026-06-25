@@ -199,14 +199,14 @@ module Sys
 
     def self.get_state(int)
       case int
-        when SIDL; "idle"
-        when SRUN; "run"
-        when SSLEEP; "sleep"
-        when SSTOP; "stop"
-        when SZOMB; "zombie"
-        when SWAIT; "waiting"
-        when SLOCK; "locked"
-        else; "unknown"
+        when SIDL; 'idle'
+        when SRUN; 'run'
+        when SSLEEP; 'sleep'
+        when SSTOP; 'stop'
+        when SZOMB; 'zombie'
+        when SWAIT; 'waiting'
+        when SLOCK; 'locked'
+        else; 'unknown'
       end
     end
 
@@ -216,7 +216,7 @@ module Sys
 
     def self.get_slptime(slptime, state)
       case state
-        when "sleep", "waiting", "locked", "idle"
+        when 'sleep', 'waiting', 'locked', 'idle'
           slptime
         else
           0
