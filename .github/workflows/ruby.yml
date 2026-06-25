@@ -49,5 +49,5 @@ jobs:
           pkg install -y ruby devel/ruby-gems gcc
         run: |
           gem install bundler --no-document
-          bundle install --quiet
+          bundle install --quiet --jobs 1
           bundle exec rspec
