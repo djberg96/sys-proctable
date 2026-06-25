@@ -40,6 +40,8 @@ Style/ClassAndModuleChildren:
   Enabled: false
 Style/ConditionalAssignment:
   Enabled: false
+Style/FetchEnvVar:
+  Enabled: false
 Style/HashSyntax:
   EnforcedStyle: hash_rockets
 Style/IfUnlessModifier:
