@@ -20,7 +20,7 @@ RSpec.describe Sys::ProcTable, :darwin do
 
   before(:all) do
     @pid1 = Process.spawn({'A' => 'B', 'Z' => nil}, 'sleep 60')
-    @pid2 = Process.spawn('ruby', '-Ilib', '-e', "sleep \'120\'.to_i", '--', 'foo bar')
+    @pid2 = Process.spawn('ruby', '-Ilib', '-e', "sleep '120'.to_i", '--', 'foo bar')
     sleep 1 # wait to make sure env is replaced by sleep
   end
 
