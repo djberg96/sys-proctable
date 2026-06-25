@@ -1,4 +1,5 @@
 # frozen_string_literal: true
+
 #######################################################################
 # sys_proctable_all_spec.rb
 #
