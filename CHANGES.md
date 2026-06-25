@@ -1,3 +1,7 @@
+## 1.4.0 - ???
+* Major updates for FreeBSD, which was woefully behind the times. It now uses
+  a struct generator, which makes it more robust but also requires a compiler.
+
 ## 1.3.0 - 26-Dec-2022
 * Added DragonflyBSD support.
 * Reorganized the BSD code so that FreeBSD and Dragonfly BSD live in their
