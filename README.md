@@ -12,6 +12,7 @@
 * rspec (development only)
 * rake (development only)
 * rubocop (development only)
+* A compiler (BSD only, for now)
 
 ## Supported Platforms
 
@@ -94,6 +95,12 @@ Sys::ProcTable.ps(host: some_host)
 A kvm interface is used. That means the owner of the process using the
 sys-proctable library needs to be a member of the kmem group (or root).
 
+FreeBSD requires that a compiler be installed on your system. This is because
+on FreeBSD this library uses a struct generator to map the OS proc struct to
+an FFI object. The practice of using pre-defined structs based on the OS version
+was proving to be unworkable since every release, even dot releases, had new
+and/or different struct members.
+
 ### Bundler
 
 For version 1.1.5 or earlier, Bundler seems to have trouble installing the
@@ -119,6 +126,7 @@ processes that you have access to. To get a full listing, run as root.
 ## Future Plans
 
 Support for Solaris will probably be dropped in the next major release.
+I may keep it around if it's compatible with IllumOS, we'll see.
 
 ## Acknowledgements
 
@@ -159,7 +167,7 @@ Apache-2.0
 
 ## Copyright
 
-(C) 2003-2023 Daniel J. Berger
+(C) 2003-2026 Daniel J. Berger
 All Rights Reserved.
 
 ## Author
