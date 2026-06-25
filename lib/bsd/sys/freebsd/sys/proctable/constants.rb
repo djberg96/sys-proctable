@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Sys
   module ProcTableConstants
     POSIX_ARG_MAX = 4096
