@@ -35,6 +35,9 @@ jobs:
       run: bundle exec rake
   freebsd:
     runs-on: ubuntu-latest
+    env:
+      CC: gcc
+      CFLAGS: -Wno-error=unused-command-line-argument-hard-error-in-future
     steps:
     - uses: actions/checkout@v4
     - name: Test in FreeBSD
@@ -44,12 +47,7 @@ jobs:
         usesh: true
         prepare: |
           pkg install -y ruby devel/ruby-gems gcc
-
         run: |
-          ruby -e 'puts RbConfig::CONFIG["host_os"]'
-          export CC=gcc
-          gcc --version
           gem install bundler --no-document
-          unset MAKEFLAGS
           bundle install --quiet
           bundle exec rspec
