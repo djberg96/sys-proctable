@@ -5,6 +5,7 @@
 # library. You should run these tests via the 'rake spec' task.
 ################################################################
 require 'spec_helper'
+require 'ffi/tools/struct_generator'
 require 'mkmf-lite'
 
 RSpec.describe Sys::ProcTable, :bsd do
@@ -74,16 +75,20 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a comm member and returns the expected value' do
       expect(process).to respond_to(:comm)
       expect(process.comm).to be_kind_of(String)
+      expect(process.comm).not_to be_empty if RbConfig::CONFIG['host_os'] =~ /freebsd/i
     end
 
     it 'contains a state member and returns the expected value', :freebsd do
       expect(process).to respond_to(:state)
       expect(process.state).to be_kind_of(String)
+      expect(process.state).not_to eql('unknown')
     end
 
     it 'contains a pctcpu member and returns the expected value', :freebsd do
       expect(process).to respond_to(:pctcpu)
       expect(process.pctcpu).to be_kind_of(Float)
+      expect(process.pctcpu).to be >= 0.0
+      expect(process.pctcpu).to be < 10_000.0
     end
 
     it 'contains a oncpu member and returns the expected value', :freebsd do
@@ -94,6 +99,7 @@ RSpec.describe Sys::ProcTable, :bsd do
     it 'contains a ttynum member and returns the expected value', :freebsd do
       expect(process).to respond_to(:ttynum)
       expect(process.ttynum).to be_kind_of(Integer)
+      expect(process.ttynum).to eql(-1) if process.ttydev == '#NODEV'
     end
 
     it 'contains a ttydev member and returns the expected value', :freebsd do
@@ -131,9 +137,16 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(process.cmdline).to be_kind_of(String)
     end
 
+    it 'uses the command name when arguments are unavailable', :freebsd do
+      process = described_class.ps(pid: 0)
+
+      expect(process.cmdline).to eq(process.comm) if process
+    end
+
     it 'contains a start member and returns the expected value' do
       expect(process).to respond_to(:start)
       expect(process.start).to be_kind_of(Time)
+      expect(process.start).to be > Time.at(1_500_000_000) if RbConfig::CONFIG['host_os'] =~ /freebsd/i
     end
 
     it 'contains a maxrss member and returns the expected value', :freebsd do
@@ -216,10 +229,34 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(process).to respond_to(:stime)
       expect(process.stime).to be_kind_of(Integer)
     end
+
+    it 'normalizes active process sleep time', :freebsd do
+      expect(process.slptime).to eql(0) if process.state == 'run'
+    end
   end
 
   context 'C struct verification' do
     let(:dummy){ Class.new{ extend Mkmf::Lite } }
+
+    def with_configured_cc
+      original_cc = ENV['CC']
+      ENV['CC'] ||= RbConfig::CONFIG['CC']
+      yield
+    ensure
+      ENV['CC'] = original_cc
+    end
+
+    def freebsd_kinfo_proc_layout(fields)
+      with_configured_cc do
+        FFI::StructGenerator.new('kinfo_proc') do |generator|
+          generator.name 'struct kinfo_proc'
+          generator.include 'sys/param.h'
+          generator.include 'sys/user.h'
+
+          fields.each_value{ |field| generator.field(field) }
+        end
+      end
+    end
 
     it 'has a timeval struct of the expected size' do
       expect(Sys::ProcTableStructs::Timeval.size).to eq(dummy.check_sizeof('struct timeval', 'sys/time.h'))
@@ -229,11 +266,6 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(Sys::ProcTableStructs::RTPrio.size).to eq(dummy.check_sizeof('struct rtprio', 'sys/rtprio.h'))
     end
 
-    # TODO: Figure out which header is the right one for FreeBSD
-    #it 'has a priority struct of the expected size', :freebsd do
-    #  expect(Sys::ProcTableStructs::Priority.size).to eq(dummy.check_sizeof('struct priority', 'sys/priority.h'))
-    #end
-
     it 'has an rusage struct of the expected size' do
       expect(Sys::ProcTableStructs::Rusage.size).to eq(dummy.check_sizeof('struct rusage', 'sys/resource.h'))
     end
@@ -242,9 +274,20 @@ RSpec.describe Sys::ProcTable, :bsd do
       expect(Sys::ProcTableStructs::KInfoLWP.size).to eq(dummy.check_sizeof('struct kinfo_lwp', 'sys/kinfo.h'))
     end
 
-    # TODO: Figure out which header is the right one for FreeBSD
     it 'has an kinfo_proc struct of the expected size', :dragonfly do
       expect(Sys::ProcTableStructs::KInfoProc.size).to eq(dummy.check_sizeof('struct kinfo_proc', 'sys/kinfo.h'))
+    end
+
+    it 'has a kinfo_proc struct layout that matches the system headers', :freebsd do
+      fields = Sys::ProcTableStructs::KInfoProc.members.to_h{ |field| [field, field] }
+
+      generated_layout = freebsd_kinfo_proc_layout(fields)
+
+      expect(Sys::ProcTableStructs::KInfoProc.size).to eq(generated_layout.size.to_i)
+
+      fields.each do |ruby_field, c_field|
+        expect(Sys::ProcTableStructs::KInfoProc.offset_of(ruby_field)).to eq(generated_layout.get_field(c_field).offset)
+      end
     end
   end
 end

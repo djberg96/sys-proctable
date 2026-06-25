@@ -1,4 +1,5 @@
-require: rubocop-rspec
+plugins:
+  - rubocop-rspec
 
 RSpec/BeforeAfterAll:
   Enabled: false
@@ -6,8 +7,10 @@ RSpec/MultipleExpectations:
   Max: 4
 RSpec/ContextWording:
   Enabled: false
-RSpec/FilePath:
-  SpecSuffixOnly: true
+RSpec/SpecFilePathFormat:
+  Enabled: false
+RSpec/SpecFilePathSuffix:
+  Enabled: true
 RSpec/InstanceVariable:
   Enabled: false
 
@@ -42,7 +45,7 @@ Style/HashSyntax:
 Style/IfUnlessModifier:
   Enabled: false
 Style/RedundantBegin:
-  Enabled: false   
+  Enabled: false
 Style/SafeNavigation:
   Enabled: false
 Layout/EmptyLineAfterGuardClause:
@@ -56,7 +59,7 @@ Layout/SpaceBeforeBlockBraces:
 Metrics/AbcSize:
   Enabled: false
 Metrics/BlockLength:
-  IgnoredMethods: ['describe', 'context']
+  AllowedMethods: ['describe', 'context']
 Metrics/ClassLength:
   Enabled: false
 Metrics/MethodLength:
