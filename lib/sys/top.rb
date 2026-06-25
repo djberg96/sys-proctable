@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'sys/proctable'
 
 # The Sys module serves as a namespace only

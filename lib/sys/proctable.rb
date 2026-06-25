@@ -1,3 +1,4 @@
+# frozen_string_literal: true
 require 'rbconfig'
 
 case RbConfig::CONFIG['host_os']
