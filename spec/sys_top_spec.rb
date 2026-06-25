@@ -18,7 +18,7 @@ RSpec.describe Sys::Top do
     end
 
     it 'returns an array' do
-      expect(described_class.top).to be_kind_of(Array)
+      expect(described_class.top).to be_a(Array)
     end
 
     it 'works with no arguments' do
@@ -36,7 +36,7 @@ RSpec.describe Sys::Top do
 
     it 'returns the expected results with no arguments' do
       expect(described_class.top.size).to be(10)
-      expect(described_class.top.first).to be_kind_of(Struct::ProcTableStruct)
+      expect(described_class.top.first).to be_a(Struct::ProcTableStruct)
     end
 
     it 'returns the expected result with a size argument' do
